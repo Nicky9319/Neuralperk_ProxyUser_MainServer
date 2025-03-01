@@ -157,7 +157,7 @@ class CustomerServerService():
 
 
 async def start_service():
-    service = CustomerServerService("0.0.0.0" , 5500)
+    service = CustomerServerService("0.0.0.0" , 8000)
     await service.startService()
 
 if __name__ == "__main__":

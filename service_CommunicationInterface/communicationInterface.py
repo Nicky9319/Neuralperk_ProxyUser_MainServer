@@ -194,7 +194,7 @@ class CommunicationInterfaceService():
 
 
 async def start_service():
-    service = CommunicationInterfaceService("127.0.0.1" , 7000)
+    service = CommunicationInterfaceService("127.0.0.1" , 12000)
     await service.startService()
 
 if __name__ == "__main__":
