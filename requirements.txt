@@ -1,18 +1,12 @@
-# Stores the Dependencies for the Project specifically for python 3.12
-
-# Necessary Dependencies
+flask
 requests
-aio-pika
-aiohttp
+python-socketio
+eventlet
+pymongo
+gunicorn
+
+# redis
 fastapi
 uvicorn
-python-dotenv
-
-# Project Dependent Dependencies
-# Example:
-# pymongo
-# tqdm
-# openai
-# flask
-# flask_cors
-# pdfplumber
+aiohttp
+aio_pika
