@@ -23,7 +23,9 @@ def stop_service_on_port(port):
 
 def stopServer():
     # Mention the Ports you want to stop
-    portList = []
+    portList = [8000,20000,5757,3232,12000,6000,6001,10000,10001]
+
+    portList.extend([i for i in range(15000,15010)])
 
     for ports in portList:
         stop_service_on_port(ports)
