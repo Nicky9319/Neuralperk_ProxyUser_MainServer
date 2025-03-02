@@ -1,0 +1,2 @@
+2025-03-02 09:11:16,638 - INFO - Connection to amqp://guest:******@localhost/ closed. Reconnecting after 5 seconds.
+2025-03-02 09:12:36,208 - INFO - Connection to amqp://guest:******@localhost/ closed. Reconnecting after 5 seconds.

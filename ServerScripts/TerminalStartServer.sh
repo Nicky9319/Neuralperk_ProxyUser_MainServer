@@ -14,3 +14,11 @@ cd ../
 #          /home/Avatar/Avatar_Env/bin/python3.12 service_LogService/loggingService.py 
 
 # Example: ../.venv/bin/python3.12 service_MainServer/mainServer.py (When Trying to Run from Local venv)
+
+
+.venv/bin/python3.12 service_CommunicationInterface/communicationInterface.py &
+.venv/bin/python3.12 service_CustomerServer/customerServer.py &
+.venv/bin/python3.12 service_SessionSupervisor/sessionSupervisor.py &
+.venv/bin/python3.12 service_UserHTTPserver/userHttpServer.py &
+.venv/bin/python3.12 service_UserManager/userManager.py &
+.venv/bin/python3.12 service_UserWSserver/userWsServer.py 
