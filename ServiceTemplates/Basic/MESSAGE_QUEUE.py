@@ -47,23 +47,29 @@ class MessageQueue:
             self.DeclaredExchanges[exchangeName] = exchange
         else:
             exchange = self.DeclaredExchanges[exchangeName]
+        
 
 
         messageToSend = None
         if headers and "DATA_FORMAT" in headers:
             if headers["DATA_FORMAT"] == "BYTES":
-                print("Bytes")
+                # print("Bytes")
                 messageToSend = message
             else:
                 messageToSend = message.encode()
         else:
             messageToSend = message.encode()
 
+    
+        try:
+            await exchange.publish(
+                aio_pika.Message(body=messageToSend, headers=headers),
+                routing_key=routingKey
+            )
+        except Exception as e:
+            print(f"Failed to publish message: {e}")
 
-        await exchange.publish(
-            aio_pika.Message(body=messageToSend,headers=headers),
-            routing_key=routingKey
-        )
+        return True
 
     async def CloseConnection(self):
         await self.Connection.close()

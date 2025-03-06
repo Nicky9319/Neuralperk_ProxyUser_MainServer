@@ -159,6 +159,7 @@ class UserManagerService:
             
             responseMsg = {"STATUS" : "SUCCESS"}
         elif msgType == "INITIALIZE_SESSION":
+            print("Handling Initialization of Session, Request Send from Session Supervisor")
             self.userToSupervisorIdMapping[supervisorID] = []
             self.supervisorToRoutingKeyMapping[supervisorID] = f"SSE_{supervisorID}_UM"
             responseMsg = {"STATUS": "SUCCESS"}

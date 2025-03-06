@@ -28,10 +28,10 @@ async def publishData(exchange_name, routing_key, message, headers=None):
 # Example usage
 async def main():
     # Mention the Exchange Name
-    exchange_name = "LOGGING_EXCHANGE"
+    exchange_name = "SESSION_SUPERVISOR_EXCHANGE"
 
     # Mention the Routing Key
-    routing_key = "LE_LOGIN_SERVICE"
+    routing_key = "SSE_33a23f757417499c83764e872fca5fbf_CA"
 
     
     mainMessage = {"LOG_LEVEL" : "INFO", "LOG_MESSAGE" : "this is a test"}

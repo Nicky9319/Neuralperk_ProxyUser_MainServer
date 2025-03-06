@@ -608,6 +608,8 @@ class sessionSupervisorService:
                 
     async def callbackCustomerAgentMessages(self, message):
         Headers = message.headers
+
+        print("Session Supervisor : Received Message from Customer Agent")
         print(Headers)
 
         DecodedMessage = None
@@ -674,7 +676,7 @@ class sessionSupervisorService:
     async def InformUserManagerAboutSessionInitialization(self):
         exchangeName = "USER_MANAGER_EXCHANGE"
         routingKey = "UME_SESSION_SUPERVISOR"
-        
+ 
         mainMessage = None
         messageToSend = {"TYPE" : "INITIALIZE_SESSION" , "DATA" : mainMessage}
         messageInJson = json.dumps(messageToSend)
@@ -688,6 +690,8 @@ class sessionSupervisorService:
 
         # Sending Information To User Manager that Session has been Initialized
         await self.InformUserManagerAboutSessionInitialization()
+
+        self.logger.info(f"Session Supervisor : {self.ID}")
 
         await self.messageQueue.AddQueueAndMapToCallback(f"SSE_{self.ID}_CA", self.callbackCustomerAgentMessages, auto_delete=True)
         await self.messageQueue.AddQueueAndMapToCallback(f"SSE_{self.ID}_UM", self.callbackUserManagerMessages)

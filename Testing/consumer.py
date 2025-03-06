@@ -30,10 +30,10 @@ async def start_consuming(exchange_name, queue_name, **queue_args):
 # Example usage
 async def main():
     # Mention the Exchange Name
-    exchange_name = "LOGGING_EXCHANGE"
+    exchange_name = "SESSION_SUPERVISOR_EXCHANGE"
 
     # Mention the Queue Name
-    queue_name = "LE_MAIN_SERVER"
+    queue_name = f"SSE_051741e9a5af42c2b686499d70bd8276_CA"
     
     await start_consuming(exchange_name, queue_name, auto_delete=True)
 

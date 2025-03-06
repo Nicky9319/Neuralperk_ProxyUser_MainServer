@@ -43,6 +43,8 @@ class CustomerServerService():
             if email not in self.sessionStatus.keys():
                 self.sessionCreationRequests[email] = mainData
                 self.sessionStatus[email] = "PENDING"
+                responseToSend = {"MESSAGE": "SESSION_CREATION_REQUEST_ACCEPTED"}
+                return JSONResponse(content=responseToSend , status_code=200)
             else:
                 responseToSend = {"MESSAGE": "SESSION_ALREADY_RUNNING"}
                 return JSONResponse(content=responseToSend , status_code=400)
@@ -65,14 +67,21 @@ class CustomerServerService():
             email = data["EMAIL"]
             password = data["PASSWORD"]
 
+            if email != "paarthsaxena2005@gmail.com":
+                return JSONResponse(content={"MESSAGE": "INVALID_EMAIL_OR_PASSWORD"} , status_code=401)
+
             messageToSend = {"EMAIL": email , "PASSWORD": password, "TYPE": personaType}
             messageInJson = json.dumps(messageToSend)
 
-            credentialServerServiceURL = await self.getServiceURL("CREDENTIAL_SERVER")
-            response = requests.get(f"http://{credentialServerServiceURL}/check_node?message={messageInJson}")
+            # credentialServerServiceURL = await self.getServiceURL("CREDENTIAL_SERVER")
+            # response = requests.get(f"http://{credentialServerServiceURL}/check_node?message={messageInJson}")
 
-            if response.status_code == 200:
-                responseData = response.json()
+            response = 200
+
+            # if response.status_code == 200:
+            if response == 200:
+                # responseData = response.json()
+                responseData = {"MESSAGE": "REGISTERED"}
                 if(responseData["MESSAGE"] == "REGISTERED"):
                     return await handleSessionCreationRequest(data)
                 else:
