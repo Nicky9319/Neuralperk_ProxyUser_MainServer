@@ -47,6 +47,24 @@
               "bsonType": ["string", "null"],
               "description": "must be a string if present, or null if not available"
             },
+            "renderedImages": {
+              "bsonType": "array",
+              "description": "array of rendered image objects with frame number and file path",
+              "items": {
+                "bsonType": "object",
+                "required": ["frameNumber", "imageFilePath"],
+                "properties": {
+                  "frameNumber": {
+                    "bsonType": "int",
+                    "description": "frame number of the rendered image, must be an integer and is required"
+                  },
+                  "imageFilePath": {
+                    "bsonType": "string",
+                    "description": "file path to the rendered image, must be a string and is required"
+                  }
+                }
+              }
+            },
             "customerId": {
               "bsonType": "string",
               "description": "reference to customerId in customers collection, must be a string and is required"

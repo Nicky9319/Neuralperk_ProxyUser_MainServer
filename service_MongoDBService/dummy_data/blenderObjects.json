@@ -3,18 +3,43 @@
     "objectId": "obj001",
     "blendFilePath": "/projects/cust001/chair.blend",
     "renderedVideoPath": "/renders/cust001/chair.mp4",
+    "renderedImages": [
+      {
+        "frameNumber": 1,
+        "imageFilePath": "/renders/cust001/chair/frame_001.png"
+      },
+      {
+        "frameNumber": 2,
+        "imageFilePath": "/renders/cust001/chair/frame_002.png"
+      },
+      {
+        "frameNumber": 3,
+        "imageFilePath": "/renders/cust001/chair/frame_003.png"
+      }
+    ],
     "customerId": "cust001"
   },
   {
     "objectId": "obj002",
     "blendFilePath": "/projects/cust002/table.blend",
     "renderedVideoPath": "/renders/cust002/table.mp4",
+    "renderedImages": [
+      {
+        "frameNumber": 1,
+        "imageFilePath": "/renders/cust002/table/frame_001.png"
+      },
+      {
+        "frameNumber": 2,
+        "imageFilePath": "/renders/cust002/table/frame_002.png"
+      }
+    ],
     "customerId": "cust002"
   },
   {
     "objectId": "obj003",
     "blendFilePath": "/projects/cust003/lamp.blend",
     "renderedVideoPath": null,
+    "renderedImages": [],
     "customerId": "cust003"
   }
 ]

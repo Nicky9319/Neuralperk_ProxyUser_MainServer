@@ -437,6 +437,216 @@ class HTTP_SERVER():
                 raise
             except Exception as e:
                 raise HTTPException(status_code=500, detail=f"Internal server error: {str(e)}")
+        
+        # ========================================
+        # RENDERED IMAGES MANAGEMENT ENDPOINTS
+        # ========================================
+        
+        @self.app.post("/api/mongodb-service/blender-objects/add-rendered-image")
+        async def add_rendered_image(request: Request):
+            """Add a single rendered image to a blender object
+            Required fields: objectId, customerId, frameNumber, imageFilePath
+            Returns: Success message with added image details
+            """
+            try:
+                body = await request.json()
+                
+                # Validate required fields
+                required_fields = ["objectId", "customerId", "frameNumber", "imageFilePath"]
+                for field in required_fields:
+                    if field not in body:
+                        raise HTTPException(status_code=400, detail=f"Missing required field: {field}")
+                
+                # Check if customer exists
+                customer = self.customers_collection.find_one({"customerId": body["customerId"]})
+                if not customer:
+                    raise HTTPException(status_code=404, detail="Customer not found")
+                
+                # Check if blender object exists
+                blender_object = self.blender_objects_collection.find_one({"objectId": body["objectId"]})
+                if not blender_object:
+                    raise HTTPException(status_code=404, detail="Blender object not found")
+                
+                # Check if frame number already exists for this object
+                existing_frame = self.blender_objects_collection.find_one({
+                    "objectId": body["objectId"],
+                    "renderedImages.frameNumber": body["frameNumber"]
+                })
+                
+                if existing_frame:
+                    # Update existing frame
+                    result = self.blender_objects_collection.update_one(
+                        {
+                            "objectId": body["objectId"],
+                            "renderedImages.frameNumber": body["frameNumber"]
+                        },
+                        {
+                            "$set": {
+                                "renderedImages.$.imageFilePath": body["imageFilePath"]
+                            }
+                        }
+                    )
+                    action = "updated"
+                else:
+                    # Add new frame
+                    result = self.blender_objects_collection.update_one(
+                        {"objectId": body["objectId"], "customerId": body["customerId"]},
+                        {
+                            "$push": {
+                                "renderedImages": {
+                                    "frameNumber": body["frameNumber"],
+                                    "imageFilePath": body["imageFilePath"]
+                                }
+                            }
+                        }
+                    )
+                    action = "added"
+                
+                if result.matched_count == 0:
+                    raise HTTPException(status_code=404, detail="Blender object not found")
+                
+                return JSONResponse(
+                    content={
+                        "message": f"Rendered image {action} successfully",
+                        "objectId": body["objectId"],
+                        "frameNumber": body["frameNumber"],
+                        "imageFilePath": body["imageFilePath"],
+                        "action": action
+                    },
+                    status_code=200
+                )
+                
+            except HTTPException:
+                raise
+            except Exception as e:
+                raise HTTPException(status_code=500, detail=f"Internal server error: {str(e)}")
+        
+        @self.app.post("/api/mongodb-service/blender-objects/add-rendered-images-batch")
+        async def add_rendered_images_batch(request: Request):
+            """Add multiple rendered images to blender objects in batch
+            Required fields: images (array of objects with objectId, customerId, frameNumber, imageFilePath)
+            Returns: Success message with batch operation results
+            """
+            try:
+                body = await request.json()
+                
+                # Validate required fields
+                if "images" not in body or not isinstance(body["images"], list):
+                    raise HTTPException(status_code=400, detail="Missing or invalid 'images' array field")
+                
+                if len(body["images"]) == 0:
+                    raise HTTPException(status_code=400, detail="Images array cannot be empty")
+                
+                # Validate each image object
+                for i, image in enumerate(body["images"]):
+                    required_fields = ["objectId", "customerId", "frameNumber", "imageFilePath"]
+                    for field in required_fields:
+                        if field not in image:
+                            raise HTTPException(status_code=400, detail=f"Image {i}: Missing required field: {field}")
+                
+                # Group images by objectId for efficient batch processing
+                images_by_object = {}
+                for image in body["images"]:
+                    object_id = image["objectId"]
+                    if object_id not in images_by_object:
+                        images_by_object[object_id] = []
+                    images_by_object[object_id].append(image)
+                
+                # Process each object
+                results = []
+                for object_id, images in images_by_object.items():
+                    # Check if object exists
+                    blender_object = self.blender_objects_collection.find_one({"objectId": object_id})
+                    if not blender_object:
+                        results.append({
+                            "objectId": object_id,
+                            "status": "failed",
+                            "error": "Blender object not found"
+                        })
+                        continue
+                    
+                    # Check if customer exists
+                    customer = self.customers_collection.find_one({"customerId": images[0]["customerId"]})
+                    if not customer:
+                        results.append({
+                            "objectId": object_id,
+                            "status": "failed",
+                            "error": "Customer not found"
+                        })
+                        continue
+                    
+                    # Process images for this object
+                    for image in images:
+                        try:
+                            # Check if frame already exists
+                            existing_frame = self.blender_objects_collection.find_one({
+                                "objectId": object_id,
+                                "renderedImages.frameNumber": image["frameNumber"]
+                            })
+                            
+                            if existing_frame:
+                                # Update existing frame
+                                self.blender_objects_collection.update_one(
+                                    {
+                                        "objectId": object_id,
+                                        "renderedImages.frameNumber": image["frameNumber"]
+                                    },
+                                    {
+                                        "$set": {
+                                            "renderedImages.$.imageFilePath": image["imageFilePath"]
+                                        }
+                                    }
+                                )
+                                results.append({
+                                    "objectId": object_id,
+                                    "frameNumber": image["frameNumber"],
+                                    "status": "updated"
+                                })
+                            else:
+                                # Add new frame
+                                self.blender_objects_collection.update_one(
+                                    {"objectId": object_id, "customerId": image["customerId"]},
+                                    {
+                                        "$push": {
+                                            "renderedImages": {
+                                                "frameNumber": image["frameNumber"],
+                                                "imageFilePath": image["imageFilePath"]
+                                            }
+                                        }
+                                    }
+                                )
+                                results.append({
+                                    "objectId": object_id,
+                                    "frameNumber": image["frameNumber"],
+                                    "status": "added"
+                                })
+                        except Exception as e:
+                            results.append({
+                                "objectId": object_id,
+                                "frameNumber": image["frameNumber"],
+                                "status": "failed",
+                                "error": str(e)
+                            })
+                
+                # Count successes and failures
+                successful = len([r for r in results if r["status"] in ["added", "updated"]])
+                failed = len([r for r in results if r["status"] == "failed"])
+                
+                return JSONResponse(
+                    content={
+                        "message": f"Batch operation completed: {successful} successful, {failed} failed",
+                        "totalProcessed": len(body["images"]),
+                        "successful": successful,
+                        "failed": failed,
+                        "results": results
+                    },
+                    status_code=200
+                )
+                
+            except HTTPException:
+                raise
+            except Exception as e:
+                raise HTTPException(status_code=500, detail=f"Internal server error: {str(e)}")
      
     async def run_app(self):
         config = uvicorn.Config(self.app, host=self.host, port=self.port)

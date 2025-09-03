@@ -458,6 +458,241 @@
 					"response": []
 				}
 			]
+		},
+		{
+			"name": "Rendered Images Management",
+			"item": [
+				{
+					"name": "Add Single Rendered Image - Success",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"objectId\": \"obj_001\",\n  \"customerId\": \"cust_001\",\n  \"frameNumber\": 5,\n  \"imageFilePath\": \"/renders/cust_001/chair/frame_005.png\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/mongodb-service/blender-objects/add-rendered-image",
+							"host": ["{{base_url}}"],
+							"path": ["api", "mongodb-service", "blender-objects", "add-rendered-image"]
+						},
+						"description": "Add a new rendered image for a specific frame"
+					},
+					"response": []
+				},
+				{
+					"name": "Add Single Rendered Image - Update Existing Frame",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"objectId\": \"obj_001\",\n  \"customerId\": \"cust_001\",\n  \"frameNumber\": 1,\n  \"imageFilePath\": \"/renders/cust_001/chair/frame_001_updated.png\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/mongodb-service/blender-objects/add-rendered-image",
+							"host": ["{{base_url}}"],
+							"path": ["api", "mongodb-service", "blender-objects", "add-rendered-image"]
+						},
+						"description": "Update an existing frame with new image file path"
+					},
+					"response": []
+				},
+				{
+					"name": "Add Single Rendered Image - Missing Fields",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"objectId\": \"obj_001\",\n  \"customerId\": \"cust_001\",\n  \"frameNumber\": 6\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/mongodb-service/blender-objects/add-rendered-image",
+							"host": ["{{base_url}}"],
+							"path": ["api", "mongodb-service", "blender-objects", "add-rendered-image"]
+						},
+						"description": "Test validation - missing imageFilePath field"
+					},
+					"response": []
+				},
+				{
+					"name": "Add Single Rendered Image - Invalid Customer",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"objectId\": \"obj_001\",\n  \"customerId\": \"invalid_customer\",\n  \"frameNumber\": 7,\n  \"imageFilePath\": \"/renders/invalid/frame_007.png\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/mongodb-service/blender-objects/add-rendered-image",
+							"host": ["{{base_url}}"],
+							"path": ["api", "mongodb-service", "blender-objects", "add-rendered-image"]
+						},
+						"description": "Test adding image with non-existent customer"
+					},
+					"response": []
+				},
+				{
+					"name": "Add Single Rendered Image - Invalid Object",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"objectId\": \"invalid_object\",\n  \"customerId\": \"cust_001\",\n  \"frameNumber\": 8,\n  \"imageFilePath\": \"/renders/cust_001/invalid/frame_008.png\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/mongodb-service/blender-objects/add-rendered-image",
+							"host": ["{{base_url}}"],
+							"path": ["api", "mongodb-service", "blender-objects", "add-rendered-image"]
+						},
+						"description": "Test adding image with non-existent blender object"
+					},
+					"response": []
+				},
+				{
+					"name": "Add Batch Rendered Images - Success",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"images\": [\n    {\n      \"objectId\": \"obj_001\",\n      \"customerId\": \"cust_001\",\n      \"frameNumber\": 10,\n      \"imageFilePath\": \"/renders/cust_001/chair/frame_010.png\"\n    },\n    {\n      \"objectId\": \"obj_001\",\n      \"customerId\": \"cust_001\",\n      \"frameNumber\": 11,\n      \"imageFilePath\": \"/renders/cust_001/chair/frame_011.png\"\n    },\n    {\n      \"objectId\": \"obj_002\",\n      \"customerId\": \"cust_002\",\n      \"frameNumber\": 3,\n      \"imageFilePath\": \"/renders/cust_002/table/frame_003.png\"\n    }\n  ]\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/mongodb-service/blender-objects/add-rendered-images-batch",
+							"host": ["{{base_url}}"],
+							"path": ["api", "mongodb-service", "blender-objects", "add-rendered-images-batch"]
+						},
+						"description": "Add multiple rendered images in batch for different objects"
+					},
+					"response": []
+				},
+				{
+					"name": "Add Batch Rendered Images - Mixed Success/Failure",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"images\": [\n    {\n      \"objectId\": \"obj_001\",\n      \"customerId\": \"cust_001\",\n      \"frameNumber\": 12,\n      \"imageFilePath\": \"/renders/cust_001/chair/frame_012.png\"\n    },\n    {\n      \"objectId\": \"invalid_object\",\n      \"customerId\": \"cust_001\",\n      \"frameNumber\": 13,\n      \"imageFilePath\": \"/renders/cust_001/invalid/frame_013.png\"\n    },\n    {\n      \"objectId\": \"obj_002\",\n      \"customerId\": \"cust_002\",\n      \"frameNumber\": 4,\n      \"imageFilePath\": \"/renders/invalid/table/frame_004.png\"\n    }\n  ]\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/mongodb-service/blender-objects/add-rendered-images-batch",
+							"host": ["{{base_url}}"],
+							"path": ["api", "mongodb-service", "blender-objects", "add-rendered-images-batch"]
+						},
+						"description": "Test batch operation with mix of valid and invalid data"
+					},
+					"response": []
+				},
+				{
+					"name": "Add Batch Rendered Images - Empty Array",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"images\": []\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/mongodb-service/blender-objects/add-rendered-images-batch",
+							"host": ["{{base_url}}"],
+							"path": ["api", "mongodb-service", "blender-objects", "add-rendered-images-batch"]
+						},
+						"description": "Test validation - empty images array"
+					},
+					"response": []
+				},
+				{
+					"name": "Add Batch Rendered Images - Missing Images Field",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"objectId\": \"obj_001\",\n  \"customerId\": \"cust_001\",\n  \"frameNumber\": 14,\n  \"imageFilePath\": \"/renders/cust_001/chair/frame_014.png\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/mongodb-service/blender-objects/add-rendered-images-batch",
+							"host": ["{{base_url}}"],
+							"path": ["api", "mongodb-service", "blender-objects", "add-rendered-images-batch"]
+						},
+						"description": "Test validation - missing images array field"
+					},
+					"response": []
+				},
+				{
+					"name": "Add Batch Rendered Images - Invalid Image Object",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"images\": [\n    {\n      \"objectId\": \"obj_001\",\n      \"customerId\": \"cust_001\",\n      \"frameNumber\": 14,\n      \"imageFilePath\": \"/renders/cust_001/chair/frame_015.png\"\n    },\n    {\n      \"objectId\": \"obj_001\",\n      \"customerId\": \"cust_001\",\n      \"frameNumber\": 16\n    }\n  ]\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/mongodb-service/blender-objects/add-rendered-images-batch",
+							"host": ["{{base_url}}"],
+							"path": ["api", "mongodb-service", "blender-objects", "add-rendered-images-batch"]
+						},
+						"description": "Test validation - missing required fields in image object"
+					},
+					"response": []
+				}
+			]
 		}
 	],
 	"event": [
@@ -502,13 +737,13 @@
 		},
 		{
 			"key": "test_customer_id",
-			"value": "cust_001",
+			"value": "cust001",
 			"type": "string",
 			"description": "Test customer ID for reuse across tests"
 		},
 		{
 			"key": "test_object_id",
-			"value": "obj_001",
+			"value": "obj001",
 			"type": "string",
 			"description": "Test blender object ID for reuse across tests"
 		},
