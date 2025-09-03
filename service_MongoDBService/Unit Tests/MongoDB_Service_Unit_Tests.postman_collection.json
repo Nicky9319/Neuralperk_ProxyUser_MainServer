@@ -911,9 +911,9 @@
 	"variable": [
 		{
 			"key": "base_url",
-			"value": "http://127.0.0.1:15000",
+			"value": "http://localhost:12000",
 			"type": "string",
-			"description": "Base URL for MongoDB Service (localhost:15000)"
+			"description": "Base URL for MongoDB Service (localhost:12000)"
 		},
 		{
 			"key": "test_customer_id",

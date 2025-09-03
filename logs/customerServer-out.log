@@ -1,0 +1,32 @@
+Customer Service Root Endpoint Hit
+INFO:     127.0.0.1:46288 - "POST /api/customer-service/ HTTP/1.1" 200 OK
+INFO:     127.0.0.1:38480 - "POST /api/customer-service/upload-blend-file HTTP/1.1" 401 Unauthorized
+INFO:     127.0.0.1:55212 - "POST /api/customer-service/upload-blend-file HTTP/1.1" 401 Unauthorized
+INFO:     127.0.0.1:34184 - "POST /api/customer-service/upload-blend-file HTTP/1.1" 401 Unauthorized
+INFO:     127.0.0.1:34200 - "POST /api/customer-service/upload-blend-file HTTP/1.1" 401 Unauthorized
+INFO:     127.0.0.1:48246 - "POST /api/customer-service/upload-blend-file HTTP/1.1" 401 Unauthorized
+INFO:     127.0.0.1:44900 - "POST /api/customer-service/upload-blend-file HTTP/1.1" 401 Unauthorized
+INFO:     127.0.0.1:36490 - "POST /api/customer-service/upload-blend-file HTTP/1.1" 401 Unauthorized
+INFO:     127.0.0.1:47910 - "POST /api/customer-service/test-auth HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:40746 - "POST /api/customer-service/test-auth HTTP/1.1" 401 Unauthorized
+INFO:     127.0.0.1:51130 - "POST /api/customer-service/test-auth HTTP/1.1" 401 Unauthorized
+INFO:     127.0.0.1:51130 - "POST /api/customer-service/test-auth HTTP/1.1" 401 Unauthorized
+INFO:     127.0.0.1:60478 - "POST /api/customer-service/test-auth HTTP/1.1" 401 Unauthorized
+INFO:     127.0.0.1:60478 - "POST /api/customer-service/test-auth HTTP/1.1" 401 Unauthorized
+INFO:     127.0.0.1:60478 - "POST /api/customer-service/test-auth HTTP/1.1" 401 Unauthorized
+valid_customer_123
+INFO:     127.0.0.1:49300 - "POST /api/customer-service/test-auth HTTP/1.1" 401 Unauthorized
+valid_customer_123
+INFO:     127.0.0.1:50054 - "POST /api/customer-service/test-auth HTTP/1.1" 401 Unauthorized
+cust_001
+Test Auth endpoint hit for customer: cust_001
+INFO:     127.0.0.1:53910 - "POST /api/customer-service/test-auth HTTP/1.1" 200 OK
+valid_customer_123
+INFO:     127.0.0.1:57314 - "POST /api/customer-service/test-auth HTTP/1.1" 401 Unauthorized
+valid_customer_123
+INFO:     127.0.0.1:41532 - "POST /api/customer-service/test-auth HTTP/1.1" 401 Unauthorized
+cust_001
+Test Auth endpoint hit for customer: cust_001
+INFO:     127.0.0.1:41538 - "POST /api/customer-service/test-auth HTTP/1.1" 200 OK
+invalid_customer_999
+INFO:     127.0.0.1:41538 - "POST /api/customer-service/test-auth HTTP/1.1" 401 Unauthorized

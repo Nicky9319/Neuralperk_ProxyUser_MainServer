@@ -41,7 +41,7 @@ class HTTP_SERVER():
         # Get MongoDB service URL from environment
         env_url = os.getenv("MONGODB_SERVICE", "").strip()
         if not env_url or not (env_url.startswith("http://") or env_url.startswith("https://")):
-            self.mongodb_service_url = "http://127.0.0.1:15000"
+            self.mongodb_service_url = "http://127.0.0.1:12000"
         else:
             self.mongodb_service_url = env_url
         
@@ -285,7 +285,7 @@ async def start_service():
     #<HTTP_SERVER_INSTANCE_INTIALIZATION_START>
 
     #<HTTP_SERVER_PORT_START>
-    httpServerPort = 5937
+    httpServerPort = 10000
     #<HTTP_SERVER_PORT_END>
 
     #<HTTP_SERVER_HOST_START>

@@ -1,8 +1,8 @@
 {
     "apps":[
         {
-            "name": "customerServer",
-            "script": "./service_CustomerServer/customerAgent.py",
+            "name": "customerService",
+            "script": "./service_CustomerService/customer-service.py",
             "interpreter": ".venv/bin/python",
             "out_file": "./logs/customerServer-out.log",
             "error_file": "./logs/customerServer-error.log",
@@ -11,7 +11,7 @@
         },
         {
             "name": "mongoDBService",
-            "script": "./service_MongoDBService/mongoDBService.py",
+            "script": "./service_MongoDBService/mongo-db-service.py",
             "interpreter": ".venv/bin/python",
             "out_file": "./logs/mongoDBService-out.log",
             "error_file": "./logs/mongoDBService-error.log",
@@ -19,29 +19,20 @@
             "namespace": "neuralperk"
         },
         {
-            "name": "vastAIService",
-            "script": "./service_VastAIService/vastAIService.py",
+            "name": "blobService",
+            "script": "./service_BlobService/blob-service.py",
             "interpreter": ".venv/bin/python",
-            "out_file": "./logs/vastAIService-out.log",
-            "error_file": "./logs/vastAIService-error.log",
+            "out_file": "./logs/blobService-out.log",
+            "error_file": "./logs/blobService-error.log",
             "merge_logs": true,
             "namespace": "neuralperk"
         },
         {
-            "name": "sessionSupervisor",
-            "script": "./service_SessionSupervisor/sessionSupervisor.py",
+            "name": "authService",
+            "script": "./service_AuthService/auth-service.py",
             "interpreter": ".venv/bin/python",
-            "out_file": "./logs/sessionSupervisor-out.log",
-            "error_file": "./logs/sessionSupervisor-error.log",
-            "merge_logs": true,
-            "namespace": "neuralperk"
-        },
-        {
-            "name": "userWsServer",
-            "script": "./service_UserWsServer/userWsServer.py",
-            "interpreter": ".venv/bin/python",
-            "out_file": "./logs/userWsServer-out.log",
-            "error_file": "./logs/userWsServer-error.log",
+            "out_file": "./logs/authService-out.log",
+            "error_file": "./logs/authService-error.log",
             "merge_logs": true,
             "namespace": "neuralperk"
         }

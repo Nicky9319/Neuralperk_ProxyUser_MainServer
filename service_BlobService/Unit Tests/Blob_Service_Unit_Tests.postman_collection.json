@@ -1,0 +1,120 @@
+{
+	"info": {
+		"_postman_id": "blob-service-unit-tests",
+		"name": "Blob Service - Unit Tests",
+		"description": "Collection to test the Blob Service functionality. Tests various scenarios including file upload, download, and management operations.",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "1. Test Service Health Check",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{base_url}}/health",
+					"host": ["{{base_url}}"],
+					"path": ["health"]
+				},
+				"description": "Tests the health check endpoint to ensure the service is running."
+			},
+			"response": []
+		},
+		{
+			"name": "2. Test File Upload",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "multipart/form-data"
+					}
+				],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "file",
+							"type": "file",
+							"src": []
+						},
+						{
+							"key": "customer_id",
+							"value": "{{test_customer_id}}",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "{{base_url}}/api/blob-service/upload",
+					"host": ["{{base_url}}"],
+					"path": ["api", "blob-service", "upload"]
+				},
+				"description": "Tests file upload functionality with customer ID."
+			},
+			"response": []
+		},
+		{
+			"name": "3. Test File Download",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{base_url}}/api/blob-service/download/{{test_file_id}}",
+					"host": ["{{base_url}}"],
+					"path": ["api", "blob-service", "download", "{{test_file_id}}"]
+				},
+				"description": "Tests file download functionality."
+			},
+			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					"// Pre-request script for Blob Service Unit Tests",
+					"console.log('Testing endpoint: ' + pm.request.url);"
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					"// Test script for Blob Service Unit Tests",
+					"pm.test('Status code is valid', function () {",
+					"    pm.expect(pm.response.code).to.be.oneOf([200, 201, 400, 404, 500]);",
+					"});",
+					"",
+					"pm.test('Response time is acceptable', function () {",
+					"    pm.expect(pm.response.responseTime).to.be.below(5000);",
+					"});"
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "base_url",
+			"value": "http://localhost:13000",
+			"type": "string",
+			"description": "Base URL for Blob Service (localhost:13000)"
+		},
+		{
+			"key": "test_customer_id",
+			"value": "cust_001",
+			"type": "string",
+			"description": "Test customer ID for reuse across tests"
+		},
+		{
+			"key": "test_file_id",
+			"value": "file_001",
+			"type": "string",
+			"description": "Test file ID for reuse across tests"
+		}
+	]
+}

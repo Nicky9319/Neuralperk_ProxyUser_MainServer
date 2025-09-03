@@ -382,9 +382,9 @@
 	"variable": [
 		{
 			"key": "auth_base_url",
-			"value": "http://127.0.0.1:5937",
+			"value": "http://localhost:10000",
 			"type": "string",
-			"description": "Base URL for Auth Service (localhost:5937)"
+			"description": "Base URL for Auth Service (localhost:10000)"
 		},
 		{
 			"key": "mongodb_service_url",

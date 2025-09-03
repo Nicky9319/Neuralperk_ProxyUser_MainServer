@@ -1,0 +1,1552 @@
+INFO:     Started server process [88884]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+ERROR:    [Errno 98] error while attempting to bind on address ('0.0.0.0', 5937): [errno 98] address already in use
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Started server process [88892]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+ERROR:    [Errno 98] error while attempting to bind on address ('0.0.0.0', 5937): [errno 98] address already in use
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Started server process [88903]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+ERROR:    [Errno 98] error while attempting to bind on address ('0.0.0.0', 5937): [errno 98] address already in use
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Started server process [88905]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+ERROR:    [Errno 98] error while attempting to bind on address ('0.0.0.0', 5937): [errno 98] address already in use
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Started server process [88907]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+ERROR:    [Errno 98] error while attempting to bind on address ('0.0.0.0', 5937): [errno 98] address already in use
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Started server process [88911]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+ERROR:    [Errno 98] error while attempting to bind on address ('0.0.0.0', 5937): [errno 98] address already in use
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Started server process [88913]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+ERROR:    [Errno 98] error while attempting to bind on address ('0.0.0.0', 5937): [errno 98] address already in use
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Started server process [88915]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+ERROR:    [Errno 98] error while attempting to bind on address ('0.0.0.0', 5937): [errno 98] address already in use
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Started server process [88917]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+ERROR:    [Errno 98] error while attempting to bind on address ('0.0.0.0', 5937): [errno 98] address already in use
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Started server process [88918]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+ERROR:    [Errno 98] error while attempting to bind on address ('0.0.0.0', 5937): [errno 98] address already in use
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Started server process [88920]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+ERROR:    [Errno 98] error while attempting to bind on address ('0.0.0.0', 5937): [errno 98] address already in use
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Started server process [88922]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+ERROR:    [Errno 98] error while attempting to bind on address ('0.0.0.0', 5937): [errno 98] address already in use
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Started server process [88924]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+ERROR:    [Errno 98] error while attempting to bind on address ('0.0.0.0', 5937): [errno 98] address already in use
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Started server process [88925]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+ERROR:    [Errno 98] error while attempting to bind on address ('0.0.0.0', 5937): [errno 98] address already in use
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Started server process [88927]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+ERROR:    [Errno 98] error while attempting to bind on address ('0.0.0.0', 5937): [errno 98] address already in use
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Started server process [88929]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+ERROR:    [Errno 98] error while attempting to bind on address ('0.0.0.0', 5937): [errno 98] address already in use
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Started server process [88966]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+ERROR:    [Errno 98] error while attempting to bind on address ('0.0.0.0', 5937): [errno 98] address already in use
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Started server process [88975]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+ERROR:    [Errno 98] error while attempting to bind on address ('0.0.0.0', 5937): [errno 98] address already in use
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Started server process [88977]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+ERROR:    [Errno 98] error while attempting to bind on address ('0.0.0.0', 5937): [errno 98] address already in use
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Started server process [88988]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+ERROR:    [Errno 98] error while attempting to bind on address ('0.0.0.0', 5937): [errno 98] address already in use
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Started server process [88990]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+ERROR:    [Errno 98] error while attempting to bind on address ('0.0.0.0', 5937): [errno 98] address already in use
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Started server process [88991]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+ERROR:    [Errno 98] error while attempting to bind on address ('0.0.0.0', 5937): [errno 98] address already in use
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Started server process [88996]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+ERROR:    [Errno 98] error while attempting to bind on address ('0.0.0.0', 5937): [errno 98] address already in use
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Started server process [88998]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+ERROR:    [Errno 98] error while attempting to bind on address ('0.0.0.0', 5937): [errno 98] address already in use
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Started server process [89008]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+ERROR:    [Errno 98] error while attempting to bind on address ('0.0.0.0', 5937): [errno 98] address already in use
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Started server process [89010]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+ERROR:    [Errno 98] error while attempting to bind on address ('0.0.0.0', 5937): [errno 98] address already in use
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Started server process [89012]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+ERROR:    [Errno 98] error while attempting to bind on address ('0.0.0.0', 5937): [errno 98] address already in use
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Started server process [89017]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+ERROR:    [Errno 98] error while attempting to bind on address ('0.0.0.0', 5937): [errno 98] address already in use
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Started server process [89018]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+ERROR:    [Errno 98] error while attempting to bind on address ('0.0.0.0', 5937): [errno 98] address already in use
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Started server process [89020]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+ERROR:    [Errno 98] error while attempting to bind on address ('0.0.0.0', 5937): [errno 98] address already in use
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Started server process [89022]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+ERROR:    [Errno 98] error while attempting to bind on address ('0.0.0.0', 5937): [errno 98] address already in use
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Started server process [89024]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+ERROR:    [Errno 98] error while attempting to bind on address ('0.0.0.0', 5937): [errno 98] address already in use
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Started server process [89137]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://0.0.0.0:5937 (Press CTRL+C to quit)
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [89137]
+Traceback (most recent call last):
+  File "/usr/lib/python3.12/asyncio/runners.py", line 118, in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/asyncio/base_events.py", line 691, in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+asyncio.exceptions.CancelledError
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/paarth/Neuralperk_ProxyUser_MainServer/service_CustomerService/customer-service.py", line 231, in <module>
+    asyncio.run(start_service())
+  File "/usr/lib/python3.12/asyncio/runners.py", line 195, in run
+    return runner.run(main)
+           ^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/asyncio/runners.py", line 123, in run
+    raise KeyboardInterrupt()
+KeyboardInterrupt
+INFO:     Started server process [89264]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+ERROR:    [Errno 98] error while attempting to bind on address ('0.0.0.0', 5937): [errno 98] address already in use
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Started server process [89268]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+ERROR:    [Errno 98] error while attempting to bind on address ('0.0.0.0', 5937): [errno 98] address already in use
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Started server process [89285]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+ERROR:    [Errno 98] error while attempting to bind on address ('0.0.0.0', 5937): [errno 98] address already in use
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Started server process [89286]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+ERROR:    [Errno 98] error while attempting to bind on address ('0.0.0.0', 5937): [errno 98] address already in use
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Started server process [89288]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+ERROR:    [Errno 98] error while attempting to bind on address ('0.0.0.0', 5937): [errno 98] address already in use
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Started server process [89290]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+ERROR:    [Errno 98] error while attempting to bind on address ('0.0.0.0', 5937): [errno 98] address already in use
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Started server process [89295]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+ERROR:    [Errno 98] error while attempting to bind on address ('0.0.0.0', 5937): [errno 98] address already in use
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Started server process [89296]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+ERROR:    [Errno 98] error while attempting to bind on address ('0.0.0.0', 5937): [errno 98] address already in use
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Started server process [89298]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+ERROR:    [Errno 98] error while attempting to bind on address ('0.0.0.0', 5937): [errno 98] address already in use
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Started server process [89301]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+ERROR:    [Errno 98] error while attempting to bind on address ('0.0.0.0', 5937): [errno 98] address already in use
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Started server process [89303]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+ERROR:    [Errno 98] error while attempting to bind on address ('0.0.0.0', 5937): [errno 98] address already in use
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Started server process [89304]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+ERROR:    [Errno 98] error while attempting to bind on address ('0.0.0.0', 5937): [errno 98] address already in use
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Started server process [89306]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+ERROR:    [Errno 98] error while attempting to bind on address ('0.0.0.0', 5937): [errno 98] address already in use
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Started server process [89308]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+ERROR:    [Errno 98] error while attempting to bind on address ('0.0.0.0', 5937): [errno 98] address already in use
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Started server process [89310]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+ERROR:    [Errno 98] error while attempting to bind on address ('0.0.0.0', 5937): [errno 98] address already in use
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Started server process [89311]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+ERROR:    [Errno 98] error while attempting to bind on address ('0.0.0.0', 5937): [errno 98] address already in use
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Started server process [89363]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+ERROR:    [Errno 98] error while attempting to bind on address ('0.0.0.0', 5937): [errno 98] address already in use
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Started server process [89381]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+ERROR:    [Errno 98] error while attempting to bind on address ('0.0.0.0', 5937): [errno 98] address already in use
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Started server process [89382]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+ERROR:    [Errno 98] error while attempting to bind on address ('0.0.0.0', 5937): [errno 98] address already in use
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Started server process [89384]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+ERROR:    [Errno 98] error while attempting to bind on address ('0.0.0.0', 5937): [errno 98] address already in use
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Started server process [89389]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+ERROR:    [Errno 98] error while attempting to bind on address ('0.0.0.0', 5937): [errno 98] address already in use
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Started server process [89391]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+ERROR:    [Errno 98] error while attempting to bind on address ('0.0.0.0', 5937): [errno 98] address already in use
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Started server process [89395]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+ERROR:    [Errno 98] error while attempting to bind on address ('0.0.0.0', 5937): [errno 98] address already in use
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Started server process [89397]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+ERROR:    [Errno 98] error while attempting to bind on address ('0.0.0.0', 5937): [errno 98] address already in use
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Started server process [89399]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+ERROR:    [Errno 98] error while attempting to bind on address ('0.0.0.0', 5937): [errno 98] address already in use
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Started server process [89401]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+ERROR:    [Errno 98] error while attempting to bind on address ('0.0.0.0', 5937): [errno 98] address already in use
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Started server process [89402]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+ERROR:    [Errno 98] error while attempting to bind on address ('0.0.0.0', 5937): [errno 98] address already in use
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Started server process [89432]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+ERROR:    [Errno 98] error while attempting to bind on address ('0.0.0.0', 5937): [errno 98] address already in use
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Started server process [89434]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+ERROR:    [Errno 98] error while attempting to bind on address ('0.0.0.0', 5937): [errno 98] address already in use
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Started server process [89436]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://0.0.0.0:5937 (Press CTRL+C to quit)
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [89436]
+Traceback (most recent call last):
+  File "/usr/lib/python3.12/asyncio/runners.py", line 118, in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/asyncio/base_events.py", line 691, in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+asyncio.exceptions.CancelledError
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/paarth/Neuralperk_ProxyUser_MainServer/service_CustomerService/customer-service.py", line 231, in <module>
+    asyncio.run(start_service())
+  File "/usr/lib/python3.12/asyncio/runners.py", line 195, in run
+    return runner.run(main)
+           ^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/asyncio/runners.py", line 123, in run
+    raise KeyboardInterrupt()
+KeyboardInterrupt
+INFO:     Started server process [89539]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://0.0.0.0:5937 (Press CTRL+C to quit)
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [89539]
+Traceback (most recent call last):
+  File "/usr/lib/python3.12/asyncio/runners.py", line 118, in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/asyncio/base_events.py", line 691, in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+asyncio.exceptions.CancelledError
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/paarth/Neuralperk_ProxyUser_MainServer/service_CustomerService/customer-service.py", line 231, in <module>
+    asyncio.run(start_service())
+  File "/usr/lib/python3.12/asyncio/runners.py", line 195, in run
+    return runner.run(main)
+           ^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/asyncio/runners.py", line 123, in run
+    raise KeyboardInterrupt()
+KeyboardInterrupt
+INFO:     Started server process [89732]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://0.0.0.0:5937 (Press CTRL+C to quit)
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [89732]
+Traceback (most recent call last):
+  File "/usr/lib/python3.12/asyncio/runners.py", line 118, in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/asyncio/base_events.py", line 691, in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+asyncio.exceptions.CancelledError
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/paarth/Neuralperk_ProxyUser_MainServer/service_CustomerService/customer-service.py", line 231, in <module>
+    asyncio.run(start_service())
+  File "/usr/lib/python3.12/asyncio/runners.py", line 195, in run
+    return runner.run(main)
+           ^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/asyncio/runners.py", line 123, in run
+    raise KeyboardInterrupt()
+KeyboardInterrupt
+INFO:     Started server process [90363]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://0.0.0.0:11000 (Press CTRL+C to quit)
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [90363]
+Traceback (most recent call last):
+  File "/usr/lib/python3.12/asyncio/runners.py", line 118, in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/asyncio/base_events.py", line 691, in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+asyncio.exceptions.CancelledError
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/paarth/Neuralperk_ProxyUser_MainServer/service_CustomerService/customer-service.py", line 231, in <module>
+    asyncio.run(start_service())
+  File "/usr/lib/python3.12/asyncio/runners.py", line 195, in run
+    return runner.run(main)
+           ^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/asyncio/runners.py", line 123, in run
+    raise KeyboardInterrupt()
+KeyboardInterrupt
+INFO:     Started server process [90901]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://0.0.0.0:11000 (Press CTRL+C to quit)
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [90901]
+Traceback (most recent call last):
+  File "/usr/lib/python3.12/asyncio/runners.py", line 118, in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/asyncio/base_events.py", line 691, in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+asyncio.exceptions.CancelledError
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/paarth/Neuralperk_ProxyUser_MainServer/service_CustomerService/customer-service.py", line 231, in <module>
+  File "/usr/lib/python3.12/asyncio/runners.py", line 195, in run
+    return runner.run(main)
+           ^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/asyncio/runners.py", line 123, in run
+    raise KeyboardInterrupt()
+KeyboardInterrupt
+Traceback (most recent call last):
+  File "/home/paarth/Neuralperk_ProxyUser_MainServer/service_CustomerService/customer-service.py", line 154, in <module>
+    asyncio.run(start_service())
+  File "/usr/lib/python3.12/asyncio/runners.py", line 195, in run
+    return runner.run(main)
+           ^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/asyncio/runners.py", line 118, in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/asyncio/base_events.py", line 691, in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+  File "/home/paarth/Neuralperk_ProxyUser_MainServer/service_CustomerService/customer-service.py", line 151, in start_service
+    await service.startService()
+  File "/home/paarth/Neuralperk_ProxyUser_MainServer/service_CustomerService/customer-service.py", line 126, in startService
+    await self.httpServer.configure_routes()
+  File "/home/paarth/Neuralperk_ProxyUser_MainServer/service_CustomerService/customer-service.py", line 61, in configure_routes
+    customer_id: str = Depends(self.authenticate_token)
+                               ^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'HTTP_SERVER' object has no attribute 'authenticate_token'
+Traceback (most recent call last):
+  File "/home/paarth/Neuralperk_ProxyUser_MainServer/service_CustomerService/customer-service.py", line 154, in <module>
+    asyncio.run(start_service())
+  File "/usr/lib/python3.12/asyncio/runners.py", line 195, in run
+    return runner.run(main)
+           ^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/asyncio/runners.py", line 118, in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/asyncio/base_events.py", line 691, in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+  File "/home/paarth/Neuralperk_ProxyUser_MainServer/service_CustomerService/customer-service.py", line 151, in start_service
+    await service.startService()
+  File "/home/paarth/Neuralperk_ProxyUser_MainServer/service_CustomerService/customer-service.py", line 126, in startService
+    await self.httpServer.configure_routes()
+  File "/home/paarth/Neuralperk_ProxyUser_MainServer/service_CustomerService/customer-service.py", line 61, in configure_routes
+    customer_id: str = Depends(self.authenticate_token)
+                               ^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'HTTP_SERVER' object has no attribute 'authenticate_token'
+Traceback (most recent call last):
+  File "/home/paarth/Neuralperk_ProxyUser_MainServer/service_CustomerService/customer-service.py", line 154, in <module>
+    asyncio.run(start_service())
+  File "/usr/lib/python3.12/asyncio/runners.py", line 195, in run
+    return runner.run(main)
+           ^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/asyncio/runners.py", line 118, in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/asyncio/base_events.py", line 691, in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+  File "/home/paarth/Neuralperk_ProxyUser_MainServer/service_CustomerService/customer-service.py", line 151, in start_service
+    await service.startService()
+  File "/home/paarth/Neuralperk_ProxyUser_MainServer/service_CustomerService/customer-service.py", line 126, in startService
+    await self.httpServer.configure_routes()
+  File "/home/paarth/Neuralperk_ProxyUser_MainServer/service_CustomerService/customer-service.py", line 61, in configure_routes
+    customer_id: str = Depends(self.authenticate_token)
+                               ^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'HTTP_SERVER' object has no attribute 'authenticate_token'
+Traceback (most recent call last):
+  File "/home/paarth/Neuralperk_ProxyUser_MainServer/service_CustomerService/customer-service.py", line 154, in <module>
+    asyncio.run(start_service())
+  File "/usr/lib/python3.12/asyncio/runners.py", line 195, in run
+    return runner.run(main)
+           ^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/asyncio/runners.py", line 118, in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/asyncio/base_events.py", line 691, in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+  File "/home/paarth/Neuralperk_ProxyUser_MainServer/service_CustomerService/customer-service.py", line 151, in start_service
+    await service.startService()
+  File "/home/paarth/Neuralperk_ProxyUser_MainServer/service_CustomerService/customer-service.py", line 126, in startService
+    await self.httpServer.configure_routes()
+  File "/home/paarth/Neuralperk_ProxyUser_MainServer/service_CustomerService/customer-service.py", line 61, in configure_routes
+    customer_id: str = Depends(self.authenticate_token)
+                               ^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'HTTP_SERVER' object has no attribute 'authenticate_token'
+Traceback (most recent call last):
+  File "/home/paarth/Neuralperk_ProxyUser_MainServer/service_CustomerService/customer-service.py", line 154, in <module>
+    asyncio.run(start_service())
+  File "/usr/lib/python3.12/asyncio/runners.py", line 195, in run
+    return runner.run(main)
+           ^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/asyncio/runners.py", line 118, in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/asyncio/base_events.py", line 691, in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+  File "/home/paarth/Neuralperk_ProxyUser_MainServer/service_CustomerService/customer-service.py", line 151, in start_service
+    await service.startService()
+  File "/home/paarth/Neuralperk_ProxyUser_MainServer/service_CustomerService/customer-service.py", line 126, in startService
+    await self.httpServer.configure_routes()
+  File "/home/paarth/Neuralperk_ProxyUser_MainServer/service_CustomerService/customer-service.py", line 61, in configure_routes
+    customer_id: str = Depends(self.authenticate_token)
+                               ^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'HTTP_SERVER' object has no attribute 'authenticate_token'
+Traceback (most recent call last):
+  File "/home/paarth/Neuralperk_ProxyUser_MainServer/service_CustomerService/customer-service.py", line 154, in <module>
+    asyncio.run(start_service())
+  File "/usr/lib/python3.12/asyncio/runners.py", line 195, in run
+    return runner.run(main)
+           ^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/asyncio/runners.py", line 118, in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/asyncio/base_events.py", line 691, in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+  File "/home/paarth/Neuralperk_ProxyUser_MainServer/service_CustomerService/customer-service.py", line 151, in start_service
+    await service.startService()
+  File "/home/paarth/Neuralperk_ProxyUser_MainServer/service_CustomerService/customer-service.py", line 126, in startService
+    await self.httpServer.configure_routes()
+  File "/home/paarth/Neuralperk_ProxyUser_MainServer/service_CustomerService/customer-service.py", line 61, in configure_routes
+    customer_id: str = Depends(self.authenticate_token)
+                               ^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'HTTP_SERVER' object has no attribute 'authenticate_token'
+Traceback (most recent call last):
+  File "/home/paarth/Neuralperk_ProxyUser_MainServer/service_CustomerService/customer-service.py", line 154, in <module>
+    asyncio.run(start_service())
+  File "/usr/lib/python3.12/asyncio/runners.py", line 195, in run
+    return runner.run(main)
+           ^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/asyncio/runners.py", line 118, in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/asyncio/base_events.py", line 691, in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+  File "/home/paarth/Neuralperk_ProxyUser_MainServer/service_CustomerService/customer-service.py", line 151, in start_service
+    await service.startService()
+  File "/home/paarth/Neuralperk_ProxyUser_MainServer/service_CustomerService/customer-service.py", line 126, in startService
+    await self.httpServer.configure_routes()
+  File "/home/paarth/Neuralperk_ProxyUser_MainServer/service_CustomerService/customer-service.py", line 61, in configure_routes
+    customer_id: str = Depends(self.authenticate_token)
+                               ^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'HTTP_SERVER' object has no attribute 'authenticate_token'
+Traceback (most recent call last):
+  File "/home/paarth/Neuralperk_ProxyUser_MainServer/service_CustomerService/customer-service.py", line 154, in <module>
+    asyncio.run(start_service())
+  File "/usr/lib/python3.12/asyncio/runners.py", line 195, in run
+    return runner.run(main)
+           ^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/asyncio/runners.py", line 118, in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/asyncio/base_events.py", line 691, in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+  File "/home/paarth/Neuralperk_ProxyUser_MainServer/service_CustomerService/customer-service.py", line 151, in start_service
+    await service.startService()
+  File "/home/paarth/Neuralperk_ProxyUser_MainServer/service_CustomerService/customer-service.py", line 126, in startService
+    await self.httpServer.configure_routes()
+  File "/home/paarth/Neuralperk_ProxyUser_MainServer/service_CustomerService/customer-service.py", line 61, in configure_routes
+    customer_id: str = Depends(self.authenticate_token)
+                               ^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'HTTP_SERVER' object has no attribute 'authenticate_token'
+Traceback (most recent call last):
+  File "/home/paarth/Neuralperk_ProxyUser_MainServer/service_CustomerService/customer-service.py", line 154, in <module>
+    asyncio.run(start_service())
+  File "/usr/lib/python3.12/asyncio/runners.py", line 195, in run
+    return runner.run(main)
+           ^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/asyncio/runners.py", line 118, in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/asyncio/base_events.py", line 691, in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+  File "/home/paarth/Neuralperk_ProxyUser_MainServer/service_CustomerService/customer-service.py", line 151, in start_service
+    await service.startService()
+  File "/home/paarth/Neuralperk_ProxyUser_MainServer/service_CustomerService/customer-service.py", line 126, in startService
+    await self.httpServer.configure_routes()
+  File "/home/paarth/Neuralperk_ProxyUser_MainServer/service_CustomerService/customer-service.py", line 61, in configure_routes
+    customer_id: str = Depends(self.authenticate_token)
+                               ^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'HTTP_SERVER' object has no attribute 'authenticate_token'
+Traceback (most recent call last):
+  File "/home/paarth/Neuralperk_ProxyUser_MainServer/service_CustomerService/customer-service.py", line 154, in <module>
+    asyncio.run(start_service())
+  File "/usr/lib/python3.12/asyncio/runners.py", line 195, in run
+    return runner.run(main)
+           ^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/asyncio/runners.py", line 118, in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/asyncio/base_events.py", line 691, in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+  File "/home/paarth/Neuralperk_ProxyUser_MainServer/service_CustomerService/customer-service.py", line 151, in start_service
+    await service.startService()
+  File "/home/paarth/Neuralperk_ProxyUser_MainServer/service_CustomerService/customer-service.py", line 126, in startService
+    await self.httpServer.configure_routes()
+  File "/home/paarth/Neuralperk_ProxyUser_MainServer/service_CustomerService/customer-service.py", line 61, in configure_routes
+    customer_id: str = Depends(self.authenticate_token)
+                               ^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'HTTP_SERVER' object has no attribute 'authenticate_token'
+Traceback (most recent call last):
+  File "/home/paarth/Neuralperk_ProxyUser_MainServer/service_CustomerService/customer-service.py", line 154, in <module>
+    asyncio.run(start_service())
+  File "/usr/lib/python3.12/asyncio/runners.py", line 195, in run
+    return runner.run(main)
+           ^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/asyncio/runners.py", line 118, in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/asyncio/base_events.py", line 691, in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+  File "/home/paarth/Neuralperk_ProxyUser_MainServer/service_CustomerService/customer-service.py", line 151, in start_service
+    await service.startService()
+  File "/home/paarth/Neuralperk_ProxyUser_MainServer/service_CustomerService/customer-service.py", line 126, in startService
+    await self.httpServer.configure_routes()
+  File "/home/paarth/Neuralperk_ProxyUser_MainServer/service_CustomerService/customer-service.py", line 61, in configure_routes
+    customer_id: str = Depends(self.authenticate_token)
+                               ^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'HTTP_SERVER' object has no attribute 'authenticate_token'
+Traceback (most recent call last):
+  File "/home/paarth/Neuralperk_ProxyUser_MainServer/service_CustomerService/customer-service.py", line 154, in <module>
+    asyncio.run(start_service())
+  File "/usr/lib/python3.12/asyncio/runners.py", line 195, in run
+    return runner.run(main)
+           ^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/asyncio/runners.py", line 118, in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/asyncio/base_events.py", line 691, in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+  File "/home/paarth/Neuralperk_ProxyUser_MainServer/service_CustomerService/customer-service.py", line 151, in start_service
+    await service.startService()
+  File "/home/paarth/Neuralperk_ProxyUser_MainServer/service_CustomerService/customer-service.py", line 126, in startService
+    await self.httpServer.configure_routes()
+  File "/home/paarth/Neuralperk_ProxyUser_MainServer/service_CustomerService/customer-service.py", line 61, in configure_routes
+    customer_id: str = Depends(self.authenticate_token)
+                               ^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'HTTP_SERVER' object has no attribute 'authenticate_token'
+Traceback (most recent call last):
+  File "/home/paarth/Neuralperk_ProxyUser_MainServer/service_CustomerService/customer-service.py", line 154, in <module>
+    asyncio.run(start_service())
+  File "/usr/lib/python3.12/asyncio/runners.py", line 195, in run
+    return runner.run(main)
+           ^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/asyncio/runners.py", line 118, in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/asyncio/base_events.py", line 691, in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+  File "/home/paarth/Neuralperk_ProxyUser_MainServer/service_CustomerService/customer-service.py", line 151, in start_service
+    await service.startService()
+  File "/home/paarth/Neuralperk_ProxyUser_MainServer/service_CustomerService/customer-service.py", line 126, in startService
+    await self.httpServer.configure_routes()
+  File "/home/paarth/Neuralperk_ProxyUser_MainServer/service_CustomerService/customer-service.py", line 61, in configure_routes
+    customer_id: str = Depends(self.authenticate_token)
+                               ^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'HTTP_SERVER' object has no attribute 'authenticate_token'
+Traceback (most recent call last):
+  File "/home/paarth/Neuralperk_ProxyUser_MainServer/service_CustomerService/customer-service.py", line 154, in <module>
+    asyncio.run(start_service())
+  File "/usr/lib/python3.12/asyncio/runners.py", line 195, in run
+    return runner.run(main)
+           ^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/asyncio/runners.py", line 118, in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/asyncio/base_events.py", line 691, in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+  File "/home/paarth/Neuralperk_ProxyUser_MainServer/service_CustomerService/customer-service.py", line 151, in start_service
+    await service.startService()
+  File "/home/paarth/Neuralperk_ProxyUser_MainServer/service_CustomerService/customer-service.py", line 126, in startService
+    await self.httpServer.configure_routes()
+  File "/home/paarth/Neuralperk_ProxyUser_MainServer/service_CustomerService/customer-service.py", line 61, in configure_routes
+    customer_id: str = Depends(self.authenticate_token)
+                               ^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'HTTP_SERVER' object has no attribute 'authenticate_token'
+Traceback (most recent call last):
+  File "/home/paarth/Neuralperk_ProxyUser_MainServer/service_CustomerService/customer-service.py", line 154, in <module>
+    asyncio.run(start_service())
+  File "/usr/lib/python3.12/asyncio/runners.py", line 195, in run
+    return runner.run(main)
+           ^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/asyncio/runners.py", line 118, in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/asyncio/base_events.py", line 691, in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+  File "/home/paarth/Neuralperk_ProxyUser_MainServer/service_CustomerService/customer-service.py", line 151, in start_service
+    await service.startService()
+  File "/home/paarth/Neuralperk_ProxyUser_MainServer/service_CustomerService/customer-service.py", line 126, in startService
+    await self.httpServer.configure_routes()
+  File "/home/paarth/Neuralperk_ProxyUser_MainServer/service_CustomerService/customer-service.py", line 61, in configure_routes
+    customer_id: str = Depends(self.authenticate_token)
+                               ^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'HTTP_SERVER' object has no attribute 'authenticate_token'
+Traceback (most recent call last):
+  File "/home/paarth/Neuralperk_ProxyUser_MainServer/service_CustomerService/customer-service.py", line 154, in <module>
+    asyncio.run(start_service())
+  File "/usr/lib/python3.12/asyncio/runners.py", line 195, in run
+    return runner.run(main)
+           ^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/asyncio/runners.py", line 118, in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/asyncio/base_events.py", line 691, in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+  File "/home/paarth/Neuralperk_ProxyUser_MainServer/service_CustomerService/customer-service.py", line 151, in start_service
+    await service.startService()
+  File "/home/paarth/Neuralperk_ProxyUser_MainServer/service_CustomerService/customer-service.py", line 126, in startService
+    await self.httpServer.configure_routes()
+  File "/home/paarth/Neuralperk_ProxyUser_MainServer/service_CustomerService/customer-service.py", line 61, in configure_routes
+    customer_id: str = Depends(self.authenticate_token)
+                               ^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'HTTP_SERVER' object has no attribute 'authenticate_token'
+INFO:     Started server process [92482]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://0.0.0.0:11000 (Press CTRL+C to quit)
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [92482]
+Traceback (most recent call last):
+  File "/usr/lib/python3.12/asyncio/runners.py", line 118, in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/asyncio/base_events.py", line 691, in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+asyncio.exceptions.CancelledError
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/paarth/Neuralperk_ProxyUser_MainServer/service_CustomerService/customer-service.py", line 244, in <module>
+  File "/usr/lib/python3.12/asyncio/runners.py", line 195, in run
+    return runner.run(main)
+           ^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/asyncio/runners.py", line 123, in run
+    raise KeyboardInterrupt()
+KeyboardInterrupt
+Traceback (most recent call last):
+  File "/home/paarth/Neuralperk_ProxyUser_MainServer/service_CustomerService/customer-service.py", line 136, in <module>
+    asyncio.run(start_service())
+  File "/usr/lib/python3.12/asyncio/runners.py", line 195, in run
+    return runner.run(main)
+           ^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/asyncio/runners.py", line 118, in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/asyncio/base_events.py", line 691, in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+  File "/home/paarth/Neuralperk_ProxyUser_MainServer/service_CustomerService/customer-service.py", line 133, in start_service
+    await service.startService()
+  File "/home/paarth/Neuralperk_ProxyUser_MainServer/service_CustomerService/customer-service.py", line 108, in startService
+    await self.httpServer.configure_routes()
+  File "/home/paarth/Neuralperk_ProxyUser_MainServer/service_CustomerService/customer-service.py", line 53, in configure_routes
+    @self.httpServer.app.post("/api/customer-service/")
+     ^^^^^^^^^^^^^^^
+AttributeError: 'HTTP_SERVER' object has no attribute 'httpServer'
+Traceback (most recent call last):
+  File "/home/paarth/Neuralperk_ProxyUser_MainServer/service_CustomerService/customer-service.py", line 136, in <module>
+    asyncio.run(start_service())
+  File "/usr/lib/python3.12/asyncio/runners.py", line 195, in run
+    return runner.run(main)
+           ^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/asyncio/runners.py", line 118, in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/asyncio/base_events.py", line 691, in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+  File "/home/paarth/Neuralperk_ProxyUser_MainServer/service_CustomerService/customer-service.py", line 133, in start_service
+    await service.startService()
+  File "/home/paarth/Neuralperk_ProxyUser_MainServer/service_CustomerService/customer-service.py", line 108, in startService
+    await self.httpServer.configure_routes()
+  File "/home/paarth/Neuralperk_ProxyUser_MainServer/service_CustomerService/customer-service.py", line 53, in configure_routes
+    @self.httpServer.app.post("/api/customer-service/")
+     ^^^^^^^^^^^^^^^
+AttributeError: 'HTTP_SERVER' object has no attribute 'httpServer'
+Traceback (most recent call last):
+  File "/home/paarth/Neuralperk_ProxyUser_MainServer/service_CustomerService/customer-service.py", line 136, in <module>
+    asyncio.run(start_service())
+  File "/usr/lib/python3.12/asyncio/runners.py", line 195, in run
+    return runner.run(main)
+           ^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/asyncio/runners.py", line 118, in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/asyncio/base_events.py", line 691, in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+  File "/home/paarth/Neuralperk_ProxyUser_MainServer/service_CustomerService/customer-service.py", line 133, in start_service
+    await service.startService()
+  File "/home/paarth/Neuralperk_ProxyUser_MainServer/service_CustomerService/customer-service.py", line 108, in startService
+    await self.httpServer.configure_routes()
+  File "/home/paarth/Neuralperk_ProxyUser_MainServer/service_CustomerService/customer-service.py", line 53, in configure_routes
+    @self.httpServer.app.post("/api/customer-service/")
+     ^^^^^^^^^^^^^^^
+AttributeError: 'HTTP_SERVER' object has no attribute 'httpServer'
+Traceback (most recent call last):
+  File "/home/paarth/Neuralperk_ProxyUser_MainServer/service_CustomerService/customer-service.py", line 136, in <module>
+    asyncio.run(start_service())
+  File "/usr/lib/python3.12/asyncio/runners.py", line 195, in run
+    return runner.run(main)
+           ^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/asyncio/runners.py", line 118, in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/asyncio/base_events.py", line 691, in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+  File "/home/paarth/Neuralperk_ProxyUser_MainServer/service_CustomerService/customer-service.py", line 133, in start_service
+    await service.startService()
+  File "/home/paarth/Neuralperk_ProxyUser_MainServer/service_CustomerService/customer-service.py", line 108, in startService
+    await self.httpServer.configure_routes()
+  File "/home/paarth/Neuralperk_ProxyUser_MainServer/service_CustomerService/customer-service.py", line 53, in configure_routes
+    @self.httpServer.app.post("/api/customer-service/")
+     ^^^^^^^^^^^^^^^
+AttributeError: 'HTTP_SERVER' object has no attribute 'httpServer'
+Traceback (most recent call last):
+  File "/home/paarth/Neuralperk_ProxyUser_MainServer/service_CustomerService/customer-service.py", line 136, in <module>
+    asyncio.run(start_service())
+  File "/usr/lib/python3.12/asyncio/runners.py", line 195, in run
+    return runner.run(main)
+           ^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/asyncio/runners.py", line 118, in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/asyncio/base_events.py", line 691, in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+  File "/home/paarth/Neuralperk_ProxyUser_MainServer/service_CustomerService/customer-service.py", line 133, in start_service
+    await service.startService()
+  File "/home/paarth/Neuralperk_ProxyUser_MainServer/service_CustomerService/customer-service.py", line 108, in startService
+    await self.httpServer.configure_routes()
+  File "/home/paarth/Neuralperk_ProxyUser_MainServer/service_CustomerService/customer-service.py", line 53, in configure_routes
+    @self.httpServer.app.post("/api/customer-service/")
+     ^^^^^^^^^^^^^^^
+AttributeError: 'HTTP_SERVER' object has no attribute 'httpServer'
+Traceback (most recent call last):
+  File "/home/paarth/Neuralperk_ProxyUser_MainServer/service_CustomerService/customer-service.py", line 136, in <module>
+    asyncio.run(start_service())
+  File "/usr/lib/python3.12/asyncio/runners.py", line 195, in run
+    return runner.run(main)
+           ^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/asyncio/runners.py", line 118, in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/asyncio/base_events.py", line 691, in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+  File "/home/paarth/Neuralperk_ProxyUser_MainServer/service_CustomerService/customer-service.py", line 133, in start_service
+    await service.startService()
+  File "/home/paarth/Neuralperk_ProxyUser_MainServer/service_CustomerService/customer-service.py", line 108, in startService
+    await self.httpServer.configure_routes()
+  File "/home/paarth/Neuralperk_ProxyUser_MainServer/service_CustomerService/customer-service.py", line 53, in configure_routes
+    @self.httpServer.app.post("/api/customer-service/")
+     ^^^^^^^^^^^^^^^
+AttributeError: 'HTTP_SERVER' object has no attribute 'httpServer'
+Traceback (most recent call last):
+  File "/home/paarth/Neuralperk_ProxyUser_MainServer/service_CustomerService/customer-service.py", line 136, in <module>
+    asyncio.run(start_service())
+  File "/usr/lib/python3.12/asyncio/runners.py", line 195, in run
+    return runner.run(main)
+           ^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/asyncio/runners.py", line 118, in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/asyncio/base_events.py", line 691, in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+  File "/home/paarth/Neuralperk_ProxyUser_MainServer/service_CustomerService/customer-service.py", line 133, in start_service
+    await service.startService()
+  File "/home/paarth/Neuralperk_ProxyUser_MainServer/service_CustomerService/customer-service.py", line 108, in startService
+    await self.httpServer.configure_routes()
+  File "/home/paarth/Neuralperk_ProxyUser_MainServer/service_CustomerService/customer-service.py", line 53, in configure_routes
+    @self.httpServer.app.post("/api/customer-service/")
+     ^^^^^^^^^^^^^^^
+AttributeError: 'HTTP_SERVER' object has no attribute 'httpServer'
+Traceback (most recent call last):
+  File "/home/paarth/Neuralperk_ProxyUser_MainServer/service_CustomerService/customer-service.py", line 136, in <module>
+    asyncio.run(start_service())
+  File "/usr/lib/python3.12/asyncio/runners.py", line 195, in run
+    return runner.run(main)
+           ^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/asyncio/runners.py", line 118, in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/asyncio/base_events.py", line 691, in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+  File "/home/paarth/Neuralperk_ProxyUser_MainServer/service_CustomerService/customer-service.py", line 133, in start_service
+    await service.startService()
+  File "/home/paarth/Neuralperk_ProxyUser_MainServer/service_CustomerService/customer-service.py", line 108, in startService
+    await self.httpServer.configure_routes()
+  File "/home/paarth/Neuralperk_ProxyUser_MainServer/service_CustomerService/customer-service.py", line 53, in configure_routes
+    @self.httpServer.app.post("/api/customer-service/")
+     ^^^^^^^^^^^^^^^
+AttributeError: 'HTTP_SERVER' object has no attribute 'httpServer'
+Traceback (most recent call last):
+  File "/home/paarth/Neuralperk_ProxyUser_MainServer/service_CustomerService/customer-service.py", line 136, in <module>
+    asyncio.run(start_service())
+  File "/usr/lib/python3.12/asyncio/runners.py", line 195, in run
+    return runner.run(main)
+           ^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/asyncio/runners.py", line 118, in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/asyncio/base_events.py", line 691, in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+  File "/home/paarth/Neuralperk_ProxyUser_MainServer/service_CustomerService/customer-service.py", line 133, in start_service
+    await service.startService()
+  File "/home/paarth/Neuralperk_ProxyUser_MainServer/service_CustomerService/customer-service.py", line 108, in startService
+    await self.httpServer.configure_routes()
+  File "/home/paarth/Neuralperk_ProxyUser_MainServer/service_CustomerService/customer-service.py", line 53, in configure_routes
+    @self.httpServer.app.post("/api/customer-service/")
+     ^^^^^^^^^^^^^^^
+AttributeError: 'HTTP_SERVER' object has no attribute 'httpServer'
+Traceback (most recent call last):
+  File "/home/paarth/Neuralperk_ProxyUser_MainServer/service_CustomerService/customer-service.py", line 136, in <module>
+    asyncio.run(start_service())
+  File "/usr/lib/python3.12/asyncio/runners.py", line 195, in run
+    return runner.run(main)
+           ^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/asyncio/runners.py", line 118, in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/asyncio/base_events.py", line 691, in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+  File "/home/paarth/Neuralperk_ProxyUser_MainServer/service_CustomerService/customer-service.py", line 133, in start_service
+    await service.startService()
+  File "/home/paarth/Neuralperk_ProxyUser_MainServer/service_CustomerService/customer-service.py", line 108, in startService
+    await self.httpServer.configure_routes()
+  File "/home/paarth/Neuralperk_ProxyUser_MainServer/service_CustomerService/customer-service.py", line 53, in configure_routes
+    @self.httpServer.app.post("/api/customer-service/")
+     ^^^^^^^^^^^^^^^
+AttributeError: 'HTTP_SERVER' object has no attribute 'httpServer'
+Traceback (most recent call last):
+  File "/home/paarth/Neuralperk_ProxyUser_MainServer/service_CustomerService/customer-service.py", line 136, in <module>
+    asyncio.run(start_service())
+  File "/usr/lib/python3.12/asyncio/runners.py", line 195, in run
+    return runner.run(main)
+           ^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/asyncio/runners.py", line 118, in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/asyncio/base_events.py", line 691, in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+  File "/home/paarth/Neuralperk_ProxyUser_MainServer/service_CustomerService/customer-service.py", line 133, in start_service
+    await service.startService()
+  File "/home/paarth/Neuralperk_ProxyUser_MainServer/service_CustomerService/customer-service.py", line 108, in startService
+    await self.httpServer.configure_routes()
+  File "/home/paarth/Neuralperk_ProxyUser_MainServer/service_CustomerService/customer-service.py", line 53, in configure_routes
+    @self.httpServer.app.post("/api/customer-service/")
+     ^^^^^^^^^^^^^^^
+AttributeError: 'HTTP_SERVER' object has no attribute 'httpServer'
+Traceback (most recent call last):
+  File "/home/paarth/Neuralperk_ProxyUser_MainServer/service_CustomerService/customer-service.py", line 136, in <module>
+    asyncio.run(start_service())
+  File "/usr/lib/python3.12/asyncio/runners.py", line 195, in run
+    return runner.run(main)
+           ^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/asyncio/runners.py", line 118, in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/asyncio/base_events.py", line 691, in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+  File "/home/paarth/Neuralperk_ProxyUser_MainServer/service_CustomerService/customer-service.py", line 133, in start_service
+    await service.startService()
+  File "/home/paarth/Neuralperk_ProxyUser_MainServer/service_CustomerService/customer-service.py", line 108, in startService
+    await self.httpServer.configure_routes()
+  File "/home/paarth/Neuralperk_ProxyUser_MainServer/service_CustomerService/customer-service.py", line 53, in configure_routes
+    @self.httpServer.app.post("/api/customer-service/")
+     ^^^^^^^^^^^^^^^
+AttributeError: 'HTTP_SERVER' object has no attribute 'httpServer'
+Traceback (most recent call last):
+  File "/home/paarth/Neuralperk_ProxyUser_MainServer/service_CustomerService/customer-service.py", line 136, in <module>
+    asyncio.run(start_service())
+  File "/usr/lib/python3.12/asyncio/runners.py", line 195, in run
+    return runner.run(main)
+           ^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/asyncio/runners.py", line 118, in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/asyncio/base_events.py", line 691, in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+  File "/home/paarth/Neuralperk_ProxyUser_MainServer/service_CustomerService/customer-service.py", line 133, in start_service
+    await service.startService()
+  File "/home/paarth/Neuralperk_ProxyUser_MainServer/service_CustomerService/customer-service.py", line 108, in startService
+    await self.httpServer.configure_routes()
+  File "/home/paarth/Neuralperk_ProxyUser_MainServer/service_CustomerService/customer-service.py", line 53, in configure_routes
+    @self.httpServer.app.post("/api/customer-service/")
+     ^^^^^^^^^^^^^^^
+AttributeError: 'HTTP_SERVER' object has no attribute 'httpServer'
+Traceback (most recent call last):
+  File "/home/paarth/Neuralperk_ProxyUser_MainServer/service_CustomerService/customer-service.py", line 136, in <module>
+    asyncio.run(start_service())
+  File "/usr/lib/python3.12/asyncio/runners.py", line 195, in run
+    return runner.run(main)
+           ^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/asyncio/runners.py", line 118, in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/asyncio/base_events.py", line 691, in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+  File "/home/paarth/Neuralperk_ProxyUser_MainServer/service_CustomerService/customer-service.py", line 133, in start_service
+    await service.startService()
+  File "/home/paarth/Neuralperk_ProxyUser_MainServer/service_CustomerService/customer-service.py", line 108, in startService
+    await self.httpServer.configure_routes()
+  File "/home/paarth/Neuralperk_ProxyUser_MainServer/service_CustomerService/customer-service.py", line 53, in configure_routes
+    @self.httpServer.app.post("/api/customer-service/")
+     ^^^^^^^^^^^^^^^
+AttributeError: 'HTTP_SERVER' object has no attribute 'httpServer'
+Traceback (most recent call last):
+  File "/home/paarth/Neuralperk_ProxyUser_MainServer/service_CustomerService/customer-service.py", line 136, in <module>
+    asyncio.run(start_service())
+  File "/usr/lib/python3.12/asyncio/runners.py", line 195, in run
+    return runner.run(main)
+           ^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/asyncio/runners.py", line 118, in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/asyncio/base_events.py", line 691, in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+  File "/home/paarth/Neuralperk_ProxyUser_MainServer/service_CustomerService/customer-service.py", line 133, in start_service
+    await service.startService()
+  File "/home/paarth/Neuralperk_ProxyUser_MainServer/service_CustomerService/customer-service.py", line 108, in startService
+    await self.httpServer.configure_routes()
+  File "/home/paarth/Neuralperk_ProxyUser_MainServer/service_CustomerService/customer-service.py", line 53, in configure_routes
+    @self.httpServer.app.post("/api/customer-service/")
+     ^^^^^^^^^^^^^^^
+AttributeError: 'HTTP_SERVER' object has no attribute 'httpServer'
+Traceback (most recent call last):
+  File "/home/paarth/Neuralperk_ProxyUser_MainServer/service_CustomerService/customer-service.py", line 136, in <module>
+    asyncio.run(start_service())
+  File "/usr/lib/python3.12/asyncio/runners.py", line 195, in run
+    return runner.run(main)
+           ^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/asyncio/runners.py", line 118, in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/asyncio/base_events.py", line 691, in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+  File "/home/paarth/Neuralperk_ProxyUser_MainServer/service_CustomerService/customer-service.py", line 133, in start_service
+    await service.startService()
+  File "/home/paarth/Neuralperk_ProxyUser_MainServer/service_CustomerService/customer-service.py", line 108, in startService
+    await self.httpServer.configure_routes()
+  File "/home/paarth/Neuralperk_ProxyUser_MainServer/service_CustomerService/customer-service.py", line 53, in configure_routes
+    @self.httpServer.app.post("/api/customer-service/")
+     ^^^^^^^^^^^^^^^
+AttributeError: 'HTTP_SERVER' object has no attribute 'httpServer'
+Traceback (most recent call last):
+  File "/home/paarth/Neuralperk_ProxyUser_MainServer/service_CustomerService/customer-service.py", line 136, in <module>
+    asyncio.run(start_service())
+  File "/usr/lib/python3.12/asyncio/runners.py", line 195, in run
+    return runner.run(main)
+           ^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/asyncio/runners.py", line 118, in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/asyncio/base_events.py", line 691, in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+  File "/home/paarth/Neuralperk_ProxyUser_MainServer/service_CustomerService/customer-service.py", line 133, in start_service
+    await service.startService()
+  File "/home/paarth/Neuralperk_ProxyUser_MainServer/service_CustomerService/customer-service.py", line 108, in startService
+    await self.httpServer.configure_routes()
+  File "/home/paarth/Neuralperk_ProxyUser_MainServer/service_CustomerService/customer-service.py", line 53, in configure_routes
+    @self.httpServer.app.post("/api/customer-service/")
+     ^^^^^^^^^^^^^^^
+AttributeError: 'HTTP_SERVER' object has no attribute 'httpServer'
+Traceback (most recent call last):
+  File "/home/paarth/Neuralperk_ProxyUser_MainServer/service_CustomerService/customer-service.py", line 136, in <module>
+    asyncio.run(start_service())
+  File "/usr/lib/python3.12/asyncio/runners.py", line 195, in run
+    return runner.run(main)
+           ^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/asyncio/runners.py", line 118, in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/asyncio/base_events.py", line 691, in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+  File "/home/paarth/Neuralperk_ProxyUser_MainServer/service_CustomerService/customer-service.py", line 133, in start_service
+    await service.startService()
+  File "/home/paarth/Neuralperk_ProxyUser_MainServer/service_CustomerService/customer-service.py", line 108, in startService
+    await self.httpServer.configure_routes()
+  File "/home/paarth/Neuralperk_ProxyUser_MainServer/service_CustomerService/customer-service.py", line 53, in configure_routes
+    @self.httpServer.app.post("/api/customer-service/")
+     ^^^^^^^^^^^^^^^
+AttributeError: 'HTTP_SERVER' object has no attribute 'httpServer'
+Traceback (most recent call last):
+  File "/home/paarth/Neuralperk_ProxyUser_MainServer/service_CustomerService/customer-service.py", line 136, in <module>
+    asyncio.run(start_service())
+  File "/usr/lib/python3.12/asyncio/runners.py", line 195, in run
+    return runner.run(main)
+           ^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/asyncio/runners.py", line 118, in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/asyncio/base_events.py", line 691, in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+  File "/home/paarth/Neuralperk_ProxyUser_MainServer/service_CustomerService/customer-service.py", line 133, in start_service
+    await service.startService()
+  File "/home/paarth/Neuralperk_ProxyUser_MainServer/service_CustomerService/customer-service.py", line 108, in startService
+    await self.httpServer.configure_routes()
+  File "/home/paarth/Neuralperk_ProxyUser_MainServer/service_CustomerService/customer-service.py", line 53, in configure_routes
+    @self.httpServer.app.post("/api/customer-service/")
+     ^^^^^^^^^^^^^^^
+AttributeError: 'HTTP_SERVER' object has no attribute 'httpServer'
+Traceback (most recent call last):
+  File "/home/paarth/Neuralperk_ProxyUser_MainServer/service_CustomerService/customer-service.py", line 136, in <module>
+    asyncio.run(start_service())
+  File "/usr/lib/python3.12/asyncio/runners.py", line 195, in run
+    return runner.run(main)
+           ^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/asyncio/runners.py", line 118, in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/asyncio/base_events.py", line 691, in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+  File "/home/paarth/Neuralperk_ProxyUser_MainServer/service_CustomerService/customer-service.py", line 133, in start_service
+    await service.startService()
+  File "/home/paarth/Neuralperk_ProxyUser_MainServer/service_CustomerService/customer-service.py", line 108, in startService
+    await self.httpServer.configure_routes()
+  File "/home/paarth/Neuralperk_ProxyUser_MainServer/service_CustomerService/customer-service.py", line 53, in configure_routes
+    @self.httpServer.app.post("/api/customer-service/")
+     ^^^^^^^^^^^^^^^
+AttributeError: 'HTTP_SERVER' object has no attribute 'httpServer'
+Traceback (most recent call last):
+  File "/home/paarth/Neuralperk_ProxyUser_MainServer/service_CustomerService/customer-service.py", line 136, in <module>
+    asyncio.run(start_service())
+  File "/usr/lib/python3.12/asyncio/runners.py", line 195, in run
+    return runner.run(main)
+           ^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/asyncio/runners.py", line 118, in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/asyncio/base_events.py", line 691, in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+  File "/home/paarth/Neuralperk_ProxyUser_MainServer/service_CustomerService/customer-service.py", line 133, in start_service
+    await service.startService()
+  File "/home/paarth/Neuralperk_ProxyUser_MainServer/service_CustomerService/customer-service.py", line 108, in startService
+    await self.httpServer.configure_routes()
+  File "/home/paarth/Neuralperk_ProxyUser_MainServer/service_CustomerService/customer-service.py", line 53, in configure_routes
+    @self.httpServer.app.post("/api/customer-service/")
+     ^^^^^^^^^^^^^^^
+AttributeError: 'HTTP_SERVER' object has no attribute 'httpServer'
+Traceback (most recent call last):
+  File "/home/paarth/Neuralperk_ProxyUser_MainServer/service_CustomerService/customer-service.py", line 136, in <module>
+    asyncio.run(start_service())
+  File "/usr/lib/python3.12/asyncio/runners.py", line 195, in run
+    return runner.run(main)
+           ^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/asyncio/runners.py", line 118, in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/asyncio/base_events.py", line 691, in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+  File "/home/paarth/Neuralperk_ProxyUser_MainServer/service_CustomerService/customer-service.py", line 133, in start_service
+    await service.startService()
+  File "/home/paarth/Neuralperk_ProxyUser_MainServer/service_CustomerService/customer-service.py", line 108, in startService
+    await self.httpServer.configure_routes()
+  File "/home/paarth/Neuralperk_ProxyUser_MainServer/service_CustomerService/customer-service.py", line 53, in configure_routes
+    @self.httpServer.app.post("/api/customer-service/")
+     ^^^^^^^^^^^^^^^
+AttributeError: 'HTTP_SERVER' object has no attribute 'httpServer'
+Traceback (most recent call last):
+  File "/home/paarth/Neuralperk_ProxyUser_MainServer/service_CustomerService/customer-service.py", line 136, in <module>
+    asyncio.run(start_service())
+  File "/usr/lib/python3.12/asyncio/runners.py", line 195, in run
+    return runner.run(main)
+           ^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/asyncio/runners.py", line 118, in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/asyncio/base_events.py", line 691, in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+  File "/home/paarth/Neuralperk_ProxyUser_MainServer/service_CustomerService/customer-service.py", line 133, in start_service
+    await service.startService()
+  File "/home/paarth/Neuralperk_ProxyUser_MainServer/service_CustomerService/customer-service.py", line 108, in startService
+    await self.httpServer.configure_routes()
+  File "/home/paarth/Neuralperk_ProxyUser_MainServer/service_CustomerService/customer-service.py", line 53, in configure_routes
+    @self.httpServer.app.post("/api/customer-service/")
+     ^^^^^^^^^^^^^^^
+AttributeError: 'HTTP_SERVER' object has no attribute 'httpServer'
+Traceback (most recent call last):
+  File "/home/paarth/Neuralperk_ProxyUser_MainServer/service_CustomerService/customer-service.py", line 136, in <module>
+    asyncio.run(start_service())
+  File "/usr/lib/python3.12/asyncio/runners.py", line 195, in run
+    return runner.run(main)
+           ^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/asyncio/runners.py", line 118, in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/asyncio/base_events.py", line 691, in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+  File "/home/paarth/Neuralperk_ProxyUser_MainServer/service_CustomerService/customer-service.py", line 133, in start_service
+    await service.startService()
+  File "/home/paarth/Neuralperk_ProxyUser_MainServer/service_CustomerService/customer-service.py", line 108, in startService
+    await self.httpServer.configure_routes()
+  File "/home/paarth/Neuralperk_ProxyUser_MainServer/service_CustomerService/customer-service.py", line 53, in configure_routes
+    @self.httpServer.app.post("/api/customer-service/")
+     ^^^^^^^^^^^^^^^
+AttributeError: 'HTTP_SERVER' object has no attribute 'httpServer'
+Traceback (most recent call last):
+  File "/home/paarth/Neuralperk_ProxyUser_MainServer/service_CustomerService/customer-service.py", line 136, in <module>
+    asyncio.run(start_service())
+  File "/usr/lib/python3.12/asyncio/runners.py", line 195, in run
+    return runner.run(main)
+           ^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/asyncio/runners.py", line 118, in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/asyncio/base_events.py", line 691, in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+  File "/home/paarth/Neuralperk_ProxyUser_MainServer/service_CustomerService/customer-service.py", line 133, in start_service
+    await service.startService()
+  File "/home/paarth/Neuralperk_ProxyUser_MainServer/service_CustomerService/customer-service.py", line 108, in startService
+    await self.httpServer.configure_routes()
+  File "/home/paarth/Neuralperk_ProxyUser_MainServer/service_CustomerService/customer-service.py", line 53, in configure_routes
+    @self.httpServer.app.post("/api/customer-service/")
+     ^^^^^^^^^^^^^^^
+AttributeError: 'HTTP_SERVER' object has no attribute 'httpServer'
+Traceback (most recent call last):
+  File "/home/paarth/Neuralperk_ProxyUser_MainServer/service_CustomerService/customer-service.py", line 136, in <module>
+    asyncio.run(start_service())
+  File "/usr/lib/python3.12/asyncio/runners.py", line 195, in run
+    return runner.run(main)
+           ^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/asyncio/runners.py", line 118, in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/asyncio/base_events.py", line 691, in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+  File "/home/paarth/Neuralperk_ProxyUser_MainServer/service_CustomerService/customer-service.py", line 133, in start_service
+    await service.startService()
+  File "/home/paarth/Neuralperk_ProxyUser_MainServer/service_CustomerService/customer-service.py", line 108, in startService
+    await self.httpServer.configure_routes()
+  File "/home/paarth/Neuralperk_ProxyUser_MainServer/service_CustomerService/customer-service.py", line 53, in configure_routes
+    @self.httpServer.app.post("/api/customer-service/")
+     ^^^^^^^^^^^^^^^
+AttributeError: 'HTTP_SERVER' object has no attribute 'httpServer'
+Traceback (most recent call last):
+  File "/home/paarth/Neuralperk_ProxyUser_MainServer/service_CustomerService/customer-service.py", line 136, in <module>
+    asyncio.run(start_service())
+  File "/usr/lib/python3.12/asyncio/runners.py", line 195, in run
+    return runner.run(main)
+           ^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/asyncio/runners.py", line 118, in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/asyncio/base_events.py", line 691, in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+  File "/home/paarth/Neuralperk_ProxyUser_MainServer/service_CustomerService/customer-service.py", line 133, in start_service
+    await service.startService()
+  File "/home/paarth/Neuralperk_ProxyUser_MainServer/service_CustomerService/customer-service.py", line 108, in startService
+    await self.httpServer.configure_routes()
+  File "/home/paarth/Neuralperk_ProxyUser_MainServer/service_CustomerService/customer-service.py", line 53, in configure_routes
+    @self.httpServer.app.post("/api/customer-service/")
+     ^^^^^^^^^^^^^^^
+AttributeError: 'HTTP_SERVER' object has no attribute 'httpServer'
+Traceback (most recent call last):
+  File "/home/paarth/Neuralperk_ProxyUser_MainServer/service_CustomerService/customer-service.py", line 136, in <module>
+    asyncio.run(start_service())
+  File "/usr/lib/python3.12/asyncio/runners.py", line 195, in run
+    return runner.run(main)
+           ^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/asyncio/runners.py", line 118, in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/asyncio/base_events.py", line 691, in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+  File "/home/paarth/Neuralperk_ProxyUser_MainServer/service_CustomerService/customer-service.py", line 133, in start_service
+    await service.startService()
+  File "/home/paarth/Neuralperk_ProxyUser_MainServer/service_CustomerService/customer-service.py", line 108, in startService
+    await self.httpServer.configure_routes()
+  File "/home/paarth/Neuralperk_ProxyUser_MainServer/service_CustomerService/customer-service.py", line 53, in configure_routes
+    @self.httpServer.app.post("/api/customer-service/")
+     ^^^^^^^^^^^^^^^
+AttributeError: 'HTTP_SERVER' object has no attribute 'httpServer'
+Traceback (most recent call last):
+  File "/home/paarth/Neuralperk_ProxyUser_MainServer/service_CustomerService/customer-service.py", line 136, in <module>
+    asyncio.run(start_service())
+  File "/usr/lib/python3.12/asyncio/runners.py", line 195, in run
+    return runner.run(main)
+           ^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/asyncio/runners.py", line 118, in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/asyncio/base_events.py", line 691, in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+  File "/home/paarth/Neuralperk_ProxyUser_MainServer/service_CustomerService/customer-service.py", line 133, in start_service
+    await service.startService()
+  File "/home/paarth/Neuralperk_ProxyUser_MainServer/service_CustomerService/customer-service.py", line 108, in startService
+    await self.httpServer.configure_routes()
+  File "/home/paarth/Neuralperk_ProxyUser_MainServer/service_CustomerService/customer-service.py", line 53, in configure_routes
+    @self.httpServer.app.post("/api/customer-service/")
+     ^^^^^^^^^^^^^^^
+AttributeError: 'HTTP_SERVER' object has no attribute 'httpServer'
+Traceback (most recent call last):
+  File "/home/paarth/Neuralperk_ProxyUser_MainServer/service_CustomerService/customer-service.py", line 136, in <module>
+    asyncio.run(start_service())
+  File "/usr/lib/python3.12/asyncio/runners.py", line 195, in run
+    return runner.run(main)
+           ^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/asyncio/runners.py", line 118, in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/asyncio/base_events.py", line 691, in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+  File "/home/paarth/Neuralperk_ProxyUser_MainServer/service_CustomerService/customer-service.py", line 133, in start_service
+    await service.startService()
+  File "/home/paarth/Neuralperk_ProxyUser_MainServer/service_CustomerService/customer-service.py", line 108, in startService
+    await self.httpServer.configure_routes()
+  File "/home/paarth/Neuralperk_ProxyUser_MainServer/service_CustomerService/customer-service.py", line 53, in configure_routes
+    @self.httpServer.app.post("/api/customer-service/")
+     ^^^^^^^^^^^^^^^
+AttributeError: 'HTTP_SERVER' object has no attribute 'httpServer'
+Traceback (most recent call last):
+  File "/home/paarth/Neuralperk_ProxyUser_MainServer/service_CustomerService/customer-service.py", line 136, in <module>
+    asyncio.run(start_service())
+  File "/usr/lib/python3.12/asyncio/runners.py", line 195, in run
+    return runner.run(main)
+           ^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/asyncio/runners.py", line 118, in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/asyncio/base_events.py", line 691, in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+  File "/home/paarth/Neuralperk_ProxyUser_MainServer/service_CustomerService/customer-service.py", line 133, in start_service
+    await service.startService()
+  File "/home/paarth/Neuralperk_ProxyUser_MainServer/service_CustomerService/customer-service.py", line 108, in startService
+    await self.httpServer.configure_routes()
+  File "/home/paarth/Neuralperk_ProxyUser_MainServer/service_CustomerService/customer-service.py", line 53, in configure_routes
+    @self.httpServer.app.post("/api/customer-service/")
+     ^^^^^^^^^^^^^^^
+AttributeError: 'HTTP_SERVER' object has no attribute 'httpServer'
+Traceback (most recent call last):
+  File "/home/paarth/Neuralperk_ProxyUser_MainServer/service_CustomerService/customer-service.py", line 136, in <module>
+    asyncio.run(start_service())
+  File "/usr/lib/python3.12/asyncio/runners.py", line 195, in run
+    return runner.run(main)
+           ^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/asyncio/runners.py", line 118, in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/asyncio/base_events.py", line 691, in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+  File "/home/paarth/Neuralperk_ProxyUser_MainServer/service_CustomerService/customer-service.py", line 133, in start_service
+    await service.startService()
+  File "/home/paarth/Neuralperk_ProxyUser_MainServer/service_CustomerService/customer-service.py", line 108, in startService
+    await self.httpServer.configure_routes()
+  File "/home/paarth/Neuralperk_ProxyUser_MainServer/service_CustomerService/customer-service.py", line 53, in configure_routes
+    @self.httpServer.app.post("/api/customer-service/")
+     ^^^^^^^^^^^^^^^
+AttributeError: 'HTTP_SERVER' object has no attribute 'httpServer'
+INFO:     Started server process [93006]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://0.0.0.0:11000 (Press CTRL+C to quit)
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [93006]
+Traceback (most recent call last):
+  File "/usr/lib/python3.12/asyncio/runners.py", line 118, in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/asyncio/base_events.py", line 691, in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+asyncio.exceptions.CancelledError
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/paarth/Neuralperk_ProxyUser_MainServer/service_CustomerService/customer-service.py", line 244, in <module>
+    
+  File "/usr/lib/python3.12/asyncio/runners.py", line 195, in run
+    return runner.run(main)
+           ^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/asyncio/runners.py", line 123, in run
+    raise KeyboardInterrupt()
+KeyboardInterrupt
+INFO:     Started server process [93167]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://0.0.0.0:11000 (Press CTRL+C to quit)
