@@ -1,0 +1,40 @@
+on:
+  push:
+    branches:
+      - prod
+  pull_request:
+    branches:
+      - prod
+
+jobs:
+  deploy:
+    if: |
+      (github.event_name == 'pull_request' && github.head_ref == 'main') ||
+      (github.event_name == 'push' && github.ref == 'refs/heads/prod')
+
+    runs-on: [self-hosted, Linux, X64]
+
+    environment: production
+
+    env:
+      ENVIRONMENTAL_VARIABLES: ${{ vars.ENVIRONMENTAL_VARIABLES }}
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+        with:
+          path: .
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: '20'
+
+      - name: Install PM2
+        run: sudo npm install -g pm2
+
+      - name: Running deployment script
+        run: bash .github/scripts/deploy.sh
+
+      - name: Echo the Environment variables
+        run: echo "$ENVIRONMENTAL_VARIABLES"
