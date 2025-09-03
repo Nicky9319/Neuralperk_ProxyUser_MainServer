@@ -1,0 +1,20 @@
+[
+  {
+    "objectId": "obj001",
+    "blendFilePath": "/projects/cust001/chair.blend",
+    "renderedVideoPath": "/renders/cust001/chair.mp4",
+    "customerId": "cust001"
+  },
+  {
+    "objectId": "obj002",
+    "blendFilePath": "/projects/cust002/table.blend",
+    "renderedVideoPath": "/renders/cust002/table.mp4",
+    "customerId": "cust002"
+  },
+  {
+    "objectId": "obj003",
+    "blendFilePath": "/projects/cust003/lamp.blend",
+    "renderedVideoPath": null,
+    "customerId": "cust003"
+  }
+]

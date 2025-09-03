@@ -1,55 +1,66 @@
 {
     "database": "neuralperk",
-    "collections": {
-        "customers": {
+    "collections": [
+        {
+            "name": "customers",
             "validator": {
                 "$jsonSchema": {
                     "bsonType": "object",
                     "title": "customers",
                     "required": [
+                        "customerId",
                         "email",
-                        "password",
-                        "blenderObjects"
+                        "password"
                     ],
                     "properties": {
+                        "customerId": {
+                            "bsonType": "string"
+                        },
                         "email": {
-                            "bsonType": "string",
-                            "description": "must be a string and is required"
+                            "bsonType": "string"
                         },
                         "password": {
+                            "bsonType": "string"
+                        }
+                    }
+                }
+            },
+            "validationLevel": "strict",
+            "validationAction": "error"
+        },
+        {
+            "name": "blenderObjects",
+            "validator": {
+                "$jsonSchema": {
+                    "bsonType": "object",
+                    "title": "blenderObjects",
+                    "required": [
+                        "objectId",
+                        "blendFilePath",
+                        "customerId"
+                    ],
+                    "properties": {
+                        "objectId": {
+                            "bsonType": "string",
+                            "description": "unique object identifier, must be a string and is required"
+                        },
+                        "blendFilePath": {
                             "bsonType": "string",
                             "description": "must be a string and is required"
                         },
-                        "blenderObjects": {
-                            "bsonType": "array",
-                            "description": "must be an array of blender object details",
-                            "items": {
-                                "bsonType": "object",
-                                "required": [
-                                    "blendFilePath",
-                                    "renderingObjectId"
-                                ],
-                                "properties": {
-                                    "blendFilePath": {
-                                        "bsonType": "string",
-                                        "description": "must be a string and is required"
-                                    },
-                                    "renderedVideoPath": {
-                                        "bsonType": "string",
-                                        "description": "must be a string if present"
-                                    },
-                                    "renderingObjectId": {
-                                        "bsonType": "string",
-                                        "description": "must be a string and is required"
-                                    }
-                                },
-                                "additionalProperties": false
-                            }
+                        "renderedVideoPath": {
+                            "bsonType": ["string","null"],
+                            "description": "must be a string if present"
+                        },
+                        "customerId": {
+                            "bsonType": "string",
+                            "description": "reference to customerId in customers collection, must be a string and is required"
                         }
-                    },
-                    "additionalProperties": false
+                    }
                 }
-            }
+            },
+            "validationLevel": "strict",
+            "validationAction": "error"
         }
-    }
+    ]
 }
