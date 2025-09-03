@@ -67,3 +67,68 @@ INFO:     127.0.0.1:49720 - "GET /api/mongodb-service/customers/check/valid_cust
 INFO:     127.0.0.1:34970 - "GET /api/mongodb-service/customers/check/valid_customer_123 HTTP/1.1" 404 Not Found
 INFO:     127.0.0.1:34972 - "GET /api/mongodb-service/customers/check/cust_001 HTTP/1.1" 200 OK
 INFO:     127.0.0.1:34972 - "GET /api/mongodb-service/customers/check/invalid_customer_999 HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:45012 - "GET /api/mongodb-service/customers/find-by-email/john.doe%40example.com HTTP/1.1" 200 OK
+Applied schema validation to collection: customers
+Applied schema validation to collection: blenderObjects
+Applied schema validation to collection: sessions
+INFO:     127.0.0.1:52616 - "GET /api/mongodb-service/customers/find-by-email/john.doe%40example.com HTTP/1.1" 200 OK
+INFO:     127.0.0.1:37146 - "GET /api/mongodb-service/customers/find-by-email/john.doe%40example.com HTTP/1.1" 200 OK
+INFO:     127.0.0.1:47976 - "POST /api/mongodb-service/customers/add HTTP/1.1" 201 Created
+INFO:     127.0.0.1:47976 - "GET /api/mongodb-service/customers/find-by-email/john.doe%40example.com HTTP/1.1" 200 OK
+Applied schema validation to collection: customers
+Applied schema validation to collection: blenderObjects
+Applied schema validation to collection: sessions
+INFO:     127.0.0.1:42672 - "POST /api/mongodb-service/blender-objects/add HTTP/1.1" 201 Created
+Applied schema validation to collection: customers
+Applied schema validation to collection: blenderObjects
+Applied schema validation to collection: sessions
+INFO:     127.0.0.1:58994 - "GET /api/mongodb-service/ HTTP/1.1" 200 OK
+INFO:     127.0.0.1:39944 - "POST /api/mongodb-service/sessions/add HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:52632 - "POST /api/mongodb-service/customers/add HTTP/1.1" 409 Conflict
+INFO:     127.0.0.1:45078 - "POST /api/mongodb-service/customers/add HTTP/1.1" 409 Conflict
+INFO:     127.0.0.1:45090 - "POST /api/mongodb-service/customers/add HTTP/1.1" 201 Created
+INFO:     127.0.0.1:55240 - "POST /api/mongodb-service/customers/add HTTP/1.1" 400 Bad Request
+INFO:     127.0.0.1:55240 - "POST /api/mongodb-service/blender-objects/add HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:44982 - "POST /api/mongodb-service/blender-objects/add HTTP/1.1" 201 Created
+INFO:     127.0.0.1:52012 - "POST /api/mongodb-service/blender-objects/add HTTP/1.1" 201 Created
+INFO:     127.0.0.1:52632 - "POST /api/mongodb-service/sessions/add HTTP/1.1" 201 Created
+Applied schema validation to collection: customers
+Applied schema validation to collection: blenderObjects
+Applied schema validation to collection: sessions
+INFO:     127.0.0.1:39878 - "GET /api/mongodb-service/customers/check/cust_001 HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:47840 - "GET /api/mongodb-service/customers/check/cust_001 HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:34576 - "GET /api/mongodb-service/customers/check/acf22712-d920-46cc-a584-42ef35d0ae02 HTTP/1.1" 200 OK
+Applied schema validation to collection: customers
+Applied schema validation to collection: blenderObjects
+Applied schema validation to collection: sessions
+INFO:     127.0.0.1:49584 - "GET /api/mongodb-service/customers/check/acf22712-d920-46cc-a584-42ef35d0ae02 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49586 - "POST /api/mongodb-service/blender-objects/add HTTP/1.1" 201 Created
+Applied schema validation to collection: customers
+Applied schema validation to collection: blenderObjects
+Applied schema validation to collection: sessions
+INFO:     127.0.0.1:53386 - "GET /api/mongodb-service/customers/check/acf22712-d920-46cc-a584-42ef35d0ae02 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53394 - "POST /api/mongodb-service/blender-objects/add HTTP/1.1" 201 Created
+Applied schema validation to collection: customers
+Applied schema validation to collection: blenderObjects
+Applied schema validation to collection: sessions
+INFO:     127.0.0.1:33492 - "GET /api/mongodb-service/customers/check/acf22712-d920-46cc-a584-42ef35d0ae02 HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:35274 - "POST /api/mongodb-service/customers/add HTTP/1.1" 201 Created
+INFO:     127.0.0.1:58446 - "POST /api/mongodb-service/customers/add HTTP/1.1" 201 Created
+INFO:     127.0.0.1:36054 - "POST /api/mongodb-service/blender-objects/add HTTP/1.1" 201 Created
+INFO:     127.0.0.1:46526 - "GET /api/mongodb-service/customers/check/785b969d-bd50-4a03-bbd9-8a766d7a553b HTTP/1.1" 200 OK
+INFO:     127.0.0.1:46532 - "POST /api/mongodb-service/blender-objects/add HTTP/1.1" 201 Created
+Applied schema validation to collection: customers
+Applied schema validation to collection: blenderObjects
+Applied schema validation to collection: sessions
+Applied schema validation to collection: customers
+Applied schema validation to collection: blenderObjects
+Applied schema validation to collection: sessions
+INFO:     127.0.0.1:44666 - "GET /api/mongodb-service/customers/check/785b969d-bd50-4a03-bbd9-8a766d7a553b HTTP/1.1" 200 OK
+INFO:     127.0.0.1:44674 - "POST /api/mongodb-service/blender-objects/add HTTP/1.1" 201 Created
+INFO:     127.0.0.1:44674 - "PUT /api/mongodb-service/blender-objects/update-blend-file HTTP/1.1" 200 OK
+Applied schema validation to collection: customers
+Applied schema validation to collection: blenderObjects
+Applied schema validation to collection: sessions
+INFO:     127.0.0.1:51264 - "GET /api/mongodb-service/customers/check/785b969d-bd50-4a03-bbd9-8a766d7a553b HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51276 - "POST /api/mongodb-service/blender-objects/add HTTP/1.1" 201 Created
+INFO:     127.0.0.1:51276 - "PUT /api/mongodb-service/blender-objects/update-blend-file HTTP/1.1" 200 OK

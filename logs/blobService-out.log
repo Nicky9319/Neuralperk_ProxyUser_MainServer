@@ -1,0 +1,34 @@
+Storing blend file: test_character_model
+Bucket: blend-files
+Key: acf22712-d920-46cc-a584-42ef35d0ae02/ae8b7ac9-e852-43ea-b8b9-0b0d9df7a42e/test_character_model
+UploadFile(filename='test_character_model', size=171421576, headers=Headers({'content-disposition': 'form-data; name="blend_file"; filename="test_character_model"', 'content-type': 'application/octet-stream'}))
+INFO:     127.0.0.1:57558 - "POST /api/blob-service/store-blend HTTP/1.1" 500 Internal Server Error
+Storing blend file: test_character_model
+Bucket: blend-files
+Key: acf22712-d920-46cc-a584-42ef35d0ae02/a3f42247-5c05-45d9-a879-e6f39fca91bd/test_character_model
+UploadFile(filename='test_character_model', size=171421576, headers=Headers({'content-disposition': 'form-data; name="blend_file"; filename="test_character_model"', 'content-type': 'application/octet-stream'}))
+INFO:     127.0.0.1:52752 - "POST /api/blob-service/store-blend HTTP/1.1" 500 Internal Server Error
+Storing blend file: test_character_model
+Bucket: blend-files
+Key: 785b969d-bd50-4a03-bbd9-8a766d7a553b/25c47a08-434f-4bb4-994c-d9eb273bcc8e/test_character_model
+UploadFile(filename='test_character_model', size=171421576, headers=Headers({'content-disposition': 'form-data; name="blend_file"; filename="test_character_model"', 'content-type': 'application/octet-stream'}))
+INFO:     127.0.0.1:55410 - "POST /api/blob-service/store-blend HTTP/1.1" 500 Internal Server Error
+Created bucket 'blend-files' successfully
+Created bucket 'rendered-videos' successfully
+Created bucket 'rendered-frames' successfully
+Bucket 'blend-files' already exists
+Bucket 'rendered-videos' already exists
+Bucket 'rendered-frames' already exists
+Storing blend file: test_character_model
+Bucket: blend-files
+Key: 785b969d-bd50-4a03-bbd9-8a766d7a553b/d92354a9-1fc5-4ee9-8adf-7d1d76555426/test_character_model
+UploadFile(filename='test_character_model', size=171421576, headers=Headers({'content-disposition': 'form-data; name="blend_file"; filename="test_character_model"', 'content-type': 'application/octet-stream'}))
+INFO:     127.0.0.1:58516 - "POST /api/blob-service/store-blend HTTP/1.1" 200 OK
+Bucket 'blend-files' already exists
+Bucket 'rendered-videos' already exists
+Bucket 'rendered-frames' already exists
+Storing blend file: test_character_model
+Bucket: blend-files
+Key: 785b969d-bd50-4a03-bbd9-8a766d7a553b/89570626-513d-4078-b36a-b72a88b92250/test_character_model.blend
+UploadFile(filename='test_character_model', size=171421576, headers=Headers({'content-disposition': 'form-data; name="blend_file"; filename="test_character_model"', 'content-type': 'application/octet-stream'}))
+INFO:     127.0.0.1:51778 - "POST /api/blob-service/store-blend HTTP/1.1" 200 OK

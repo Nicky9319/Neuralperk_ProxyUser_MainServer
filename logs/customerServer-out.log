@@ -30,3 +30,55 @@ Test Auth endpoint hit for customer: cust_001
 INFO:     127.0.0.1:41538 - "POST /api/customer-service/test-auth HTTP/1.1" 200 OK
 invalid_customer_999
 INFO:     127.0.0.1:41538 - "POST /api/customer-service/test-auth HTTP/1.1" 401 Unauthorized
+cust_001
+INFO:     127.0.0.1:46586 - "POST /api/customer-service/upload-blend-file HTTP/1.1" 401 Unauthorized
+cust_001
+INFO:     127.0.0.1:46706 - "POST /api/customer-service/upload-blend-file HTTP/1.1" 401 Unauthorized
+acf22712-d920-46cc-a584-42ef35d0ae02
+INFO:     127.0.0.1:33098 - "POST /api/customer-service/upload-blend-file HTTP/1.1" 422 Unprocessable Entity
+acf22712-d920-46cc-a584-42ef35d0ae02
+Upload blend file endpoint hit for customer: acf22712-d920-46cc-a584-42ef35d0ae02
+Blend file name: test_character_model
+Blend file size: 171421576 bytes
+Creating empty blender object in MongoDB...
+Created blender object with ID: ae8b7ac9-e852-43ea-b8b9-0b0d9df7a42e
+Storing blend file in blob storage...
+INFO:     127.0.0.1:47144 - "POST /api/customer-service/upload-blend-file HTTP/1.1" 500 Internal Server Error
+acf22712-d920-46cc-a584-42ef35d0ae02
+Upload blend file endpoint hit for customer: acf22712-d920-46cc-a584-42ef35d0ae02
+Blend file name: test_character_model
+Blend file size: 171421576 bytes
+Creating empty blender object in MongoDB...
+Created blender object with ID: a3f42247-5c05-45d9-a879-e6f39fca91bd
+Storing blend file in blob storage...
+INFO:     127.0.0.1:37844 - "POST /api/customer-service/upload-blend-file HTTP/1.1" 500 Internal Server Error
+acf22712-d920-46cc-a584-42ef35d0ae02
+INFO:     127.0.0.1:36456 - "POST /api/customer-service/upload-blend-file HTTP/1.1" 401 Unauthorized
+785b969d-bd50-4a03-bbd9-8a766d7a553b
+Upload blend file endpoint hit for customer: 785b969d-bd50-4a03-bbd9-8a766d7a553b
+Blend file name: test_character_model
+Blend file size: 171421576 bytes
+Creating empty blender object in MongoDB...
+Created blender object with ID: 25c47a08-434f-4bb4-994c-d9eb273bcc8e
+Storing blend file in blob storage...
+INFO:     127.0.0.1:32986 - "POST /api/customer-service/upload-blend-file HTTP/1.1" 500 Internal Server Error
+785b969d-bd50-4a03-bbd9-8a766d7a553b
+Upload blend file endpoint hit for customer: 785b969d-bd50-4a03-bbd9-8a766d7a553b
+Blend file name: test_character_model
+Blend file size: 171421576 bytes
+Creating empty blender object in MongoDB...
+Created blender object with ID: d92354a9-1fc5-4ee9-8adf-7d1d76555426
+Storing blend file in blob storage...
+Blend file stored successfully: {'message': 'Blend file stored successfully', 'filename': 'test_character_model', 'bucket': 'blend-files', 'key': '785b969d-bd50-4a03-bbd9-8a766d7a553b/d92354a9-1fc5-4ee9-8adf-7d1d76555426/test_character_model.blend'}
+Updating MongoDB object with blend file path...
+INFO:     127.0.0.1:36710 - "POST /api/customer-service/upload-blend-file HTTP/1.1" 200 OK
+785b969d-bd50-4a03-bbd9-8a766d7a553b
+Upload blend file endpoint hit for customer: 785b969d-bd50-4a03-bbd9-8a766d7a553b
+Blend file name: test_character_model
+Blend file size: 171421576 bytes
+Creating empty blender object in MongoDB...
+Created blender object with ID: 89570626-513d-4078-b36a-b72a88b92250
+Storing blend file in blob storage...
+Blend file stored successfully: {'message': 'Blend file stored successfully', 'filename': 'test_character_model', 'bucket': 'blend-files', 'key': '785b969d-bd50-4a03-bbd9-8a766d7a553b/89570626-513d-4078-b36a-b72a88b92250/test_character_model.blend'}
+Updating MongoDB object with blend file path...
+INFO:     127.0.0.1:36192 - "POST /api/customer-service/upload-blend-file HTTP/1.1" 200 OK

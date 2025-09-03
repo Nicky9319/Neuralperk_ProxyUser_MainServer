@@ -1,0 +1,471 @@
+{
+	"info": {
+		"_postman_id": "customer-service-upload-blend-tests",
+		"name": "Customer Service - Upload Blend File Tests",
+		"description": "Comprehensive test collection for the upload blend file API endpoint. Tests various scenarios including successful uploads, authentication, validation, and error cases.",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "1. Test Upload Blend File - Success Case",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{valid_access_token}}"
+					}
+				],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "blend_file_name",
+							"value": "test_character_model",
+							"type": "text",
+							"description": "Name of the blend file (without extension)"
+						},
+						{
+							"key": "blend_file",
+							"type": "file",
+							"src": [],
+							"description": "Select a .blend file to upload for testing"
+						},
+						{
+							"key": "customer_id",
+							"value": "{{test_customer_id}}",
+							"type": "text",
+							"description": "Customer ID for the upload"
+						}
+					]
+				},
+				"url": {
+					"raw": "{{base_url}}/api/customer-service/upload-blend-file",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"api",
+						"customer-service",
+						"upload-blend-file"
+					]
+				},
+				"description": "Tests successful blend file upload with valid authentication and file data. This should create a blender object in MongoDB, store the file in blob storage, and return success with object ID and file path."
+			},
+			"response": []
+		},
+		{
+			"name": "2. Test Upload Blend File - Missing Authentication",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "blend_file_name",
+							"value": "test_character_model",
+							"type": "text"
+						},
+						{
+							"key": "blend_file",
+							"type": "file",
+							"src": []
+						},
+						{
+							"key": "customer_id",
+							"value": "{{test_customer_id}}",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "{{base_url}}/api/customer-service/upload-blend-file",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"api",
+						"customer-service",
+						"upload-blend-file"
+					]
+				},
+				"description": "Tests upload attempt without authentication header. Should return 401 Unauthorized."
+			},
+			"response": []
+		},
+		{
+			"name": "3. Test Upload Blend File - Invalid Access Token",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer invalid_token_123"
+					}
+				],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "blend_file_name",
+							"value": "test_character_model",
+							"type": "text"
+						},
+						{
+							"key": "blend_file",
+							"type": "file",
+							"src": []
+						},
+						{
+							"key": "customer_id",
+							"value": "{{test_customer_id}}",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "{{base_url}}/api/customer-service/upload-blend-file",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"api",
+						"customer-service",
+						"upload-blend-file"
+					]
+				},
+				"description": "Tests upload attempt with invalid access token. Should return 401 Unauthorized."
+			},
+			"response": []
+		},
+		{
+			"name": "4. Test Upload Blend File - Missing File Name",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{valid_access_token}}"
+					}
+				],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "blend_file",
+							"type": "file",
+							"src": []
+						},
+						{
+							"key": "customer_id",
+							"value": "{{test_customer_id}}",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "{{base_url}}/api/customer-service/upload-blend-file",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"api",
+						"customer-service",
+						"upload-blend-file"
+					]
+				},
+				"description": "Tests upload attempt without blend file name. Should return 422 Unprocessable Entity due to missing required field."
+			},
+			"response": []
+		},
+		{
+			"name": "5. Test Upload Blend File - Missing File",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{valid_access_token}}"
+					}
+				],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "blend_file_name",
+							"value": "test_character_model",
+							"type": "text"
+						},
+						{
+							"key": "customer_id",
+							"value": "{{test_customer_id}}",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "{{base_url}}/api/customer-service/upload-blend-file",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"api",
+						"customer-service",
+						"upload-blend-file"
+					]
+				},
+				"description": "Tests upload attempt without the actual blend file. Should return 422 Unprocessable Entity due to missing required field."
+			},
+			"response": []
+		},
+		{
+			"name": "6. Test Upload Blend File - Missing Customer ID",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{valid_access_token}}"
+					}
+				],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "blend_file_name",
+							"value": "test_character_model",
+							"type": "text"
+						},
+						{
+							"key": "blend_file",
+							"type": "file",
+							"src": []
+						}
+					]
+				},
+				"url": {
+					"raw": "{{base_url}}/api/customer-service/upload-blend-file",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"api",
+						"customer-service",
+						"upload-blend-file"
+					]
+				},
+				"description": "Tests upload attempt without customer ID. Should return 422 Unprocessable Entity due to missing required field."
+			},
+			"response": []
+		},
+		{
+			"name": "7. Test Upload Blend File - Different File Types",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{valid_access_token}}"
+					}
+				],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "blend_file_name",
+							"value": "test_scene_with_textures",
+							"type": "text"
+						},
+						{
+							"key": "blend_file",
+							"type": "file",
+							"src": [],
+							"description": "Try uploading different types of files to test validation"
+						},
+						{
+							"key": "customer_id",
+							"value": "{{test_customer_id}}",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "{{base_url}}/api/customer-service/upload-blend-file",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"api",
+						"customer-service",
+						"upload-blend-file"
+					]
+				},
+				"description": "Tests upload with different file types to verify the API handles various scenarios correctly."
+			},
+			"response": []
+		},
+		{
+			"name": "8. Test Upload Blend File - Large File",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{valid_access_token}}"
+					}
+				],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "blend_file_name",
+							"value": "large_scene_file",
+							"type": "text"
+						},
+						{
+							"key": "blend_file",
+							"type": "file",
+							"src": [],
+							"description": "Test with a larger blend file to verify performance and storage handling"
+						},
+						{
+							"key": "customer_id",
+							"value": "{{test_customer_id}}",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "{{base_url}}/api/customer-service/upload-blend-file",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"api",
+						"customer-service",
+						"upload-blend-file"
+					]
+				},
+				"description": "Tests upload with larger files to verify the API can handle files of various sizes and performance characteristics."
+			},
+			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					"// Pre-request script for Upload Blend File Tests",
+					"console.log('Testing endpoint: ' + pm.request.url);",
+					"console.log('Request method: ' + pm.request.method);",
+					"console.log('Current timestamp: ' + new Date().toISOString());",
+					"",
+					"// Log environment variables for debugging",
+					"console.log('Base URL: ' + pm.environment.get('base_url'));",
+					"console.log('Test Customer ID: ' + pm.environment.get('test_customer_id'));",
+					"console.log('Valid Access Token: ' + pm.environment.get('valid_access_token'));"
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					"// Test script for Upload Blend File API",
+					"",
+					"// Basic response validation",
+					"pm.test('Response time is acceptable', function () {",
+					"    pm.expect(pm.response.responseTime).to.be.below(10000);",
+					"});",
+					"",
+					"pm.test('Response has valid structure', function () {",
+					"    if (pm.response.code === 200 || pm.response.code === 201) {",
+					"        pm.response.to.have.jsonBody();",
+					"        const responseJson = pm.response.json();",
+					"        pm.expect(responseJson).to.have.property('message');",
+					"    }",
+					"});",
+					"",
+					"// Test specific to successful uploads",
+					"if (pm.response.code === 200 && pm.request.url.path.includes('upload-blend-file')) {",
+					"    pm.test('Successful upload response structure', function () {",
+					"        const responseJson = pm.response.json();",
+					"        pm.expect(responseJson).to.have.property('customer_id');",
+					"        pm.expect(responseJson).to.have.property('object_id');",
+					"        pm.expect(responseJson).to.have.property('file_name');",
+					"        pm.expect(responseJson).to.have.property('blend_file_path');",
+					"        pm.expect(responseJson).to.have.property('status');",
+					"        pm.expect(responseJson.status).to.eql('uploaded');",
+					"    });",
+					"",
+					"    pm.test('Object ID is valid UUID format', function () {",
+					"        const responseJson = pm.response.json();",
+					"        const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;",
+					"        pm.expect(responseJson.object_id).to.match(uuidRegex);",
+					"    });",
+					"",
+					"    pm.test('Blend file path follows convention', function () {",
+					"        const responseJson = pm.response.json();",
+					"        const expectedPath = responseJson.customer_id + '/' + responseJson.object_id + '/' + responseJson.file_name;",
+					"        pm.expect(responseJson.blend_file_path).to.eql(expectedPath);",
+					"    });",
+					"}",
+					"",
+					"// Test specific to authentication failures",
+					"if (pm.response.code === 401) {",
+					"    pm.test('Authentication error response', function () {",
+					"        const responseJson = pm.response.json();",
+					"        pm.expect(responseJson).to.have.property('detail');",
+					"        pm.expect(responseJson.detail).to.include('token') || pm.expect(responseJson.detail).to.include('authentication');",
+					"    });",
+					"}",
+					"",
+					"// Test specific to validation failures",
+					"if (pm.response.code === 422) {",
+					"    pm.test('Validation error response', function () {",
+					"        const responseJson = pm.response.json();",
+					"        pm.expect(responseJson).to.have.property('detail');",
+					"    });",
+					"}",
+					"",
+					"// Log response for debugging",
+					"console.log('Response Status: ' + pm.response.status);",
+					"console.log('Response Body: ' + pm.response.text());",
+					"",
+					"// Store successful upload data for subsequent tests",
+					"if (pm.response.code === 200 && pm.request.url.path.includes('upload-blend-file')) {",
+					"    const responseJson = pm.response.json();",
+					"    pm.environment.set('last_uploaded_object_id', responseJson.object_id);",
+					"    pm.environment.set('last_uploaded_file_path', responseJson.blend_file_path);",
+					"    console.log('Stored object ID: ' + responseJson.object_id);",
+					"    console.log('Stored file path: ' + responseJson.blend_file_path);",
+					"}"
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "base_url",
+			"value": "http://localhost:11000",
+			"type": "string",
+			"description": "Base URL for the Customer Service. Update this if your service runs on a different port or host."
+		},
+		{
+			"key": "test_customer_id",
+			"value": "cust_001",
+			"type": "string",
+			"description": "Test customer ID to use for testing the upload blend file API. This should be a valid customer ID that exists in your system."
+		},
+		{
+			"key": "valid_access_token",
+			"value": "cust_001",
+			"type": "string",
+			"description": "Valid access token for testing authentication. This should be a valid Bearer token that the auth service recognizes."
+		}
+	]
+}

@@ -1,6 +1,6 @@
 import asyncio
 
-from fastapi import FastAPI, Response, Request, HTTPException, Depends
+from fastapi import FastAPI, Response, Request, HTTPException, Depends, File, Form, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 
@@ -52,6 +52,13 @@ class HTTP_SERVER():
             self.auth_service_url = "http://127.0.0.1:10000"
         else:
             self.auth_service_url = auth_env_url
+        
+        # Get Blob service URL from environment
+        blob_env_url = os.getenv("BLOB_SERVICE", "").strip()
+        if not blob_env_url or not (blob_env_url.startswith("http://") or blob_env_url.startswith("https://")):
+            self.blob_service_url = "http://127.0.0.1:13000"
+        else:
+            self.blob_service_url = blob_env_url
         
         # HTTP client for making requests to MongoDB service and Auth service
         self.http_client = httpx.AsyncClient(timeout=30.0)
@@ -132,12 +139,107 @@ class HTTP_SERVER():
             
         @self.app.post("/api/customer-service/upload-blend-file")
         async def uploadBlendFile(
-            request: Request, 
-            customer_id: str = Depends(self.authenticate_token)
+            blend_file_name: str = Form(...),
+            blend_file: UploadFile = File(...),
+            customer_id: str = Form(...),
+            access_token: str = Depends(self.authenticate_token)
         ):
             print(f"Upload blend file endpoint hit for customer: {customer_id}")
-            # TODO: Implement actual business logic
-            return JSONResponse(content={"message": "Upload blend file endpoint", "customer_id": customer_id}, status_code=200)
+            print(f"Blend file name: {blend_file_name}")
+            print(f"Blend file size: {blend_file.size} bytes")
+            
+            try:
+                # Step 1: Create empty blender object in MongoDB
+                print("Creating empty blender object in MongoDB...")
+                mongo_response = await self.http_client.post(
+                    f"{self.mongodb_service_url}/api/mongodb-service/blender-objects/add",
+                    json={
+                        "customerId": customer_id,
+                        "blendFileName": blend_file_name
+                    }
+                )
+                
+                if mongo_response.status_code != 201:
+                    raise HTTPException(
+                        status_code=500,
+                        detail=f"Failed to create blender object: {mongo_response.text}"
+                    )
+                
+                mongo_result = mongo_response.json()
+                object_id = mongo_result["objectId"]
+                print(f"Created blender object with ID: {object_id}")
+                
+                # Step 2: Store blend file in blob storage
+                print("Storing blend file in blob storage...")
+                
+                # Prepare form data for blob service
+                # Using the blend-files bucket with the naming convention: customer_id/object_id/blend_file_name
+                
+                # Store in blob storage
+                # Ensure .blend extension is included in the key for consistency
+                if not blend_file_name.endswith('.blend'):
+                    blob_key = f"{customer_id}/{object_id}/{blend_file_name}.blend"
+                else:
+                    blob_key = f"{customer_id}/{object_id}/{blend_file_name}"
+                
+                blob_response = await self.http_client.post(
+                    f"{self.blob_service_url}/api/blob-service/store-blend",
+                    data={
+                        "bucket": "blend-files",
+                        "key": blob_key
+                    },
+                    files={"blend_file": (blend_file_name, await blend_file.read(), "application/octet-stream")}
+                )
+                
+                if blob_response.status_code != 200:
+                    raise HTTPException(
+                        status_code=500,
+                        detail=f"Failed to store blend file in blob storage: {blob_response.text}"
+                    )
+                
+                blob_result = blob_response.json()
+                print(f"Blend file stored successfully: {blob_result}")
+                
+                # Step 3: Update MongoDB object with blend file path
+                print("Updating MongoDB object with blend file path...")
+                # Ensure .blend extension is included in the path for easier retrieval
+                if not blend_file_name.endswith('.blend'):
+                    blend_file_path = f"{customer_id}/{object_id}/{blend_file_name}.blend"
+                else:
+                    blend_file_path = f"{customer_id}/{object_id}/{blend_file_name}"
+                
+                update_response = await self.http_client.put(
+                    f"{self.mongodb_service_url}/api/mongodb-service/blender-objects/update-blend-file",
+                    json={
+                        "objectId": object_id,
+                        "customerId": customer_id,
+                        "blendFilePath": blend_file_path
+                    }
+                )
+                
+                if update_response.status_code != 200:
+                    print(f"Warning: Failed to update blend file path: {update_response.text}")
+                    # Continue anyway as the file is stored
+                
+                # Return success response
+                return JSONResponse(content={
+                    "message": "Blend file uploaded successfully",
+                    "customer_id": customer_id,
+                    "object_id": object_id,
+                    "file_name": blend_file_name,
+                    "file_size_bytes": blend_file.size,
+                    "upload_timestamp": datetime.now().isoformat(),
+                    "status": "uploaded"
+                }, status_code=200)
+                
+            except HTTPException:
+                raise
+            except Exception as e:
+                print(f"Error uploading blend file: {str(e)}")
+                raise HTTPException(
+                    status_code=500,
+                    detail=f"Failed to upload blend file: {str(e)}"
+                )
 
         @self.app.post("/api/customer-service/start-workload")
         async def startWorkload(

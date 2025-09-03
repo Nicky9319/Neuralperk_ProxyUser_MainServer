@@ -27,12 +27,50 @@ class HTTP_SERVER():
         # Initialize S3 client
         self.client = boto3.client(
             "s3",
-            endpoint_url="http://localhost:3000",
+            endpoint_url="http://localhost:9000",
             aws_access_key_id="admin",
             aws_secret_access_key="password",
             config=Config(signature_version="s3v4"),
             region_name="us-east-1"
         )
+        
+        # Initialize default buckets
+        self.initialize_default_buckets()
+
+    def initialize_default_buckets(self):
+        """Initialize default buckets if they don't exist"""
+        try:
+            # List of default buckets to create
+            default_buckets = ["blend-files", "rendered-videos", "rendered-frames"]
+            
+            for bucket_name in default_buckets:
+                try:
+                    # Check if bucket exists
+                    self.client.head_bucket(Bucket=bucket_name)
+                    print(f"Bucket '{bucket_name}' already exists")
+                except Exception:
+                    # Bucket doesn't exist, create it
+                    self.client.create_bucket(Bucket=bucket_name)
+                    print(f"Created bucket '{bucket_name}' successfully")
+                    
+        except Exception as e:
+            print(f"Warning: Could not initialize default buckets: {str(e)}")
+
+    async def ensure_bucket_exists(self, bucket: str):
+        """Ensure a bucket exists, create it if it doesn't"""
+        try:
+            # Check if bucket exists
+            self.client.head_bucket(Bucket=bucket)
+            return True
+        except Exception:
+            try:
+                # Bucket doesn't exist, create it
+                self.client.create_bucket(Bucket=bucket)
+                print(f"Created bucket '{bucket}' on demand")
+                return True
+            except Exception as e:
+                print(f"Error creating bucket '{bucket}': {str(e)}")
+                return False
 
     async def configure_routes(self):
 
@@ -145,10 +183,52 @@ class HTTP_SERVER():
             
             # Return blend file with appropriate media type
             return Response(content=data, media_type="application/octet-stream")
+        
+        # 5. List buckets
+        @self.app.get("/api/blob-service/list-buckets")
+        async def listBuckets():
+            """List all available buckets"""
+            try:
+                response = self.client.list_buckets()
+                buckets = [bucket['Name'] for bucket in response['Buckets']]
+                return JSONResponse(content={
+                    "buckets": buckets,
+                    "count": len(buckets),
+                    "message": "Buckets retrieved successfully"
+                }, status_code=200)
+            except Exception as e:
+                return JSONResponse(content={
+                    "error": f"Failed to list buckets: {str(e)}"
+                }, status_code=500)
+        
+        # 6. Create bucket
+        @self.app.post("/api/blob-service/create-bucket")
+        async def createBucket(bucket_name: str = Form(...)):
+            """Create a new bucket"""
+            try:
+                bucket_created = await self.ensure_bucket_exists(bucket_name)
+                if bucket_created:
+                    return JSONResponse(content={
+                        "message": f"Bucket '{bucket_name}' created successfully or already exists",
+                        "bucket_name": bucket_name
+                    }, status_code=200)
+                else:
+                    return JSONResponse(content={
+                        "error": f"Failed to create bucket '{bucket_name}'"
+                    }, status_code=500)
+            except Exception as e:
+                return JSONResponse(content={
+                    "error": f"Failed to create bucket: {str(e)}"
+                }, status_code=500)
 
     async def uploadImageToBlobStorage(self, image: UploadFile, bucket: str, key: str):
         print(image)
         try:
+            # Ensure bucket exists before uploading
+            bucket_created = await self.ensure_bucket_exists(bucket)
+            if not bucket_created:
+                return {"error": f"Failed to create bucket '{bucket}'"}
+            
             contents = await image.read()
             self.client.put_object(Bucket=bucket, Key=key, Body=contents)
             return {"filename": image.filename}
@@ -157,6 +237,11 @@ class HTTP_SERVER():
         
     async def retrieveImageFromBlobStorage(self, bucket: str, key: str):
         try:
+            # Ensure bucket exists before retrieving
+            bucket_created = await self.ensure_bucket_exists(bucket)
+            if not bucket_created:
+                return {"error": f"Failed to create bucket '{bucket}'"}
+            
             response = self.client.get_object(Bucket=bucket, Key=key)
             data = response['Body'].read()
             print(type(data))
@@ -167,6 +252,11 @@ class HTTP_SERVER():
     async def uploadBlendFileToBlobStorage(self, blend_file: UploadFile, bucket: str, key: str):
         print(blend_file)
         try:
+            # Ensure bucket exists before uploading
+            bucket_created = await self.ensure_bucket_exists(bucket)
+            if not bucket_created:
+                return {"error": f"Failed to create bucket '{bucket}'"}
+            
             contents = await blend_file.read()
             self.client.put_object(Bucket=bucket, Key=key, Body=contents)
             return {"filename": blend_file.filename}
@@ -175,6 +265,11 @@ class HTTP_SERVER():
         
     async def retrieveBlendFileFromBlobStorage(self, bucket: str, key: str):
         try:
+            # Ensure bucket exists before retrieving
+            bucket_created = await self.ensure_bucket_exists(bucket)
+            if not bucket_created:
+                return {"error": f"Failed to create bucket '{bucket}'"}
+            
             response = self.client.get_object(Bucket=bucket, Key=key)
             data = response['Body'].read()
             print(type(data))
