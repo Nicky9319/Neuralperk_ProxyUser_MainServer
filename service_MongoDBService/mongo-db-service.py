@@ -83,6 +83,10 @@ class HTTP_SERVER():
             return datetime.fromisoformat(field["$date"].replace("Z", "+00:00"))
         return field
 
+    def generate_uuid(self):
+        """Generate a unique UUID string"""
+        return str(uuid.uuid4())
+
        
     async def configure_routes(self):
         # ========================================
@@ -100,26 +104,29 @@ class HTTP_SERVER():
         @self.app.post("/api/mongodb-service/customers/add")
         async def add_customer(request: Request):
             """Add a new customer to the database
-            Required fields: customerId, email, password
-            Returns: Success message with customer details
+            Required fields: email, password
+            Returns: Success message with customer details including auto-generated customerId
             """
             try:
                 body = await request.json()
                 
                 # Validate required fields
-                required_fields = ["customerId", "email", "password"]
+                required_fields = ["email", "password"]
                 for field in required_fields:
                     if field not in body:
                         raise HTTPException(status_code=400, detail=f"Missing required field: {field}")
                 
-                # Check if customer already exists
-                existing_customer = self.customers_collection.find_one({"customerId": body["customerId"]})
+                # Check if customer already exists by email
+                existing_customer = self.customers_collection.find_one({"email": body["email"]})
                 if existing_customer:
-                    raise HTTPException(status_code=409, detail="Customer with this ID already exists")
+                    raise HTTPException(status_code=409, detail="Customer with this email already exists")
+                
+                # Generate unique customer ID
+                customer_id = self.generate_uuid()
                 
                 # Create customer document
                 customer_doc = {
-                    "customerId": body["customerId"],
+                    "customerId": customer_id,
                     "email": body["email"],
                     "password": body["password"]
                 }
@@ -129,7 +136,7 @@ class HTTP_SERVER():
                 return JSONResponse(
                     content={
                         "message": "Customer added successfully",
-                        "customerId": body["customerId"],
+                        "customerId": customer_id,
                         "email": body["email"]
                     },
                     status_code=201
@@ -208,15 +215,15 @@ class HTTP_SERVER():
         @self.app.post("/api/mongodb-service/blender-objects/add")
         async def add_blender_object(request: Request):
             """Add a new blender object to the database
-            Required fields: objectId, customerId
+            Required fields: customerId
             Optional fields: blendFileName, blendFilePath, renderedVideoPath
-            Returns: Success message with object details
+            Returns: Success message with object details including auto-generated objectId
             """
             try:
                 body = await request.json()
                 
                 # Validate required fields
-                required_fields = ["objectId", "customerId"]
+                required_fields = ["customerId"]
                 for field in required_fields:
                     if field not in body:
                         raise HTTPException(status_code=400, detail=f"Missing required field: {field}")
@@ -226,14 +233,12 @@ class HTTP_SERVER():
                 if not customer:
                     raise HTTPException(status_code=404, detail="Customer not found")
                 
-                # Check if object already exists
-                existing_object = self.blender_objects_collection.find_one({"objectId": body["objectId"]})
-                if existing_object:
-                    raise HTTPException(status_code=409, detail="Object with this ID already exists")
+                # Generate unique object ID
+                object_id = self.generate_uuid()
                 
                 # Create blender object document
                 object_doc = {
-                    "objectId": body["objectId"],
+                    "objectId": object_id,
                     "blendFileName": body.get("blendFileName", None),
                     "blendFilePath": body.get("blendFilePath", None),
                     "renderedVideoPath": body.get("renderedVideoPath", None),
@@ -245,7 +250,7 @@ class HTTP_SERVER():
                 return JSONResponse(
                     content={
                         "message": "Blender object added successfully",
-                        "objectId": body["objectId"],
+                        "objectId": object_id,
                         "customerId": body["customerId"],
                         "blendFileName": object_doc["blendFileName"]
                     },
@@ -350,15 +355,15 @@ class HTTP_SERVER():
         @self.app.post("/api/mongodb-service/sessions/add")
         async def add_session(request: Request):
             """Add a new session to the database
-            Required fields: sessionId, customerId, blenderObjectId
+            Required fields: customerId, blenderObjectId
             Optional fields: status (defaults to 'queued')
-            Returns: Success message with session details
+            Returns: Success message with session details including auto-generated sessionId
             """
             try:
                 body = await request.json()
                 
                 # Validate required fields
-                required_fields = ["sessionId", "customerId", "blenderObjectId"]
+                required_fields = ["customerId", "blenderObjectId"]
                 for field in required_fields:
                     if field not in body:
                         raise HTTPException(status_code=400, detail=f"Missing required field: {field}")
@@ -373,14 +378,12 @@ class HTTP_SERVER():
                 if not blender_object:
                     raise HTTPException(status_code=404, detail="Blender object not found")
                 
-                # Check if session already exists
-                existing_session = self.sessions_collection.find_one({"sessionId": body["sessionId"]})
-                if existing_session:
-                    raise HTTPException(status_code=409, detail="Session with this ID already exists")
+                # Generate unique session ID
+                session_id = self.generate_uuid()
                 
                 # Create session document with default status 'queued'
                 session_doc = {
-                    "sessionId": body["sessionId"],
+                    "sessionId": session_id,
                     "customerId": body["customerId"],
                     "blenderObjectId": body["blenderObjectId"],
                     "status": body.get("status", "queued")
@@ -391,7 +394,7 @@ class HTTP_SERVER():
                 return JSONResponse(
                     content={
                         "message": "Session added successfully",
-                        "sessionId": body["sessionId"],
+                        "sessionId": session_id,
                         "status": session_doc["status"]
                     },
                     status_code=201
