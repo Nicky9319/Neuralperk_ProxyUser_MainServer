@@ -132,3 +132,7 @@ Applied schema validation to collection: sessions
 INFO:     127.0.0.1:51264 - "GET /api/mongodb-service/customers/check/785b969d-bd50-4a03-bbd9-8a766d7a553b HTTP/1.1" 200 OK
 INFO:     127.0.0.1:51276 - "POST /api/mongodb-service/blender-objects/add HTTP/1.1" 201 Created
 INFO:     127.0.0.1:51276 - "PUT /api/mongodb-service/blender-objects/update-blend-file HTTP/1.1" 200 OK
+Applied schema validation to collection: customers
+Applied schema validation to collection: blenderObjects
+Applied schema validation to collection: sessions
+INFO:     127.0.0.1:43896 - "GET /api/mongodb-service/customers/check/785b969d-bd50-4a03-bbd9-8a766d7a553b HTTP/1.1" 200 OK

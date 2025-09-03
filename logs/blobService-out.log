@@ -32,3 +32,6 @@ Bucket: blend-files
 Key: 785b969d-bd50-4a03-bbd9-8a766d7a553b/89570626-513d-4078-b36a-b72a88b92250/test_character_model.blend
 UploadFile(filename='test_character_model', size=171421576, headers=Headers({'content-disposition': 'form-data; name="blend_file"; filename="test_character_model"', 'content-type': 'application/octet-stream'}))
 INFO:     127.0.0.1:51778 - "POST /api/blob-service/store-blend HTTP/1.1" 200 OK
+Bucket 'blend-files' already exists
+Bucket 'rendered-videos' already exists
+Bucket 'rendered-frames' already exists

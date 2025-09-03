@@ -82,3 +82,8 @@ Storing blend file in blob storage...
 Blend file stored successfully: {'message': 'Blend file stored successfully', 'filename': 'test_character_model', 'bucket': 'blend-files', 'key': '785b969d-bd50-4a03-bbd9-8a766d7a553b/89570626-513d-4078-b36a-b72a88b92250/test_character_model.blend'}
 Updating MongoDB object with blend file path...
 INFO:     127.0.0.1:36192 - "POST /api/customer-service/upload-blend-file HTTP/1.1" 200 OK
+INFO:     127.0.0.1:47502 - "GET /api/customer-service/start-workload HTTP/1.1" 405 Method Not Allowed
+785b969d-bd50-4a03-bbd9-8a766d7a553b
+Access token from header: 785b969d-bd50-4a03-bbd9-8a766d7a553b
+Start workload endpoint hit for customer: 785b969d-bd50-4a03-bbd9-8a766d7a553b
+INFO:     127.0.0.1:47502 - "POST /api/customer-service/start-workload HTTP/1.1" 200 OK

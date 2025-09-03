@@ -8,6 +8,8 @@ import sys
 
 import pickle
 
+import aio_pika
+
 # Embedded MessageQueue class
 class MessageQueue:
     def __init__(self, ConnectionURL="amqp://guest:guest@localhost/", ExchangeName="/"):

@@ -32,3 +32,4 @@ INFO:     127.0.0.1:47236 - "POST /api/auth-service/register HTTP/1.1" 201 Creat
 INFO:     127.0.0.1:38658 - "POST /api/auth-service/authenticate_customer_id HTTP/1.1" 200 OK
 INFO:     127.0.0.1:48408 - "POST /api/auth-service/authenticate_customer_id HTTP/1.1" 200 OK
 INFO:     127.0.0.1:42530 - "POST /api/auth-service/authenticate_customer_id HTTP/1.1" 200 OK
+INFO:     127.0.0.1:48204 - "POST /api/auth-service/authenticate_customer_id HTTP/1.1" 200 OK
