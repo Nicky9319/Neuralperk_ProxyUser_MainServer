@@ -43,7 +43,40 @@ class HTTP_SERVER():
         self.customers_collection = self.db["customers"]
         self.blender_objects_collection = self.db["blenderObjects"]
         self.sessions_collection = self.db["sessions"]
+        
+        # Apply schema validation
+        self.apply_schema_validation()
 
+    def apply_schema_validation(self):
+        """Apply MongoDB schema validation to collections"""
+        try:
+            # Load schema from file
+            schema_file_path = os.path.join(os.path.dirname(__file__), 'mongo-db-schema.json')
+            with open(schema_file_path, 'r') as f:
+                schema = json.load(f)
+            
+            # Apply validation to each collection
+            for collection_config in schema['collections']:
+                collection_name = collection_config['name']
+                collection = self.db[collection_name]
+                
+                # Check if collection exists, if not create it
+                if collection_name not in self.db.list_collection_names():
+                    self.db.create_collection(collection_name)
+                
+                # Apply schema validation
+                self.db.command({
+                    'collMod': collection_name,
+                    'validator': collection_config['validator'],
+                    'validationLevel': collection_config['validationLevel'],
+                    'validationAction': collection_config['validationAction']
+                })
+                
+                print(f"Applied schema validation to collection: {collection_name}")
+                
+        except Exception as e:
+            print(f"Warning: Could not apply schema validation: {str(e)}")
+            print("Collections will use default validation")
 
     def parse_date_time(self,field):
         if isinstance(field, dict) and "$date" in field:

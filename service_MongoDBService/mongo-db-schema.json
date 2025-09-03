@@ -33,15 +33,15 @@
         "$jsonSchema": {
           "bsonType": "object",
           "title": "blenderObjects",
-          "required": ["objectId", "blendFilePath", "customerId"],
+          "required": ["objectId", "customerId"],
           "properties": {
             "objectId": {
               "bsonType": "string",
               "description": "unique object identifier, must be a string and is required"
             },
             "blendFilePath": {
-              "bsonType": "string",
-              "description": "must be a string and is required"
+              "bsonType": ["string", "null"],
+              "description": "must be a string if present, or null if not available"
             },
             "renderedVideoPath": {
               "bsonType": ["string", "null"],
