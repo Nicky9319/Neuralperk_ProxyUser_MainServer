@@ -1,0 +1,55 @@
+{
+    "database": "neuralperk",
+    "collections": {
+        "customers": {
+            "validator": {
+                "$jsonSchema": {
+                    "bsonType": "object",
+                    "title": "customers",
+                    "required": [
+                        "email",
+                        "password",
+                        "blenderObjects"
+                    ],
+                    "properties": {
+                        "email": {
+                            "bsonType": "string",
+                            "description": "must be a string and is required"
+                        },
+                        "password": {
+                            "bsonType": "string",
+                            "description": "must be a string and is required"
+                        },
+                        "blenderObjects": {
+                            "bsonType": "array",
+                            "description": "must be an array of blender object details",
+                            "items": {
+                                "bsonType": "object",
+                                "required": [
+                                    "blendFilePath",
+                                    "renderingObjectId"
+                                ],
+                                "properties": {
+                                    "blendFilePath": {
+                                        "bsonType": "string",
+                                        "description": "must be a string and is required"
+                                    },
+                                    "renderedVideoPath": {
+                                        "bsonType": "string",
+                                        "description": "must be a string if present"
+                                    },
+                                    "renderingObjectId": {
+                                        "bsonType": "string",
+                                        "description": "must be a string and is required"
+                                    }
+                                },
+                                "additionalProperties": false
+                            }
+                        }
+                    },
+                    "additionalProperties": false
+                }
+            }
+        }
+    }
+}
