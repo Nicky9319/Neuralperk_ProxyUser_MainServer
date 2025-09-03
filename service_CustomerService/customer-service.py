@@ -1,6 +1,7 @@
 import asyncio
 
 from fastapi import FastAPI, Response, Request, HTTPException, Depends, File, Form, UploadFile
+from fastapi.responses import StreamingResponse
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 
@@ -70,6 +71,7 @@ class HTTP_SERVER():
         Middleware function to authenticate the access token (customerId)
         This function will be called before any protected endpoint
         """
+        print("Authenticating token... is being processed...")
         if not credentials:
             raise HTTPException(
                 status_code=401, 
@@ -119,6 +121,25 @@ class HTTP_SERVER():
                 detail=f"Authentication error: {str(e)}"
             )
 
+    async def getCustomerIdFromAuthorizationHeader(self, access_token: HTTPAuthorizationCredentials = Depends(security)):
+        try:
+            if not access_token:
+                raise HTTPException(
+                    status_code=401,
+                    detail="Access token missing or invalid",
+                    headers={"WWW-Authenticate": "Bearer"}
+                )
+            return access_token.credentials
+        except HTTPException as http_exc:
+            raise http_exc
+        except Exception as e:
+            raise HTTPException(
+                status_code=500,
+                detail=f"Error extracting access token: {str(e)}"
+            )
+        
+
+
     async def configure_routes(self):
 
         # @self.app.post("/api/customer-service/test-auth")
@@ -143,12 +164,15 @@ class HTTP_SERVER():
         async def uploadBlendFile(
             blend_file_name: str = Form(...),
             blend_file: UploadFile = File(...),
-            customer_id: str = Form(...),
-            access_token: str = Depends(self.authenticate_token)
+            # customer_id: str = Form(...),
+            access_token: str = Depends(self.authenticate_token),
+            customer_id: str = Depends(self.getCustomerIdFromAuthorizationHeader)
         ):
             print(f"Upload blend file endpoint hit for customer: {customer_id}")
             print(f"Blend file name: {blend_file_name}")
             print(f"Blend file size: {blend_file.size} bytes")
+            print(f"access token: {access_token}")
+            print(f"customer id from authorization header: {customer_id}")
             
             try:
                 # Step 1: Create empty blender object in MongoDB
@@ -247,6 +271,7 @@ class HTTP_SERVER():
         async def startWorkload(
             request: Request, 
             access_token: str = Depends(self.authenticate_token),
+            customer_id: str = Depends(self.getCustomerIdFromAuthorizationHeader),
             object_id: str = Form(...)
         ):
             try:
@@ -296,7 +321,8 @@ class HTTP_SERVER():
         @self.app.post("/api/customer-service/get-workload-status")
         async def getWorkloadStatus(
             request: Request, 
-            access_token: str = Depends(self.authenticate_token)
+            access_token: str = Depends(self.authenticate_token),
+            customer_id: str = Depends(self.getCustomerIdFromAuthorizationHeader)
         ):
             try:
                 print(f"Get workload status endpoint hit for customer: {access_token}")
@@ -324,7 +350,8 @@ class HTTP_SERVER():
         @self.app.post("/api/customer-service/stop-and-delete-workload")
         async def getWorkloadResults(
             request: Request, 
-            access_token: str = Depends(self.authenticate_token)
+            access_token: str = Depends(self.authenticate_token),
+            customer_id: str = Depends(self.getCustomerIdFromAuthorizationHeader)
         ):
             try:
                 print(f"Stop and delete workload endpoint hit for customer: {access_token}")
@@ -350,16 +377,112 @@ class HTTP_SERVER():
                 print(f"Error in stopAndDeleteWorkload: {traceback.format_exc()}")
                 raise HTTPException(status_code=500, detail=f"Internal server error: {str(e)}")
                 
-        @self.app.post("/api/customer-service/get-blend-file")
+        @self.app.get("/api/customer-service/get-blend-file/{object_id}")
         async def getBlendFile(
-            request: Request, 
-            customer_id: str = Depends(self.authenticate_token)
+            object_id: str,
+            access_token: str = Depends(self.authenticate_token),
+            customer_id: str = Depends(self.getCustomerIdFromAuthorizationHeader)
         ):
             print(f"Get blend file endpoint hit for customer: {customer_id}")
-            # TODO: Implement actual business logic
-            return JSONResponse(content={"message": "Get blend file endpoint", "customer_id": customer_id}, status_code=200)
+            print(f"Requested object ID: {object_id}")
+            
+            try:
+                # Step 1: Get the blend file path from MongoDB
+                print("Retrieving blend file path from MongoDB...")
+                mongo_response = await self.http_client.get(
+                    f"{self.mongodb_service_url}/api/mongodb-service/blender-objects/get-blend-file-name/{object_id}",
+                    params={"customer_id": access_token}
+                )
+                
+                if mongo_response.status_code != 200:
+                    raise HTTPException(
+                        status_code=404,
+                        detail=f"Blend file not found: {mongo_response.text}"
+                    )
+                
+                mongo_result = mongo_response.json()
+                print(mongo_result)
+                blend_file_path = mongo_result.get("blendFilePath")
+                
+                if not blend_file_path:
+                    raise HTTPException(
+                        status_code=404,
+                        detail="Blend file path not found in database"
+                    )
+                
+                print(f"Found blend file path: {blend_file_path}")
+                
+                # Step 2: Extract bucket and key from the path
+                # Path format: customer_id/object_id/filename.blend
+                path_parts = blend_file_path.split('/')
+                if len(path_parts) != 3:
+                    raise HTTPException(
+                        status_code=500,
+                        detail=f"Invalid blend file path format: {blend_file_path}"
+                    )
+                
+                bucket = "blend-files"  # Fixed bucket for blend files
+                key = blend_file_path
+                
+                print(f"Retrieving from bucket: {bucket}, key: {key}")
+                
+                # Step 3: Proxy the response directly from blob service to client
+                print(f"Proxying blend file from blob service...")
+                
+                # Create a streaming response that proxies the blob service
+                async def proxy_blend_file():
+                    try:
+                        async with httpx.AsyncClient() as proxy_client:
+                            async with proxy_client.stream(
+                                "GET",
+                                f"{self.blob_service_url}/api/blob-service/retrieve-blend",
+                                params={
+                                    "bucket": bucket,
+                                    "key": key
+                                }
+                            ) as response:
+                                if response.status_code != 200:
+                                    # If blob service fails, we need to handle it differently
+                                    error_content = await response.aread()
+                                    raise HTTPException(
+                                        status_code=response.status_code,
+                                        detail=f"Blob service error: {error_content.decode()}"
+                                    )
+                                
+                                # Stream the response directly to the client
+                                async for chunk in response.aiter_bytes():
+                                    yield chunk
+                                
+                    except Exception as e:
+                        print(f"Error in proxy stream: {str(e)}")
+                        raise HTTPException(
+                            status_code=500,
+                            detail=f"Failed to proxy blend file: {str(e)}"
+                        )
+                
+                # Return streaming response with proper headers
+                file_name = path_parts[2]  # filename.blend
+                print(f"Proxying blend file: {file_name}")
+                
+                return StreamingResponse(
+                    proxy_blend_file(),
+                    media_type="application/octet-stream",
+                    headers={
+                        "Content-Disposition": f"attachment; filename=\"{file_name}\"",
+                        "Cache-Control": "no-cache"
+                    }
+                )
+                
+            except HTTPException:
+                raise
+            except Exception as e:
+                print(f"Error retrieving blend file: {str(e)}")
+                raise HTTPException(
+                    status_code=500,
+                    detail=f"Failed to retrieve blend file: {str(e)}"
+                )
     
-        @self.app.post("/api/customer-service/get-rendered-video")
+        @self.app.get("/api/customer-service/get-rendered-video")
         async def getRenderedVideo(
             request: Request, 
             customer_id: str = Depends(self.authenticate_token)

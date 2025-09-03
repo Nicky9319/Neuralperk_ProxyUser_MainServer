@@ -1860,3 +1860,893 @@ INFO:     Started server process [102245]
 INFO:     Waiting for application startup.
 INFO:     Application startup complete.
 INFO:     Uvicorn running on http://0.0.0.0:11000 (Press CTRL+C to quit)
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [102245]
+Traceback (most recent call last):
+  File "/usr/lib/python3.12/asyncio/runners.py", line 118, in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/asyncio/base_events.py", line 691, in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+asyncio.exceptions.CancelledError
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/paarth/Neuralperk_ProxyUser_MainServer/service_CustomerService/customer-service.py", line 348, in <module>
+    except Exception as e:
+^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/asyncio/runners.py", line 195, in run
+    return runner.run(main)
+           ^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/asyncio/runners.py", line 123, in run
+    raise KeyboardInterrupt()
+KeyboardInterrupt
+Traceback (most recent call last):
+  File "/home/paarth/Neuralperk_ProxyUser_MainServer/service_CustomerService/customer-service.py", line 3, in <module>
+    from fastapi import FastAPI, Response, Request, HTTPException, Depends, File, Form, UploadFile, StreamingResponse
+ImportError: cannot import name 'StreamingResponse' from 'fastapi' (/home/paarth/Neuralperk_ProxyUser_MainServer/.venv/lib/python3.12/site-packages/fastapi/__init__.py)
+Traceback (most recent call last):
+  File "/home/paarth/Neuralperk_ProxyUser_MainServer/service_CustomerService/customer-service.py", line 3, in <module>
+    from fastapi import FastAPI, Response, Request, HTTPException, Depends, File, Form, UploadFile, StreamingResponse
+ImportError: cannot import name 'StreamingResponse' from 'fastapi' (/home/paarth/Neuralperk_ProxyUser_MainServer/.venv/lib/python3.12/site-packages/fastapi/__init__.py)
+Traceback (most recent call last):
+  File "/home/paarth/Neuralperk_ProxyUser_MainServer/service_CustomerService/customer-service.py", line 3, in <module>
+    from fastapi import FastAPI, Response, Request, HTTPException, Depends, File, Form, UploadFile, StreamingResponse
+ImportError: cannot import name 'StreamingResponse' from 'fastapi' (/home/paarth/Neuralperk_ProxyUser_MainServer/.venv/lib/python3.12/site-packages/fastapi/__init__.py)
+Traceback (most recent call last):
+  File "/home/paarth/Neuralperk_ProxyUser_MainServer/service_CustomerService/customer-service.py", line 3, in <module>
+    from fastapi import FastAPI, Response, Request, HTTPException, Depends, File, Form, UploadFile, StreamingResponse
+ImportError: cannot import name 'StreamingResponse' from 'fastapi' (/home/paarth/Neuralperk_ProxyUser_MainServer/.venv/lib/python3.12/site-packages/fastapi/__init__.py)
+Traceback (most recent call last):
+  File "/home/paarth/Neuralperk_ProxyUser_MainServer/service_CustomerService/customer-service.py", line 3, in <module>
+    from fastapi import FastAPI, Response, Request, HTTPException, Depends, File, Form, UploadFile, StreamingResponse
+ImportError: cannot import name 'StreamingResponse' from 'fastapi' (/home/paarth/Neuralperk_ProxyUser_MainServer/.venv/lib/python3.12/site-packages/fastapi/__init__.py)
+Traceback (most recent call last):
+  File "/home/paarth/Neuralperk_ProxyUser_MainServer/service_CustomerService/customer-service.py", line 3, in <module>
+    from fastapi import FastAPI, Response, Request, HTTPException, Depends, File, Form, UploadFile, StreamingResponse
+ImportError: cannot import name 'StreamingResponse' from 'fastapi' (/home/paarth/Neuralperk_ProxyUser_MainServer/.venv/lib/python3.12/site-packages/fastapi/__init__.py)
+Traceback (most recent call last):
+  File "/home/paarth/Neuralperk_ProxyUser_MainServer/service_CustomerService/customer-service.py", line 3, in <module>
+    from fastapi import FastAPI, Response, Request, HTTPException, Depends, File, Form, UploadFile, StreamingResponse
+ImportError: cannot import name 'StreamingResponse' from 'fastapi' (/home/paarth/Neuralperk_ProxyUser_MainServer/.venv/lib/python3.12/site-packages/fastapi/__init__.py)
+Traceback (most recent call last):
+  File "/home/paarth/Neuralperk_ProxyUser_MainServer/service_CustomerService/customer-service.py", line 3, in <module>
+    from fastapi import FastAPI, Response, Request, HTTPException, Depends, File, Form, UploadFile, StreamingResponse
+ImportError: cannot import name 'StreamingResponse' from 'fastapi' (/home/paarth/Neuralperk_ProxyUser_MainServer/.venv/lib/python3.12/site-packages/fastapi/__init__.py)
+Traceback (most recent call last):
+  File "/home/paarth/Neuralperk_ProxyUser_MainServer/service_CustomerService/customer-service.py", line 3, in <module>
+    from fastapi import FastAPI, Response, Request, HTTPException, Depends, File, Form, UploadFile, StreamingResponse
+ImportError: cannot import name 'StreamingResponse' from 'fastapi' (/home/paarth/Neuralperk_ProxyUser_MainServer/.venv/lib/python3.12/site-packages/fastapi/__init__.py)
+Traceback (most recent call last):
+  File "/home/paarth/Neuralperk_ProxyUser_MainServer/service_CustomerService/customer-service.py", line 3, in <module>
+    from fastapi import FastAPI, Response, Request, HTTPException, Depends, File, Form, UploadFile, StreamingResponse
+ImportError: cannot import name 'StreamingResponse' from 'fastapi' (/home/paarth/Neuralperk_ProxyUser_MainServer/.venv/lib/python3.12/site-packages/fastapi/__init__.py)
+Traceback (most recent call last):
+  File "/home/paarth/Neuralperk_ProxyUser_MainServer/service_CustomerService/customer-service.py", line 3, in <module>
+    from fastapi import FastAPI, Response, Request, HTTPException, Depends, File, Form, UploadFile, StreamingResponse
+ImportError: cannot import name 'StreamingResponse' from 'fastapi' (/home/paarth/Neuralperk_ProxyUser_MainServer/.venv/lib/python3.12/site-packages/fastapi/__init__.py)
+Traceback (most recent call last):
+  File "/home/paarth/Neuralperk_ProxyUser_MainServer/service_CustomerService/customer-service.py", line 3, in <module>
+    from fastapi import FastAPI, Response, Request, HTTPException, Depends, File, Form, UploadFile, StreamingResponse
+ImportError: cannot import name 'StreamingResponse' from 'fastapi' (/home/paarth/Neuralperk_ProxyUser_MainServer/.venv/lib/python3.12/site-packages/fastapi/__init__.py)
+Traceback (most recent call last):
+  File "/home/paarth/Neuralperk_ProxyUser_MainServer/service_CustomerService/customer-service.py", line 3, in <module>
+    from fastapi import FastAPI, Response, Request, HTTPException, Depends, File, Form, UploadFile, StreamingResponse
+ImportError: cannot import name 'StreamingResponse' from 'fastapi' (/home/paarth/Neuralperk_ProxyUser_MainServer/.venv/lib/python3.12/site-packages/fastapi/__init__.py)
+Traceback (most recent call last):
+  File "/home/paarth/Neuralperk_ProxyUser_MainServer/service_CustomerService/customer-service.py", line 3, in <module>
+    from fastapi import FastAPI, Response, Request, HTTPException, Depends, File, Form, UploadFile, StreamingResponse
+ImportError: cannot import name 'StreamingResponse' from 'fastapi' (/home/paarth/Neuralperk_ProxyUser_MainServer/.venv/lib/python3.12/site-packages/fastapi/__init__.py)
+Traceback (most recent call last):
+  File "/home/paarth/Neuralperk_ProxyUser_MainServer/service_CustomerService/customer-service.py", line 3, in <module>
+    from fastapi import FastAPI, Response, Request, HTTPException, Depends, File, Form, UploadFile, StreamingResponse
+ImportError: cannot import name 'StreamingResponse' from 'fastapi' (/home/paarth/Neuralperk_ProxyUser_MainServer/.venv/lib/python3.12/site-packages/fastapi/__init__.py)
+Traceback (most recent call last):
+  File "/home/paarth/Neuralperk_ProxyUser_MainServer/service_CustomerService/customer-service.py", line 3, in <module>
+    from fastapi import FastAPI, Response, Request, HTTPException, Depends, File, Form, UploadFile, StreamingResponse
+ImportError: cannot import name 'StreamingResponse' from 'fastapi' (/home/paarth/Neuralperk_ProxyUser_MainServer/.venv/lib/python3.12/site-packages/fastapi/__init__.py)
+Traceback (most recent call last):
+  File "/home/paarth/Neuralperk_ProxyUser_MainServer/service_CustomerService/customer-service.py", line 3, in <module>
+    from fastapi import FastAPI, Response, Request, HTTPException, Depends, File, Form, UploadFile, StreamingResponse
+ImportError: cannot import name 'StreamingResponse' from 'fastapi' (/home/paarth/Neuralperk_ProxyUser_MainServer/.venv/lib/python3.12/site-packages/fastapi/__init__.py)
+Traceback (most recent call last):
+  File "/home/paarth/Neuralperk_ProxyUser_MainServer/service_CustomerService/customer-service.py", line 3, in <module>
+    from fastapi import FastAPI, Response, Request, HTTPException, Depends, File, Form, UploadFile, StreamingResponse
+ImportError: cannot import name 'StreamingResponse' from 'fastapi' (/home/paarth/Neuralperk_ProxyUser_MainServer/.venv/lib/python3.12/site-packages/fastapi/__init__.py)
+Traceback (most recent call last):
+  File "/home/paarth/Neuralperk_ProxyUser_MainServer/service_CustomerService/customer-service.py", line 3, in <module>
+    from fastapi import FastAPI, Response, Request, HTTPException, Depends, File, Form, UploadFile, StreamingResponse
+ImportError: cannot import name 'StreamingResponse' from 'fastapi' (/home/paarth/Neuralperk_ProxyUser_MainServer/.venv/lib/python3.12/site-packages/fastapi/__init__.py)
+Traceback (most recent call last):
+  File "/home/paarth/Neuralperk_ProxyUser_MainServer/service_CustomerService/customer-service.py", line 3, in <module>
+    from fastapi import FastAPI, Response, Request, HTTPException, Depends, File, Form, UploadFile, StreamingResponse
+ImportError: cannot import name 'StreamingResponse' from 'fastapi' (/home/paarth/Neuralperk_ProxyUser_MainServer/.venv/lib/python3.12/site-packages/fastapi/__init__.py)
+Traceback (most recent call last):
+  File "/home/paarth/Neuralperk_ProxyUser_MainServer/service_CustomerService/customer-service.py", line 3, in <module>
+    from fastapi import FastAPI, Response, Request, HTTPException, Depends, File, Form, UploadFile, StreamingResponse
+ImportError: cannot import name 'StreamingResponse' from 'fastapi' (/home/paarth/Neuralperk_ProxyUser_MainServer/.venv/lib/python3.12/site-packages/fastapi/__init__.py)
+Traceback (most recent call last):
+  File "/home/paarth/Neuralperk_ProxyUser_MainServer/service_CustomerService/customer-service.py", line 3, in <module>
+    from fastapi import FastAPI, Response, Request, HTTPException, Depends, File, Form, UploadFile, StreamingResponse
+ImportError: cannot import name 'StreamingResponse' from 'fastapi' (/home/paarth/Neuralperk_ProxyUser_MainServer/.venv/lib/python3.12/site-packages/fastapi/__init__.py)
+Traceback (most recent call last):
+  File "/home/paarth/Neuralperk_ProxyUser_MainServer/service_CustomerService/customer-service.py", line 3, in <module>
+    from fastapi import FastAPI, Response, Request, HTTPException, Depends, File, Form, UploadFile, StreamingResponse
+ImportError: cannot import name 'StreamingResponse' from 'fastapi' (/home/paarth/Neuralperk_ProxyUser_MainServer/.venv/lib/python3.12/site-packages/fastapi/__init__.py)
+Traceback (most recent call last):
+  File "/home/paarth/Neuralperk_ProxyUser_MainServer/service_CustomerService/customer-service.py", line 3, in <module>
+    from fastapi import FastAPI, Response, Request, HTTPException, Depends, File, Form, UploadFile, StreamingResponse
+ImportError: cannot import name 'StreamingResponse' from 'fastapi' (/home/paarth/Neuralperk_ProxyUser_MainServer/.venv/lib/python3.12/site-packages/fastapi/__init__.py)
+Traceback (most recent call last):
+  File "/home/paarth/Neuralperk_ProxyUser_MainServer/service_CustomerService/customer-service.py", line 3, in <module>
+    from fastapi import FastAPI, Response, Request, HTTPException, Depends, File, Form, UploadFile, StreamingResponse
+ImportError: cannot import name 'StreamingResponse' from 'fastapi' (/home/paarth/Neuralperk_ProxyUser_MainServer/.venv/lib/python3.12/site-packages/fastapi/__init__.py)
+Traceback (most recent call last):
+  File "/home/paarth/Neuralperk_ProxyUser_MainServer/service_CustomerService/customer-service.py", line 3, in <module>
+    from fastapi import FastAPI, Response, Request, HTTPException, Depends, File, Form, UploadFile, StreamingResponse
+ImportError: cannot import name 'StreamingResponse' from 'fastapi' (/home/paarth/Neuralperk_ProxyUser_MainServer/.venv/lib/python3.12/site-packages/fastapi/__init__.py)
+Traceback (most recent call last):
+  File "/home/paarth/Neuralperk_ProxyUser_MainServer/service_CustomerService/customer-service.py", line 3, in <module>
+    from fastapi import FastAPI, Response, Request, HTTPException, Depends, File, Form, UploadFile, StreamingResponse
+ImportError: cannot import name 'StreamingResponse' from 'fastapi' (/home/paarth/Neuralperk_ProxyUser_MainServer/.venv/lib/python3.12/site-packages/fastapi/__init__.py)
+Traceback (most recent call last):
+  File "/home/paarth/Neuralperk_ProxyUser_MainServer/service_CustomerService/customer-service.py", line 3, in <module>
+    from fastapi import FastAPI, Response, Request, HTTPException, Depends, File, Form, UploadFile, StreamingResponse
+ImportError: cannot import name 'StreamingResponse' from 'fastapi' (/home/paarth/Neuralperk_ProxyUser_MainServer/.venv/lib/python3.12/site-packages/fastapi/__init__.py)
+Traceback (most recent call last):
+  File "/home/paarth/Neuralperk_ProxyUser_MainServer/service_CustomerService/customer-service.py", line 3, in <module>
+    from fastapi import FastAPI, Response, Request, HTTPException, Depends, File, Form, UploadFile, StreamingResponse
+ImportError: cannot import name 'StreamingResponse' from 'fastapi' (/home/paarth/Neuralperk_ProxyUser_MainServer/.venv/lib/python3.12/site-packages/fastapi/__init__.py)
+Traceback (most recent call last):
+  File "/home/paarth/Neuralperk_ProxyUser_MainServer/service_CustomerService/customer-service.py", line 3, in <module>
+    from fastapi import FastAPI, Response, Request, HTTPException, Depends, File, Form, UploadFile, StreamingResponse
+ImportError: cannot import name 'StreamingResponse' from 'fastapi' (/home/paarth/Neuralperk_ProxyUser_MainServer/.venv/lib/python3.12/site-packages/fastapi/__init__.py)
+Traceback (most recent call last):
+  File "/home/paarth/Neuralperk_ProxyUser_MainServer/service_CustomerService/customer-service.py", line 3, in <module>
+    from fastapi import FastAPI, Response, Request, HTTPException, Depends, File, Form, UploadFile, StreamingResponse
+ImportError: cannot import name 'StreamingResponse' from 'fastapi' (/home/paarth/Neuralperk_ProxyUser_MainServer/.venv/lib/python3.12/site-packages/fastapi/__init__.py)
+Traceback (most recent call last):
+  File "/home/paarth/Neuralperk_ProxyUser_MainServer/service_CustomerService/customer-service.py", line 3, in <module>
+    from fastapi import FastAPI, Response, Request, HTTPException, Depends, File, Form, UploadFile, StreamingResponse
+ImportError: cannot import name 'StreamingResponse' from 'fastapi' (/home/paarth/Neuralperk_ProxyUser_MainServer/.venv/lib/python3.12/site-packages/fastapi/__init__.py)
+INFO:     Started server process [107839]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://0.0.0.0:11000 (Press CTRL+C to quit)
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [107839]
+Traceback (most recent call last):
+  File "/usr/lib/python3.12/asyncio/runners.py", line 118, in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/asyncio/base_events.py", line 691, in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+asyncio.exceptions.CancelledError
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/paarth/Neuralperk_ProxyUser_MainServer/service_CustomerService/customer-service.py", line 536, in <module>
+    asyncio.run(start_service())
+  File "/usr/lib/python3.12/asyncio/runners.py", line 195, in run
+    return runner.run(main)
+           ^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/asyncio/runners.py", line 123, in run
+    raise KeyboardInterrupt()
+KeyboardInterrupt
+INFO:     Started server process [108577]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://0.0.0.0:11000 (Press CTRL+C to quit)
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [108577]
+Traceback (most recent call last):
+  File "/usr/lib/python3.12/asyncio/runners.py", line 118, in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/asyncio/base_events.py", line 691, in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+asyncio.exceptions.CancelledError
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/paarth/Neuralperk_ProxyUser_MainServer/service_CustomerService/customer-service.py", line 536, in <module>
+    asyncio.run(start_service())
+  File "/usr/lib/python3.12/asyncio/runners.py", line 195, in run
+    return runner.run(main)
+           ^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/asyncio/runners.py", line 123, in run
+    raise KeyboardInterrupt()
+KeyboardInterrupt
+INFO:     Started server process [108783]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://0.0.0.0:11000 (Press CTRL+C to quit)
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [108783]
+Traceback (most recent call last):
+  File "/usr/lib/python3.12/asyncio/runners.py", line 118, in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/asyncio/base_events.py", line 691, in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+asyncio.exceptions.CancelledError
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/paarth/Neuralperk_ProxyUser_MainServer/service_CustomerService/customer-service.py", line 536, in <module>
+    if __name__ == "__main__":
+        ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/asyncio/runners.py", line 195, in run
+    return runner.run(main)
+           ^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/asyncio/runners.py", line 123, in run
+    raise KeyboardInterrupt()
+KeyboardInterrupt
+INFO:     Started server process [109027]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://0.0.0.0:11000 (Press CTRL+C to quit)
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [109027]
+Traceback (most recent call last):
+  File "/usr/lib/python3.12/asyncio/runners.py", line 118, in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/asyncio/base_events.py", line 691, in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+asyncio.exceptions.CancelledError
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/paarth/Neuralperk_ProxyUser_MainServer/service_CustomerService/customer-service.py", line 537, in <module>
+    asyncio.run(start_service())
+  File "/usr/lib/python3.12/asyncio/runners.py", line 195, in run
+    return runner.run(main)
+           ^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/asyncio/runners.py", line 123, in run
+    raise KeyboardInterrupt()
+KeyboardInterrupt
+INFO:     Started server process [109165]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://0.0.0.0:11000 (Press CTRL+C to quit)
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [109165]
+Traceback (most recent call last):
+  File "/usr/lib/python3.12/asyncio/runners.py", line 118, in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/asyncio/base_events.py", line 691, in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+asyncio.exceptions.CancelledError
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/paarth/Neuralperk_ProxyUser_MainServer/service_CustomerService/customer-service.py", line 537, in <module>
+    asyncio.run(start_service())
+  File "/usr/lib/python3.12/asyncio/runners.py", line 195, in run
+    return runner.run(main)
+           ^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/asyncio/runners.py", line 123, in run
+    raise KeyboardInterrupt()
+KeyboardInterrupt
+INFO:     Started server process [109771]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://0.0.0.0:11000 (Press CTRL+C to quit)
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [109771]
+Traceback (most recent call last):
+  File "/usr/lib/python3.12/asyncio/runners.py", line 118, in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/asyncio/base_events.py", line 691, in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+asyncio.exceptions.CancelledError
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/paarth/Neuralperk_ProxyUser_MainServer/service_CustomerService/customer-service.py", line 537, in <module>
+    
+  File "/usr/lib/python3.12/asyncio/runners.py", line 195, in run
+    return runner.run(main)
+           ^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/asyncio/runners.py", line 123, in run
+    raise KeyboardInterrupt()
+KeyboardInterrupt
+INFO:     Started server process [110108]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://0.0.0.0:11000 (Press CTRL+C to quit)
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [110108]
+Traceback (most recent call last):
+  File "/usr/lib/python3.12/asyncio/runners.py", line 118, in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/asyncio/base_events.py", line 691, in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+asyncio.exceptions.CancelledError
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/paarth/Neuralperk_ProxyUser_MainServer/service_CustomerService/customer-service.py", line 549, in <module>
+  File "/usr/lib/python3.12/asyncio/runners.py", line 195, in run
+    return runner.run(main)
+           ^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/asyncio/runners.py", line 123, in run
+    raise KeyboardInterrupt()
+KeyboardInterrupt
+INFO:     Started server process [110552]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://0.0.0.0:11000 (Press CTRL+C to quit)
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [110552]
+Traceback (most recent call last):
+  File "/usr/lib/python3.12/asyncio/runners.py", line 118, in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/asyncio/base_events.py", line 691, in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+asyncio.exceptions.CancelledError
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/paarth/Neuralperk_ProxyUser_MainServer/service_CustomerService/customer-service.py", line 546, in <module>
+  File "/usr/lib/python3.12/asyncio/runners.py", line 195, in run
+    return runner.run(main)
+           ^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/asyncio/runners.py", line 123, in run
+    raise KeyboardInterrupt()
+KeyboardInterrupt
+INFO:     Started server process [110719]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://0.0.0.0:11000 (Press CTRL+C to quit)
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [110719]
+Traceback (most recent call last):
+  File "/usr/lib/python3.12/asyncio/runners.py", line 118, in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/asyncio/base_events.py", line 691, in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+asyncio.exceptions.CancelledError
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/paarth/Neuralperk_ProxyUser_MainServer/service_CustomerService/customer-service.py", line 443, in <module>
+    if __name__ == "__main__":
+        ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/asyncio/runners.py", line 195, in run
+    return runner.run(main)
+           ^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/asyncio/runners.py", line 123, in run
+    raise KeyboardInterrupt()
+KeyboardInterrupt
+INFO:     Started server process [110944]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://0.0.0.0:11000 (Press CTRL+C to quit)
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [110944]
+Traceback (most recent call last):
+  File "/usr/lib/python3.12/asyncio/runners.py", line 118, in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/asyncio/base_events.py", line 691, in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+asyncio.exceptions.CancelledError
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/paarth/Neuralperk_ProxyUser_MainServer/service_CustomerService/customer-service.py", line 444, in <module>
+    asyncio.run(start_service())
+  File "/usr/lib/python3.12/asyncio/runners.py", line 195, in run
+    return runner.run(main)
+           ^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/asyncio/runners.py", line 123, in run
+    raise KeyboardInterrupt()
+KeyboardInterrupt
+INFO:     Started server process [111026]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://0.0.0.0:11000 (Press CTRL+C to quit)
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [111026]
+Traceback (most recent call last):
+  File "/usr/lib/python3.12/asyncio/runners.py", line 118, in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/asyncio/base_events.py", line 691, in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+asyncio.exceptions.CancelledError
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/paarth/Neuralperk_ProxyUser_MainServer/service_CustomerService/customer-service.py", line 444, in <module>
+  File "/usr/lib/python3.12/asyncio/runners.py", line 195, in run
+    return runner.run(main)
+           ^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/asyncio/runners.py", line 123, in run
+    raise KeyboardInterrupt()
+KeyboardInterrupt
+INFO:     Started server process [111116]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://0.0.0.0:11000 (Press CTRL+C to quit)
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [111116]
+Traceback (most recent call last):
+  File "/usr/lib/python3.12/asyncio/runners.py", line 118, in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/asyncio/base_events.py", line 691, in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+asyncio.exceptions.CancelledError
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/paarth/Neuralperk_ProxyUser_MainServer/service_CustomerService/customer-service.py", line 443, in <module>
+    if __name__ == "__main__":
+        ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/asyncio/runners.py", line 195, in run
+    return runner.run(main)
+           ^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/asyncio/runners.py", line 123, in run
+    raise KeyboardInterrupt()
+KeyboardInterrupt
+INFO:     Started server process [111184]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://0.0.0.0:11000 (Press CTRL+C to quit)
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [111184]
+Traceback (most recent call last):
+  File "/usr/lib/python3.12/asyncio/runners.py", line 118, in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/asyncio/base_events.py", line 691, in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+asyncio.exceptions.CancelledError
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/paarth/Neuralperk_ProxyUser_MainServer/service_CustomerService/customer-service.py", line 444, in <module>
+  File "/usr/lib/python3.12/asyncio/runners.py", line 195, in run
+    return runner.run(main)
+           ^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/asyncio/runners.py", line 123, in run
+    raise KeyboardInterrupt()
+KeyboardInterrupt
+INFO:     Started server process [111341]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://0.0.0.0:11000 (Press CTRL+C to quit)
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [111341]
+Traceback (most recent call last):
+  File "/usr/lib/python3.12/asyncio/runners.py", line 118, in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/asyncio/base_events.py", line 691, in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+asyncio.exceptions.CancelledError
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/paarth/Neuralperk_ProxyUser_MainServer/service_CustomerService/customer-service.py", line 424, in <module>
+    #<HTTP_SERVER_PORT_START>
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/asyncio/runners.py", line 195, in run
+    return runner.run(main)
+           ^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/asyncio/runners.py", line 123, in run
+    raise KeyboardInterrupt()
+KeyboardInterrupt
+INFO:     Started server process [111678]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://0.0.0.0:11000 (Press CTRL+C to quit)
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [111678]
+Traceback (most recent call last):
+  File "/usr/lib/python3.12/asyncio/runners.py", line 118, in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/asyncio/base_events.py", line 691, in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+asyncio.exceptions.CancelledError
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/paarth/Neuralperk_ProxyUser_MainServer/service_CustomerService/customer-service.py", line 443, in <module>
+    asyncio.run(start_service())
+  File "/usr/lib/python3.12/asyncio/runners.py", line 195, in run
+    return runner.run(main)
+           ^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/asyncio/runners.py", line 123, in run
+    raise KeyboardInterrupt()
+KeyboardInterrupt
+INFO:     Started server process [111748]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://0.0.0.0:11000 (Press CTRL+C to quit)
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [111748]
+Traceback (most recent call last):
+  File "/usr/lib/python3.12/asyncio/runners.py", line 118, in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/asyncio/base_events.py", line 691, in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+asyncio.exceptions.CancelledError
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/paarth/Neuralperk_ProxyUser_MainServer/service_CustomerService/customer-service.py", line 443, in <module>
+    await service.startService()
+  File "/usr/lib/python3.12/asyncio/runners.py", line 195, in run
+    return runner.run(main)
+           ^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/asyncio/runners.py", line 123, in run
+    raise KeyboardInterrupt()
+KeyboardInterrupt
+INFO:     Started server process [111978]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://0.0.0.0:11000 (Press CTRL+C to quit)
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [111978]
+Traceback (most recent call last):
+  File "/usr/lib/python3.12/asyncio/runners.py", line 118, in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/asyncio/base_events.py", line 691, in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+asyncio.exceptions.CancelledError
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/paarth/Neuralperk_ProxyUser_MainServer/service_CustomerService/customer-service.py", line 446, in <module>
+  File "/usr/lib/python3.12/asyncio/runners.py", line 195, in run
+    return runner.run(main)
+           ^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/asyncio/runners.py", line 123, in run
+    raise KeyboardInterrupt()
+KeyboardInterrupt
+INFO:     Started server process [112090]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://0.0.0.0:11000 (Press CTRL+C to quit)
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [112090]
+Traceback (most recent call last):
+  File "/usr/lib/python3.12/asyncio/runners.py", line 118, in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/asyncio/base_events.py", line 691, in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+asyncio.exceptions.CancelledError
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/paarth/Neuralperk_ProxyUser_MainServer/service_CustomerService/customer-service.py", line 444, in <module>
+    asyncio.run(start_service())
+  File "/usr/lib/python3.12/asyncio/runners.py", line 195, in run
+    return runner.run(main)
+           ^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/asyncio/runners.py", line 123, in run
+    raise KeyboardInterrupt()
+KeyboardInterrupt
+INFO:     Started server process [112157]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://0.0.0.0:11000 (Press CTRL+C to quit)
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [112157]
+Traceback (most recent call last):
+  File "/usr/lib/python3.12/asyncio/runners.py", line 118, in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/asyncio/base_events.py", line 691, in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+asyncio.exceptions.CancelledError
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/paarth/Neuralperk_ProxyUser_MainServer/service_CustomerService/customer-service.py", line 444, in <module>
+    if __name__ == "__main__":
+        ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/asyncio/runners.py", line 195, in run
+    return runner.run(main)
+           ^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/asyncio/runners.py", line 123, in run
+    raise KeyboardInterrupt()
+KeyboardInterrupt
+INFO:     Started server process [112365]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://0.0.0.0:11000 (Press CTRL+C to quit)
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [112365]
+Traceback (most recent call last):
+  File "/usr/lib/python3.12/asyncio/runners.py", line 118, in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/asyncio/base_events.py", line 691, in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+asyncio.exceptions.CancelledError
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/paarth/Neuralperk_ProxyUser_MainServer/service_CustomerService/customer-service.py", line 445, in <module>
+    if __name__ == "__main__":
+        ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/asyncio/runners.py", line 195, in run
+    return runner.run(main)
+           ^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/asyncio/runners.py", line 123, in run
+    raise KeyboardInterrupt()
+KeyboardInterrupt
+INFO:     Started server process [112449]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://0.0.0.0:11000 (Press CTRL+C to quit)
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [112449]
+Traceback (most recent call last):
+  File "/usr/lib/python3.12/asyncio/runners.py", line 118, in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/asyncio/base_events.py", line 691, in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+asyncio.exceptions.CancelledError
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/paarth/Neuralperk_ProxyUser_MainServer/service_CustomerService/customer-service.py", line 446, in <module>
+    if __name__ == "__main__":
+        ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/asyncio/runners.py", line 195, in run
+    return runner.run(main)
+           ^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/asyncio/runners.py", line 123, in run
+    raise KeyboardInterrupt()
+KeyboardInterrupt
+INFO:     Started server process [112605]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://0.0.0.0:11000 (Press CTRL+C to quit)
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [112605]
+Traceback (most recent call last):
+  File "/usr/lib/python3.12/asyncio/runners.py", line 118, in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/asyncio/base_events.py", line 691, in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+asyncio.exceptions.CancelledError
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/paarth/Neuralperk_ProxyUser_MainServer/service_CustomerService/customer-service.py", line 447, in <module>
+    service = Service(http_server)
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/asyncio/runners.py", line 195, in run
+    return runner.run(main)
+           ^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/asyncio/runners.py", line 123, in run
+    raise KeyboardInterrupt()
+KeyboardInterrupt
+INFO:     Started server process [112844]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://0.0.0.0:11000 (Press CTRL+C to quit)
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [112844]
+Traceback (most recent call last):
+  File "/usr/lib/python3.12/asyncio/runners.py", line 118, in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/asyncio/base_events.py", line 691, in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+asyncio.exceptions.CancelledError
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/paarth/Neuralperk_ProxyUser_MainServer/service_CustomerService/customer-service.py", line 451, in <module>
+    # Stream the response directly to the client
+^^^^
+  File "/usr/lib/python3.12/asyncio/runners.py", line 195, in run
+    return runner.run(main)
+           ^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/asyncio/runners.py", line 123, in run
+    raise KeyboardInterrupt()
+KeyboardInterrupt
+INFO:     Started server process [112947]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://0.0.0.0:11000 (Press CTRL+C to quit)
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [112947]
+Traceback (most recent call last):
+  File "/usr/lib/python3.12/asyncio/runners.py", line 118, in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/asyncio/base_events.py", line 691, in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+asyncio.exceptions.CancelledError
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/paarth/Neuralperk_ProxyUser_MainServer/service_CustomerService/customer-service.py", line 546, in <module>
+    asyncio.run(start_service())
+  File "/usr/lib/python3.12/asyncio/runners.py", line 195, in run
+    return runner.run(main)
+           ^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/asyncio/runners.py", line 123, in run
+    raise KeyboardInterrupt()
+KeyboardInterrupt
+INFO:     Started server process [113030]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://0.0.0.0:11000 (Press CTRL+C to quit)
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [113030]
+Traceback (most recent call last):
+  File "/usr/lib/python3.12/asyncio/runners.py", line 118, in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/asyncio/base_events.py", line 691, in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+asyncio.exceptions.CancelledError
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/paarth/Neuralperk_ProxyUser_MainServer/service_CustomerService/customer-service.py", line 546, in <module>
+    if __name__ == "__main__":
+        ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/asyncio/runners.py", line 195, in run
+    return runner.run(main)
+           ^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/asyncio/runners.py", line 123, in run
+    raise KeyboardInterrupt()
+KeyboardInterrupt
+INFO:     Started server process [113182]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://0.0.0.0:11000 (Press CTRL+C to quit)
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [113182]
+Traceback (most recent call last):
+  File "/usr/lib/python3.12/asyncio/runners.py", line 118, in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/asyncio/base_events.py", line 691, in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+asyncio.exceptions.CancelledError
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/paarth/Neuralperk_ProxyUser_MainServer/service_CustomerService/customer-service.py", line 547, in <module>
+    asyncio.run(start_service())
+  File "/usr/lib/python3.12/asyncio/runners.py", line 195, in run
+    return runner.run(main)
+           ^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/asyncio/runners.py", line 123, in run
+    raise KeyboardInterrupt()
+KeyboardInterrupt
+INFO:     Started server process [113568]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://0.0.0.0:11000 (Press CTRL+C to quit)

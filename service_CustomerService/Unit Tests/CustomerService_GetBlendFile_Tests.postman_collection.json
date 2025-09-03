@@ -9,33 +9,23 @@
 		{
 			"name": "1. Test Get Blend File - Success Case",
 			"request": {
-				"method": "POST",
+				"method": "GET",
 				"header": [
 					{
 						"key": "Authorization",
 						"value": "Bearer {{valid_access_token}}"
 					}
 				],
-				"body": {
-					"mode": "formdata",
-					"formdata": [
-						{
-							"key": "object_id",
-							"value": "{{test_object_id}}",
-							"type": "text",
-							"description": "Object ID of an existing blend file to retrieve"
-						}
-					]
-				},
 				"url": {
-					"raw": "{{base_url}}/api/customer-service/get-blend-file",
+					"raw": "{{base_url}}/api/customer-service/get-blend-file/{{test_object_id}}",
 					"host": [
 						"{{base_url}}"
 					],
 					"path": [
 						"api",
 						"customer-service",
-						"get-blend-file"
+						"get-blend-file",
+						"{{test_object_id}}"
 					]
 				},
 				"description": "Tests successful blend file retrieval. This should return the actual blend file with proper headers via reverse proxy from blob service."
@@ -45,27 +35,18 @@
 		{
 			"name": "2. Test Get Blend File - Missing Authentication",
 			"request": {
-				"method": "POST",
+				"method": "GET",
 				"header": [],
-				"body": {
-					"mode": "formdata",
-					"formdata": [
-						{
-							"key": "object_id",
-							"value": "{{test_object_id}}",
-							"type": "text"
-						}
-					]
-				},
 				"url": {
-					"raw": "{{base_url}}/api/customer-service/get-blend-file",
+					"raw": "{{base_url}}/api/customer-service/get-blend-file/{{test_object_id}}",
 					"host": [
 						"{{base_url}}"
 					],
 					"path": [
 						"api",
 						"customer-service",
-						"get-blend-file"
+						"get-blend-file",
+						"{{test_object_id}}"
 					]
 				},
 				"description": "Tests blend file retrieval without authentication header. Should return 401 Unauthorized."
@@ -75,32 +56,23 @@
 		{
 			"name": "3. Test Get Blend File - Invalid Access Token",
 			"request": {
-				"method": "POST",
+				"method": "GET",
 				"header": [
 					{
 						"key": "Authorization",
 						"value": "Bearer invalid_token_123"
 					}
 				],
-				"body": {
-					"mode": "formdata",
-					"formdata": [
-						{
-							"key": "object_id",
-							"value": "{{test_object_id}}",
-							"type": "text"
-						}
-					]
-				},
 				"url": {
-					"raw": "{{base_url}}/api/customer-service/get-blend-file",
+					"raw": "{{base_url}}/api/customer-service/get-blend-file/{{test_object_id}}",
 					"host": [
 						"{{base_url}}"
 					],
 					"path": [
 						"api",
 						"customer-service",
-						"get-blend-file"
+						"get-blend-file",
+						"{{test_object_id}}"
 					]
 				},
 				"description": "Tests blend file retrieval with invalid access token. Should return 401 Unauthorized."
@@ -108,63 +80,51 @@
 			"response": []
 		},
 		{
-			"name": "4. Test Get Blend File - Missing Object ID",
+			"name": "4. Test Get Blend File - Empty Object ID",
 			"request": {
-				"method": "POST",
+				"method": "GET",
 				"header": [
 					{
 						"key": "Authorization",
 						"value": "Bearer {{valid_access_token}}"
 					}
 				],
-				"body": {
-					"mode": "formdata",
-					"formdata": []
-				},
 				"url": {
-					"raw": "{{base_url}}/api/customer-service/get-blend-file",
+					"raw": "{{base_url}}/api/customer-service/get-blend-file/",
 					"host": [
 						"{{base_url}}"
 					],
 					"path": [
 						"api",
 						"customer-service",
-						"get-blend-file"
+						"get-blend-file",
+						""
 					]
 				},
-				"description": "Tests blend file retrieval without object ID. Should return 422 Unprocessable Entity due to missing required field."
+				"description": "Tests blend file retrieval with empty object ID in path. Should return 404 Not Found."
 			},
 			"response": []
 		},
 		{
 			"name": "5. Test Get Blend File - Invalid Object ID",
 			"request": {
-				"method": "POST",
+				"method": "GET",
 				"header": [
 					{
 						"key": "Authorization",
 						"value": "Bearer {{valid_access_token}}"
 					}
 				],
-				"body": {
-					"mode": "formdata",
-					"formdata": [
-						{
-							"key": "object_id",
-							"value": "invalid_object_id_123",
-							"type": "text"
-						}
-					]
-				},
 				"url": {
-					"raw": "{{base_url}}/api/customer-service/get-blend-file",
+					"raw": "{{base_url}}/api/customer-service/get-blend-file/invalid_object_id_123",
 					"host": [
 						"{{base_url}}"
 					],
 					"path": [
 						"api",
 						"customer-service",
-						"get-blend-file"
+						"get-blend-file",
+						"invalid_object_id_123"
 					]
 				},
 				"description": "Tests blend file retrieval with invalid object ID. Should return 404 Not Found."
@@ -174,32 +134,23 @@
 		{
 			"name": "6. Test Get Blend File - Non-Existent Object",
 			"request": {
-				"method": "POST",
+				"method": "GET",
 				"header": [
 					{
 						"key": "Authorization",
 						"value": "Bearer {{valid_access_token}}"
 					}
 				],
-				"body": {
-					"mode": "formdata",
-					"formdata": [
-						{
-							"key": "object_id",
-							"value": "00000000-0000-0000-0000-000000000000",
-							"type": "text"
-						}
-					]
-				},
 				"url": {
-					"raw": "{{base_url}}/api/customer-service/get-blend-file",
+					"raw": "{{base_url}}/api/customer-service/get-blend-file/00000000-0000-0000-0000-000000000000",
 					"host": [
 						"{{base_url}}"
 					],
 					"path": [
 						"api",
 						"customer-service",
-						"get-blend-file"
+						"get-blend-file",
+						"00000000-0000-0000-0000-000000000000"
 					]
 				},
 				"description": "Tests blend file retrieval with a valid UUID format but non-existent object. Should return 404 Not Found."
@@ -314,7 +265,7 @@
 			"key": "valid_access_token",
 			"value": "cust_001",
 			"type": "string",
-			"description": "Valid access token for testing authentication. This should be a valid Bearer token that the auth service recognizes."
+			"description": "Valid access token for testing authentication. This should be a valid Bearer token that your auth service recognizes."
 		}
 	]
 }
