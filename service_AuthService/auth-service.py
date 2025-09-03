@@ -137,11 +137,59 @@ class HTTP_SERVER():
             except Exception as e:
                 raise HTTPException(status_code=500, detail=f"Internal server error: {str(e)}")
 
+        @self.app.post("/api/auth-service/authenticate_customer_id")
+        async def authenticate_customer_id(request: Request):
+            """Authenticate a customer ID
+            Required fields: customerId
+            Returns: Success message with customer details if valid
+            """
+            try:
+                body = await request.json()
+                
+                # Validate required fields
+                required_fields = ["customerId"]
+                for field in required_fields:
+                    if field not in body:
+                        raise HTTPException(status_code=400, detail=f"Missing required field: {field}")
+                
+                customer_id = body["customerId"]
+                
+                # Check if customer exists using MongoDB service
+                try:
+                    response = await self.http_client.get(
+                        f"{self.mongodb_service_url}/api/mongodb-service/customers/check/{customer_id}"
+                    )
+                    
+                    if response.status_code == 200:
+                        user_data = response.json()
+                        if user_data.get("exists"):
+                            # Customer ID is valid
+                            return JSONResponse(
+                                content={
+                                    "message": "Customer ID authenticated successfully",
+                                    "customerId": customer_id,
+                                    "email": user_data.get("email")
+                                },
+                                status_code=200
+                            )
+                        else:
+                            raise HTTPException(status_code=401, detail="Invalid customer ID")
+                    else:
+                        raise HTTPException(status_code=401, detail="Invalid customer ID")
+                        
+                except httpx.RequestError as e:
+                    raise HTTPException(status_code=503, detail=f"MongoDB service unavailable: {str(e)}")
+                
+            except HTTPException:
+                raise
+            except Exception as e:
+                raise HTTPException(status_code=500, detail=f"Internal server error: {str(e)}")
+
         @self.app.post("/api/auth-service/login")
         async def login(request: Request):
             """Login user with email and password
             Required fields: email, password
-            Returns: Customer ID as authentication token and user details
+            Returns: Access token and refresh token
             """
             try:
                 body = await request.json()
@@ -170,13 +218,12 @@ class HTTP_SERVER():
                             
                             # Verify the password
                             if self.verify_password(password, stored_password):
-                                # Password is correct, return customer ID as auth token
+                                # Password is correct, return access token and refresh token
                                 return JSONResponse(
                                     content={
                                         "message": "Login successful",
-                                        "authToken": customer_id,
-                                        "customerId": customer_id,
-                                        "email": email
+                                        "accessToken": customer_id,
+                                        "refreshToken": ""
                                     },
                                     status_code=200
                                 )

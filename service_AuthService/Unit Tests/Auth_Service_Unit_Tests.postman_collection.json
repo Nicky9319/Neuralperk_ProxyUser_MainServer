@@ -2,7 +2,7 @@
 	"info": {
 		"_postman_id": "auth-service-unit-tests",
 		"name": "Auth Service Unit Tests",
-		"description": "Comprehensive unit test collection for Auth Service APIs including user registration and authentication",
+		"description": "Comprehensive unit test collection for Auth Service APIs including user registration, authentication, and customer ID validation",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
 	"item": [
@@ -241,6 +241,80 @@
 					"response": []
 				}
 			]
+		},
+		{
+			"name": "Customer ID Authentication",
+			"item": [
+				{
+					"name": "Authenticate Customer ID - Success",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"customerId\": \"cust_001\"\n}"
+						},
+						"url": {
+							"raw": "{{auth_base_url}}/api/auth-service/authenticate_customer_id",
+							"host": ["{{auth_base_url}}"],
+							"path": ["api", "auth-service", "authenticate_customer_id"]
+						},
+						"description": "Authenticate a valid customer ID"
+					},
+					"response": []
+				},
+				{
+					"name": "Authenticate Customer ID - Missing Fields",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{}"
+						},
+						"url": {
+							"raw": "{{auth_base_url}}/api/auth-service/authenticate_customer_id",
+							"host": ["{{auth_base_url}}"],
+							"path": ["api", "auth-service", "authenticate_customer_id"]
+						},
+						"description": "Test validation - missing customerId field"
+					},
+					"response": []
+				},
+				{
+					"name": "Authenticate Customer ID - Invalid ID",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"customerId\": \"nonexistent_customer\"\n}"
+						},
+						"url": {
+							"raw": "{{auth_base_url}}/api/auth-service/authenticate_customer_id",
+							"host": ["{{auth_base_url}}"],
+							"path": ["api", "auth-service", "authenticate_customer_id"]
+						},
+						"description": "Test authentication with non-existent customer ID"
+					},
+					"response": []
+				}
+			]
 		}
 	],
 	"event": [
@@ -275,17 +349,27 @@
 					"",
 					"// Test specific to login success",
 					"if (pm.request.url.path.includes('/login') && pm.response.code === 200) {",
-					"    pm.test('Login response contains auth token', function () {",
+					"    pm.test('Login response contains access token and refresh token', function () {",
 					"        const response = pm.response.json();",
-					"        pm.expect(response).to.have.property('authToken');",
-					"        pm.expect(response).to.have.property('customerId');",
-					"        pm.expect(response).to.have.property('email');",
+					"        pm.expect(response).to.have.property('accessToken');",
+					"        pm.expect(response).to.have.property('refreshToken');",
+					"        pm.expect(response).to.not.have.property('customerId');",
+					"        pm.expect(response).to.not.have.property('email');",
 					"    });",
 					"}",
 					"",
 					"// Test specific to registration success",
 					"if (pm.request.url.path.includes('/register') && pm.response.code === 201) {",
 					"    pm.test('Registration response contains user details', function () {",
+					"        const response = pm.response.json();",
+					"        pm.expect(response).to.have.property('customerId');",
+					"        pm.expect(response).to.have.property('email');",
+					"    });",
+					"}",
+					"",
+					"// Test specific to authenticate_customer_id success",
+					"if (pm.request.url.path.includes('/authenticate_customer_id') && pm.response.code === 200) {",
+					"    pm.test('Authenticate Customer ID response contains customer details', function () {",
 					"        const response = pm.response.json();",
 					"        pm.expect(response).to.have.property('customerId');",
 					"        pm.expect(response).to.have.property('email');",
