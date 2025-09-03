@@ -1,0 +1,522 @@
+{
+	"info": {
+		"_postman_id": "mongodb-service-unit-tests",
+		"name": "MongoDB Service Unit Tests",
+		"description": "Comprehensive unit test collection for MongoDB Service APIs including customer management, blender objects, and sessions",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Root Endpoint",
+			"item": [
+				{
+					"name": "Health Check",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/mongodb-service/",
+							"host": ["{{base_url}}"],
+							"path": ["api", "mongodb-service", ""]
+						},
+						"description": "Test if MongoDB Service is active and responding"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Customer Management",
+			"item": [
+				{
+					"name": "Add Customer - Success",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"customerId\": \"cust_001\",\n  \"email\": \"john.doe@example.com\",\n  \"password\": \"securePassword123\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/mongodb-service/customers/add",
+							"host": ["{{base_url}}"],
+							"path": ["api", "mongodb-service", "customers", "add"]
+						},
+						"description": "Add a new customer with valid data"
+					},
+					"response": []
+				},
+				{
+					"name": "Add Customer - Missing Fields",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"customerId\": \"cust_002\",\n  \"email\": \"jane.smith@example.com\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/mongodb-service/customers/add",
+							"host": ["{{base_url}}"],
+							"path": ["api", "mongodb-service", "customers", "add"]
+						},
+						"description": "Test validation - missing password field"
+					},
+					"response": []
+				},
+				{
+					"name": "Add Customer - Duplicate ID",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"customerId\": \"cust_001\",\n  \"email\": \"duplicate@example.com\",\n  \"password\": \"password123\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/mongodb-service/customers/add",
+							"host": ["{{base_url}}"],
+							"path": ["api", "mongodb-service", "customers", "add"]
+						},
+						"description": "Test duplicate customer ID handling"
+					},
+					"response": []
+				},
+				{
+					"name": "Check Customer Exists - Found",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/mongodb-service/customers/check/cust_001",
+							"host": ["{{base_url}}"],
+							"path": ["api", "mongodb-service", "customers", "check", "cust_001"]
+						},
+						"description": "Check if customer exists (should return found)"
+					},
+					"response": []
+				},
+				{
+					"name": "Check Customer Exists - Not Found",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/mongodb-service/customers/check/nonexistent_customer",
+							"host": ["{{base_url}}"],
+							"path": ["api", "mongodb-service", "customers", "check", "nonexistent_customer"]
+						},
+						"description": "Check if customer exists (should return not found)"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Blender Object Management",
+			"item": [
+				{
+					"name": "Add Blender Object - Success",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"objectId\": \"obj_001\",\n  \"customerId\": \"cust_001\",\n  \"blendFilePath\": \"/path/to/model.blend\",\n  \"renderedVideoPath\": \"/path/to/video.mp4\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/mongodb-service/blender-objects/add",
+							"host": ["{{base_url}}"],
+							"path": ["api", "mongodb-service", "blender-objects", "add"]
+						},
+						"description": "Add a new blender object with all fields"
+					},
+					"response": []
+				},
+				{
+					"name": "Add Blender Object - Minimal",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"objectId\": \"obj_002\",\n  \"customerId\": \"cust_001\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/mongodb-service/blender-objects/add",
+							"host": ["{{base_url}}"],
+							"path": ["api", "mongodb-service", "blender-objects", "add"]
+						},
+						"description": "Add a blender object with only required fields"
+					},
+					"response": []
+				},
+				{
+					"name": "Add Blender Object - Invalid Customer",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"objectId\": \"obj_003\",\n  \"customerId\": \"invalid_customer\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/mongodb-service/blender-objects/add",
+							"host": ["{{base_url}}"],
+							"path": ["api", "mongodb-service", "blender-objects", "add"]
+						},
+						"description": "Test adding object with non-existent customer"
+					},
+					"response": []
+				},
+				{
+					"name": "Update Blend File Path - Success",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"objectId\": \"obj_001\",\n  \"customerId\": \"cust_001\",\n  \"blendFilePath\": \"/new/path/to/updated_model.blend\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/mongodb-service/blender-objects/update-blend-file",
+							"host": ["{{base_url}}"],
+							"path": ["api", "mongodb-service", "blender-objects", "update-blend-file"]
+						},
+						"description": "Update blend file path for existing object"
+					},
+					"response": []
+				},
+				{
+					"name": "Update Blend File Path - Object Not Found",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"objectId\": \"nonexistent_obj\",\n  \"customerId\": \"cust_001\",\n  \"blendFilePath\": \"/path/to/file.blend\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/mongodb-service/blender-objects/update-blend-file",
+							"host": ["{{base_url}}"],
+							"path": ["api", "mongodb-service", "blender-objects", "update-blend-file"]
+						},
+						"description": "Test updating non-existent object"
+					},
+					"response": []
+				},
+				{
+					"name": "Update Video File Path - Success",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"objectId\": \"obj_001\",\n  \"customerId\": \"cust_001\",\n  \"renderedVideoPath\": \"/new/path/to/rendered_video.mp4\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/mongodb-service/blender-objects/update-video-file",
+							"host": ["{{base_url}}"],
+							"path": ["api", "mongodb-service", "blender-objects", "update-video-file"]
+						},
+						"description": "Update rendered video path for existing object"
+					},
+					"response": []
+				},
+				{
+					"name": "Update Video File Path - Missing Fields",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"objectId\": \"obj_001\",\n  \"customerId\": \"cust_001\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/mongodb-service/blender-objects/update-video-file",
+							"host": ["{{base_url}}"],
+							"path": ["api", "mongodb-service", "blender-objects", "update-video-file"]
+						},
+						"description": "Test validation - missing renderedVideoPath field"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Session Management",
+			"item": [
+				{
+					"name": "Add Session - Success",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"sessionId\": \"sess_001\",\n  \"customerId\": \"cust_001\",\n  \"blenderObjectId\": \"obj_001\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/mongodb-service/sessions/add",
+							"host": ["{{base_url}}"],
+							"path": ["api", "mongodb-service", "sessions", "add"]
+						},
+						"description": "Add a new session with default 'queued' status"
+					},
+					"response": []
+				},
+				{
+					"name": "Add Session - Custom Status",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"sessionId\": \"sess_002\",\n  \"customerId\": \"cust_001\",\n  \"blenderObjectId\": \"obj_001\",\n  \"status\": \"rendering\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/mongodb-service/sessions/add",
+							"host": ["{{base_url}}"],
+							"path": ["api", "mongodb-service", "sessions", "add"]
+						},
+						"description": "Add a session with custom status"
+					},
+					"response": []
+				},
+				{
+					"name": "Add Session - Invalid Customer",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"sessionId\": \"sess_003\",\n  \"customerId\": \"invalid_customer\",\n  \"blenderObjectId\": \"obj_001\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/mongodb-service/sessions/add",
+							"host": ["{{base_url}}"],
+							"path": ["api", "mongodb-service", "sessions", "add"]
+						},
+						"description": "Test adding session with non-existent customer"
+					},
+					"response": []
+				},
+				{
+					"name": "Add Session - Invalid Blender Object",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"sessionId\": \"sess_004\",\n  \"customerId\": \"cust_001\",\n  \"blenderObjectId\": \"invalid_object\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/mongodb-service/sessions/add",
+							"host": ["{{base_url}}"],
+							"path": ["api", "mongodb-service", "sessions", "add"]
+						},
+						"description": "Test adding session with non-existent blender object"
+					},
+					"response": []
+				},
+				{
+					"name": "Update Session Status - Success",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"sessionId\": \"sess_001\",\n  \"status\": \"completed\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/mongodb-service/sessions/update-status",
+							"host": ["{{base_url}}"],
+							"path": ["api", "mongodb-service", "sessions", "update-status"]
+						},
+						"description": "Update session status to completed"
+					},
+					"response": []
+				},
+				{
+					"name": "Update Session Status - Not Found",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"sessionId\": \"nonexistent_session\",\n  \"status\": \"failed\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/mongodb-service/sessions/update-status",
+							"host": ["{{base_url}}"],
+							"path": ["api", "mongodb-service", "sessions", "update-status"]
+						},
+						"description": "Test updating non-existent session"
+					},
+					"response": []
+				},
+				{
+					"name": "Update Session Status - Missing Fields",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"sessionId\": \"sess_001\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/mongodb-service/sessions/update-status",
+							"host": ["{{base_url}}"],
+							"path": ["api", "mongodb-service", "sessions", "update-status"]
+						},
+						"description": "Test validation - missing status field"
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					"// Pre-request script for MongoDB Service Unit Tests",
+					"console.log('Testing endpoint: ' + pm.request.url);"
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					"// Test script for MongoDB Service Unit Tests",
+					"pm.test('Status code is valid', function () {",
+					"    pm.expect(pm.response.code).to.be.oneOf([200, 201, 400, 404, 409, 500]);",
+					"});",
+					"",
+					"pm.test('Response has required structure', function () {",
+					"    const response = pm.response.json();",
+					"    pm.expect(response).to.have.property('message');",
+					"});",
+					"",
+					"pm.test('Response time is acceptable', function () {",
+					"    pm.expect(pm.response.responseTime).to.be.below(1000);",
+					"});"
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "base_url",
+			"value": "http://127.0.0.1:15000",
+			"type": "string",
+			"description": "Base URL for MongoDB Service (localhost:15000)"
+		},
+		{
+			"key": "test_customer_id",
+			"value": "cust_001",
+			"type": "string",
+			"description": "Test customer ID for reuse across tests"
+		},
+		{
+			"key": "test_object_id",
+			"value": "obj_001",
+			"type": "string",
+			"description": "Test blender object ID for reuse across tests"
+		},
+		{
+			"key": "test_session_id",
+			"value": "sess_001",
+			"type": "string",
+			"description": "Test session ID for reuse across tests"
+		}
+	]
+}
