@@ -17,7 +17,8 @@ import subprocess
 import aio_pika
 
 from fastapi.responses import JSONResponse
-
+from fastapi import FastAPI
+import uvicorn
 
 
 import logging
@@ -25,19 +26,101 @@ import logging
 
 import pickle
 
+# Embedded HTTPServer class
+class HTTPServer:
+    def __init__(self, host="127.0.0.1", port=54545):
+        self.app = FastAPI()
+        self.host = host
+        self.port = port
 
+    async def run_app(self):
+        config = uvicorn.Config(self.app, host=self.host, port=self.port)
+        server = uvicorn.Server(config)
+        await server.serve()
 
+# Embedded MessageQueue class
+class MessageQueue:
+    def __init__(self, ConnectionURL="amqp://guest:guest@localhost/", ExchangeName="/"):
+        self.ExchangeName = ExchangeName
+        self.ConnectionURL = ConnectionURL
+        self.Connection = None
+        self.Channel = None
+        self.QueueList = []
+        self.QueueToCallbackMapping = {}  
+        self.DeclaredExchanges = {}
 
-sys.path.append(os.path.join(os.path.dirname(__file__), "../ServiceTemplates/Basic"))
+    async def InitializeConnection(self):
+        self.Connection = await aio_pika.connect_robust(self.ConnectionURL)
+        self.Channel = await self.Connection.channel()
+        await self.Channel.declare_exchange(self.ExchangeName, aio_pika.ExchangeType.DIRECT)
 
-from HTTP_SERVER import HTTPServer
-from MESSAGE_QUEUE import MessageQueue
+    async def BoundQueueToExchange(self):
+        for queues in self.QueueList:
+            await queues.bind(self.ExchangeName , routing_key=queues.name)
+        
+    async def AddNewQueue(self, QueueName,**queueParams):
+        queue = await self.Channel.declare_queue(QueueName, **queueParams)
+        self.QueueList.append(queue)
+    
+    async def MapQueueToCallback(self, QueueName, Callback):
+        self.QueueToCallbackMapping[QueueName] = Callback
 
+    async def AddQueueAndMapToCallback(self, QueueName, Callback,**queueParams):
+        await self.AddNewQueue(QueueName,**queueParams)
+        await self.MapQueueToCallback(QueueName, Callback)
 
+    async def StartListeningToQueue(self):
+        for queue in self.QueueList:
+            await queue.consume(self.QueueToCallbackMapping[queue.name])
+
+    async def PublishMessage(self, exchangeName , routingKey, message, headers=None):
+        exchange = None
+        if exchangeName not in self.DeclaredExchanges.keys():
+            exchange = await self.Channel.declare_exchange(exchangeName)
+            self.DeclaredExchanges[exchangeName] = exchange
+        else:
+            exchange = self.DeclaredExchanges[exchangeName]
+        
+        messageToSend = None
+        if headers and "DATA_FORMAT" in headers:
+            if headers["DATA_FORMAT"] == "BYTES":
+                messageToSend = message
+            else:
+                messageToSend = message.encode()
+        else:
+            messageToSend = message.encode()
+    
+        try:
+            await exchange.publish(
+                aio_pika.Message(body=messageToSend, headers=headers),
+                routing_key=routingKey
+            )
+        except Exception as e:
+            print(f"Failed to publish message: {e}")
+
+        return True
+
+    async def CloseConnection(self):
+        await self.Connection.close()
+
+class SessionSupervisorData:
+    def __init__(self):
+        self.connection_url = "amqp://guest:guest@localhost/"
+        self.exchange_name = "SESSION_SUPERVISOR_EXCHANGE"
+        self.http_host = "127.0.0.1"
+        self.http_port = 8000
+        
+        # Session supervisor specific configurations
+        self.service_url_mapping_file = "ServiceURLMapping.json"
+        self.rendered_images_folder = "RenderedImages"
+        self.max_concurrent_renders = 10
+        self.render_timeout = 3600  # 1 hour
+        self.log_level = "INFO"
 
 
 class renderingSupervisor:
-    def __init__(self, renderingCompleteEvent, MessageQueueReference, supervisorID = None):
+    def __init__(self, renderingCompleteEvent, MessageQueueReference, supervisorID = None, data_class=None):
+        self.data = data_class or SessionSupervisorData()
         self.renderingInfo = None
         self.renderingComplete = renderingCompleteEvent
 
@@ -53,14 +136,13 @@ class renderingSupervisor:
 
         self.logger.info(f"{type(self.messageQueue)}")
 
-
         self.savedBlendFilePath = None
-        self.renderedImagesFolder = "RenderedImages"
+        self.renderedImagesFolder = self.data.rendered_images_folder
 
 # Basic Utility Section !!! ----------------------------------------------------------------------------------------------------------------------------------------------------
 
     async def getServiceURL(self, serviceName):
-        servicePortMapping = json.load(open("ServiceURLMapping.json"))
+        servicePortMapping = json.load(open(self.data.service_url_mapping_file))
         return servicePortMapping[serviceName]
 
 # Basic Utility Section END !!! ------------------------------------------------------------------------------------------------------------------------------------------------
@@ -510,8 +592,8 @@ class renderingSupervisor:
 
 
 class sessionSupervisorService:
-    def __init__(self, httpServerHost, httpServerPort , supervisorID = None):
-        self.messageQueue = MessageQueue("amqp://guest:guest@localhost/" , "SESSION_SUPERVISOR_EXCHANGE")
+    def __init__(self, httpServerHost, httpServerPort , supervisorID = None, data_class=None):
+        self.messageQueue = MessageQueue(data_class.connection_url, data_class.exchange_name)
         self.apiServer = HTTPServer(httpServerHost, httpServerPort)
 
         self.renderingComplete = asyncio.Event()
@@ -532,7 +614,7 @@ class sessionSupervisorService:
 
 
     async def ManageRenderingProcess(self, renderingInfo):
-        self.supervisor = renderingSupervisor(self.renderingComplete, self.messageQueue, self.ID)
+        self.supervisor = renderingSupervisor(self.renderingComplete, self.messageQueue, self.ID, self.data)
         await self.supervisor.RenderingProcessInititalSetup()
 
         self.savedBlendFilePath = await self.supervisor.saveBlendFileBinary(renderingInfo['DATA_BINARY_BLENDFILE'] , self.customerEmail)
@@ -705,6 +787,14 @@ class sessionSupervisorService:
         
 
 
+class Service:
+    def __init__(self, sessionSupervisorService=None):
+        self.sessionSupervisorService = sessionSupervisorService
+
+    async def startService(self):
+        print("Starting Session Supervisor Service...")
+        await self.sessionSupervisorService.start_server()
+
 async def start_service():
 
     parser = argparse.ArgumentParser(description='Start a simple HTTP server.')
@@ -713,9 +803,10 @@ async def start_service():
     parser.add_argument('--id', type=str, default=None, help='Id of the Session Supervisor')
     args = parser.parse_args()
 
-
-    server = sessionSupervisorService(httpServerHost=args.host, httpServerPort=args.port , supervisorID=args.id)
-    await server.start_server()
+    dataClass = SessionSupervisorData()
+    server = sessionSupervisorService(httpServerHost=args.host, httpServerPort=args.port , supervisorID=args.id, data_class=dataClass)
+    service = Service(server)
+    await service.startService()
 
 if __name__ == "__main__":
     asyncio.run(start_service())

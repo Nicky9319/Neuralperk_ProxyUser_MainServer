@@ -15,14 +15,24 @@ import requests
 import pickle
 import time
 
-sys.path.append(os.path.join(os.path.dirname(__file__), "../ServiceTemplates/Basic"))
 
-from HTTP_SERVER import HTTPServer
 from customerAgent import customerAgent
 
+class CustomerServerData:
+    def __init__(self):
+        self.http_host = "127.0.0.1"
+        self.http_port = 5000
+        
+        # Customer server specific configurations
+        self.service_url_mapping_file = "ServiceURLMapping.json"
+        self.session_timeout = 3600  # 1 hour
+        self.max_concurrent_sessions = 100
+        self.credential_validation_enabled = True
+
 class CustomerServerService():
-    def __init__(self,httpServerHost, httpServerPort):
-        self.httpServer = HTTPServer(httpServerHost, httpServerPort)
+    def __init__(self, data_class=None):
+        self.data = data_class or CustomerServerData()
+        self.httpServer = HTTPServer(self.data.http_host, self.data.http_port)
 
         self.sessionCreationRequests = {}
         self.sessionStatus = {}
@@ -30,9 +40,8 @@ class CustomerServerService():
 
         self.CateringRequestLock = threading.Lock()
 
-
     async def getServiceURL(self, serviceName):
-        servicePortMapping = json.load(open("ServiceURLMapping.json"))
+        servicePortMapping = json.load(open(self.data.service_url_mapping_file))
         return servicePortMapping[serviceName]
 
     async def ConfigureHttpRoutes(self):
@@ -62,7 +71,6 @@ class CustomerServerService():
                 data= await request.body()
                 data = pickle.loads(data)
 
-
             personaType = data["PERSONA_TYPE"]
             email = data["EMAIL"]
             password = data["PASSWORD"]
@@ -89,87 +97,31 @@ class CustomerServerService():
             else:
                 return JSONResponse(content={"MESSAGE": "SESSION_CREATION_FAILED"} , status_code=500)
 
-            
+    async def initializeCustomerSession(self, customerEmail):
+        print(f"Session Inititalizing for the Customer : {customerEmail}")
+        newCustomerAgent = customerAgent()
+        self.customerAgentList[customerEmail] = newCustomerAgent
+        messageToSend = {"META_DATA" : {"EMAIL" : customerEmail} , "SESSION_DATA": self.sessionCreationRequests[customerEmail]}
 
-        async def initializeCustomerSession(customerEmail):
-            print(f"Session Inititalizing for the Customer : {customerEmail}")
-            newCustomerAgent = customerAgent()
-            self.customerAgentList[customerEmail] = newCustomerAgent
-            messageToSend = {"META_DATA" : {"EMAIL" : customerEmail} , "SESSION_DATA": self.sessionCreationRequests[customerEmail]}
-
-            await newCustomerAgent.InitializeSession(messageToSend)
-            return True
-            
-        @self.httpServer.app.post("/initializeSession")
-        async def initializeSessionCallback(request: Request):
-            print("Initialize Session Called")
-            data = await request.json()
-            email = data["EMAIL"]
-            if email in self.sessionCreationRequests.keys():
-                if await initializeCustomerSession(email):
-                    print(f"Session Initialized for the Customer : {email}")
-                    print(len(self.customerAgentList))
-
-                    del self.sessionCreationRequests[email]
-                    self.sessionStatus[email] = "RUNNING"
-                    print(f"Session Status for the Customer {email} : {self.sessionStatus[email]}")
-
-                    return JSONResponse(content={"MESSAGE": "SESSION_INITIALIZED"} , status_code=200)
-                else:
-                    print(f"Session Creation Failed for Customer : {email}")
-                    return JSONResponse(content={"MESSAGE": "SESSION_CREATION_FAILED"} , status_code=500)
-            else:
-                print(f"No Session Pending for the Customer : {email}")
-                return JSONResponse(content={"MESSAGE": "NO_SESSION_PENDING"} , status_code=404)
-
-
-
-        @self.httpServer.app.put("/handleSessionRequests")
-        async def handleSessionRequestsCallback(request: Request):
-            pass
-            
-
-
-        @self.httpServer.app.get("/serverRunning")
-        async def serverRunningCallback(request: Request):
-            print("Server Running Check Called ")
-            responseToSend = {"MESSAGE": "SERVER_RUNNING"}
-            return JSONResponse(content=responseToSend , status_code=200)
-
-
-
-        @self.httpServer.app.get("/sessionSTATUS")
-        async def sessionStatusCallback(request: Request):
-            print("Session Status Check Called ")
-            message = request.query_params.get("message")
-            data = json.loads(message)
-
-            personalType = data["PERSONA_TYPE"]
-            email = data["EMAIL"]
-            if personalType == "CUSTOMERS":
-                if email in self.sessionStatus.keys():
-                    responseToSend = {"MESSAGE": self.sessionStatus[email]}
-                    return JSONResponse(content=responseToSend , status_code=200)
-                else:
-                    responseToSend = {"MESSAGE": "IDLE"}
-                    return JSONResponse(content=responseToSend , status_code=200)
-            else:
-                responseToSend = {"MESSAGE": "INVALID_REQUEST"}
-                return JSONResponse(content=responseToSend , status_code=400)
-          
-            
+        await newCustomerAgent.InitializeSession(messageToSend)
 
     async def startService(self):
-
         await self.ConfigureHttpRoutes()
         await self.httpServer.run_app()
 
+class Service:
+    def __init__(self, customerServerService=None):
+        self.customerServerService = customerServerService
 
+    async def startService(self):
+        print("Starting Customer Server Service...")
+        await self.customerServerService.startService()
 
 async def start_service():
-    service = CustomerServerService("0.0.0.0" , 8000)
+    dataClass = CustomerServerData()
+    customerServerService = CustomerServerService(dataClass)
+    service = Service(customerServerService)
     await service.startService()
 
 if __name__ == "__main__":
-    print("Starting Customer Server Service")
     asyncio.run(start_service())

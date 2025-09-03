@@ -14,29 +14,108 @@ import requests
 
 import pickle
 
-sys.path.append(os.path.join(os.path.dirname(__file__), "../ServiceTemplates/Basic"))
+# Embedded HTTPServer class
+class HTTPServer:
+    def __init__(self, host="127.0.0.1", port=54545):
+        self.app = FastAPI()
+        self.host = host
+        self.port = port
 
-from HTTP_SERVER import HTTPServer
-from MESSAGE_QUEUE import MessageQueue
+    async def run_app(self):
+        config = uvicorn.Config(self.app, host=self.host, port=self.port)
+        server = uvicorn.Server(config)
+        await server.serve()
+
+# Embedded MessageQueue class
+class MessageQueue:
+    def __init__(self, ConnectionURL="amqp://guest:guest@localhost/", ExchangeName="/"):
+        self.ExchangeName = ExchangeName
+        self.ConnectionURL = ConnectionURL
+        self.Connection = None
+        self.Channel = None
+        self.QueueList = []
+        self.QueueToCallbackMapping = {}  
+        self.DeclaredExchanges = {}
+
+    async def InitializeConnection(self):
+        self.Connection = await aio_pika.connect_robust(self.ConnectionURL)
+        self.Channel = await self.Connection.channel()
+        await self.Channel.declare_exchange(self.ExchangeName, aio_pika.ExchangeType.DIRECT)
+
+    async def BoundQueueToExchange(self):
+        for queues in self.QueueList:
+            await queues.bind(self.ExchangeName , routing_key=queues.name)
+        
+    async def AddNewQueue(self, QueueName,**queueParams):
+        queue = await self.Channel.declare_queue(QueueName, **queueParams)
+        self.QueueList.append(queue)
+    
+    async def MapQueueToCallback(self, QueueName, Callback):
+        self.QueueToCallbackMapping[QueueName] = Callback
+
+    async def AddQueueAndMapToCallback(self, QueueName, Callback,**queueParams):
+        await self.AddNewQueue(QueueName,**queueParams)
+        await self.MapQueueToCallback(QueueName, Callback)
+
+    async def StartListeningToQueue(self):
+        for queue in self.QueueList:
+            await queue.consume(self.QueueToCallbackMapping[queue.name])
+
+    async def PublishMessage(self, exchangeName , routingKey, message, headers=None):
+        exchange = None
+        if exchangeName not in self.DeclaredExchanges.keys():
+            exchange = await self.Channel.declare_exchange(exchangeName)
+            self.DeclaredExchanges[exchangeName] = exchange
+        else:
+            exchange = self.DeclaredExchanges[exchangeName]
+        
+        messageToSend = None
+        if headers and "DATA_FORMAT" in headers:
+            if headers["DATA_FORMAT"] == "BYTES":
+                messageToSend = message
+            else:
+                messageToSend = message.encode()
+        else:
+            messageToSend = message.encode()
+    
+        try:
+            await exchange.publish(
+                aio_pika.Message(body=messageToSend, headers=headers),
+                routing_key=routingKey
+            )
+        except Exception as e:
+            print(f"Failed to publish message: {e}")
+
+        return True
+
+    async def CloseConnection(self):
+        await self.Connection.close()
+
+class CommunicationInterfaceData:
+    def __init__(self):
+        self.connection_url = "amqp://guest:guest@localhost/"
+        self.exchange_name = "COMMUNICATION_INTERFACE_EXCHANGE"
+        self.http_host = "127.0.0.1"
+        self.http_port = 7000
+        
+        # Communication interface specific configurations
+        self.service_url_mapping_file = "ServiceURLMapping.json"
+        self.default_timeout = 30
+        self.max_retries = 3
+        self.buffer_cleanup_interval = 300  # 5 minutes
 
 class CommunicationInterfaceService():
-    def __init__(self,httpServerHost, httpServerPort):
-        self.messageQueue = MessageQueue("amqp://guest:guest@localhost/" , "COMMUNICATION_INTERFACE_EXCHANGE")
-        self.apiServer = HTTPServer(httpServerHost, httpServerPort)
-
-
-
+    def __init__(self, data_class=None):
+        self.data = data_class or CommunicationInterfaceData()
+        self.messageQueue = MessageQueue(self.data.connection_url, self.data.exchange_name)
+        self.apiServer = HTTPServer(self.data.http_host, self.data.http_port)
 
     async def getServiceURL(self, serviceName):
-        servicePortMapping = json.load(open("ServiceURLMapping.json"))
+        servicePortMapping = json.load(open(self.data.service_url_mapping_file))
         return servicePortMapping[serviceName]
 
     async def ConfigureApiRoutes(self):
         pass
-
-
-
-
 
     async def sendMessageToUserManager(self, userManagerMessage, headers=None):
         print("Sending Message to User Manager")
@@ -88,9 +167,6 @@ class CommunicationInterfaceService():
             messageToSend = {"TYPE": "SEND_BUFFER_REQUEST" , "DATA": mainMessage}
             await self.sendMessageToWsServer(messageToSend)
 
-            
-
-    
     async def handleUserManagerMessages(self, userManagerMessage, response=False):
         print(type(userManagerMessage))
         msgType = userManagerMessage['TYPE']
@@ -99,105 +175,46 @@ class CommunicationInterfaceService():
         if msgType == "SEND_MESSAGE_TO_USER":
             print("CI : User Manager Asked to Send Message to User")
             userId = msgData["USER_ID"]
-            messageForUser = msgData["MESSAGE_FOR_USER"]
-            await self.sendMessageToUser(userId, messageForUser)
+            message = msgData["MESSAGE_FOR_USER"]
+            await self.sendMessageToUser(userId, message)
+            responseMsg = {"STATUS": "SUCCESS"}
         else:
             print("Unknown Message Type")
             print("Received Message: ", userManagerMessage)
-            responseMsg = {"STATUS" : "FAILED" , "ERROR" : "Unknown message type"}
+            responseMsg = {"STATUS": "FAILED", "ERROR": "Unknown message type"}
 
         if response:
             return responseMsg
 
     async def callbackUserManagerMessages(self, message):
+        print("Received Message from User Manager")
         DecodedMessage = message.body.decode()
         DecodedMessage = json.loads(DecodedMessage)
-        print(type(DecodedMessage))
-        
+
         await self.handleUserManagerMessages(DecodedMessage)
-
-
-
-    async def handleUserHttpServerMessages(self, UserHttpServerMessage, response=False, headers=None):
-        msgType = UserHttpServerMessage['TYPE']
-        msgData = UserHttpServerMessage['DATA']
-        responseMsg = None
-        if msgType == "MESSAGE_FOR_USER_MANAGER":
-            print("User Http Server Asked to Forward Message to User Manager")
-            print()
-            await self.sendMessageToUserManager(msgData, headers=headers)
-            responseMsg = {"STATUS" : "SUCCESS"}
-        else:
-            print("Unknown Message Type")
-            print("Received Message: ", UserHttpServerMessage)
-            responseMsg = {"STATUS" : "FAILED" , "ERROR" : "Unknown message type"}
-        
-        if response:
-            return responseMsg
-
-    async def callbackUserHttpServerMessages(self, message):
-        # DecodedMessage = message.body.decode()
-        # DecodedMessage = json.loads(DecodedMessage)
-
-        DecodedMessage = None
-
-        headers = message.headers
-        print(f"Communication Interface Headers Received : {message.headers}")
-
-        if headers and "DATA_FORMAT" in headers:
-            if headers["DATA_FORMAT"] == "BYTES":
-                print("Bytes")
-                DecodedMessage = pickle.loads(message.body)
-            else:
-                DecodedMessage = message.body.decode()
-                DecodedMessage = json.loads(DecodedMessage)
-        else:
-            DecodedMessage = message.body.decode()
-            DecodedMessage = json.loads(DecodedMessage)
-
-        asyncio.create_task(self.handleUserHttpServerMessages(DecodedMessage, headers=headers))
-        
-
-
-    async def handleUserWsServerMessages(self, UserWsServerMessage, response=False):
-        msgType = UserWsServerMessage['TYPE']
-        msgData = UserWsServerMessage['DATA']
-        if msgType == "MESSAGE_FOR_USER_MANAGER":
-            print("User Ws Server Asked to Forward Message to User Manager")
-            await self.sendMessageToUserManager(msgData)
-            responseMsg = {"STATUS" : "SUCCESS"}
-        else:
-            print("Unknown Message Type")
-            print("Received Message: ", UserWsServerMessage)
-            responseMsg = {"STATUS" : "FAILED" , "ERROR" : "Unknown message type"}
-        
-        if response:
-            return responseMsg
-
-    async def callbackUserWsServerMessages(self , message):
-        DecodedMessage = message.body.decode()
-        DecodedMessage = json.loads(DecodedMessage)
-
-        await self.handleUserWsServerMessages(DecodedMessage)
-
-
 
     async def startService(self):
         await self.messageQueue.InitializeConnection()
         await self.messageQueue.AddQueueAndMapToCallback("CIE_USER_MANAGER", self.callbackUserManagerMessages, auto_delete = True)
-        await self.messageQueue.AddQueueAndMapToCallback("CIE_USER_HTTP_SERVER", self.callbackUserHttpServerMessages, auto_delete = True)
-        await self.messageQueue.AddQueueAndMapToCallback("CIE_USER_WS_SERVER", self.callbackUserWsServerMessages, auto_delete = True)
         await self.messageQueue.BoundQueueToExchange()
         await self.messageQueue.StartListeningToQueue()
 
         await self.ConfigureApiRoutes()
         await self.apiServer.run_app()
 
+class Service:
+    def __init__(self, communicationInterfaceService=None):
+        self.communicationInterfaceService = communicationInterfaceService
+
+    async def startService(self):
+        print("Starting Communication Interface Service...")
+        await self.communicationInterfaceService.startService()
 
 async def start_service():
-    service = CommunicationInterfaceService("127.0.0.1" , 12000)
+    dataClass = CommunicationInterfaceData()
+    communicationInterfaceService = CommunicationInterfaceService(dataClass)
+    service = Service(communicationInterfaceService)
     await service.startService()
 
 if __name__ == "__main__":
-    print("Starting Communication Interface Service")
     asyncio.run(start_service())

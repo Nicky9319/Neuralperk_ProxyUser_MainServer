@@ -1,0 +1,49 @@
+{
+    "apps":[
+        {
+            "name": "customerServer",
+            "script": "./service_CustomerServer/customerAgent.py",
+            "interpreter": ".venv/bin/python",
+            "out_file": "./logs/customerServer-out.log",
+            "error_file": "./logs/customerServer-error.log",
+            "merge_logs": true,
+            "namespace": "neuralperk"
+        },
+        {
+            "name": "mongoDBService",
+            "script": "./service_MongoDBService/mongoDBService.py",
+            "interpreter": ".venv/bin/python",
+            "out_file": "./logs/mongoDBService-out.log",
+            "error_file": "./logs/mongoDBService-error.log",
+            "merge_logs": true,
+            "namespace": "neuralperk"
+        },
+        {
+            "name": "vastAIService",
+            "script": "./service_VastAIService/vastAIService.py",
+            "interpreter": ".venv/bin/python",
+            "out_file": "./logs/vastAIService-out.log",
+            "error_file": "./logs/vastAIService-error.log",
+            "merge_logs": true,
+            "namespace": "neuralperk"
+        },
+        {
+            "name": "sessionSupervisor",
+            "script": "./service_SessionSupervisor/sessionSupervisor.py",
+            "interpreter": ".venv/bin/python",
+            "out_file": "./logs/sessionSupervisor-out.log",
+            "error_file": "./logs/sessionSupervisor-error.log",
+            "merge_logs": true,
+            "namespace": "neuralperk"
+        },
+        {
+            "name": "userWsServer",
+            "script": "./service_UserWsServer/userWsServer.py",
+            "interpreter": ".venv/bin/python",
+            "out_file": "./logs/userWsServer-out.log",
+            "error_file": "./logs/userWsServer-error.log",
+            "merge_logs": true,
+            "namespace": "neuralperk"
+        }
+    ]
+}
