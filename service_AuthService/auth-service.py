@@ -141,7 +141,7 @@ class HTTP_SERVER():
         async def authenticate_customer_id(request: Request):
             """Authenticate a customer ID
             Required fields: customerId
-            Returns: Success message with customer details if valid
+            Returns: Boolean indicating if customer ID exists
             """
             try:
                 body = await request.json()
@@ -166,16 +166,29 @@ class HTTP_SERVER():
                             # Customer ID is valid
                             return JSONResponse(
                                 content={
-                                    "message": "Customer ID authenticated successfully",
-                                    "customerId": customer_id,
-                                    "email": user_data.get("email")
+                                    "authenticated": True,
+                                    "message": "Customer ID is valid"
                                 },
                                 status_code=200
                             )
                         else:
-                            raise HTTPException(status_code=401, detail="Invalid customer ID")
+                            # Customer ID is invalid
+                            return JSONResponse(
+                                content={
+                                    "authenticated": False,
+                                    "message": "Customer ID is invalid"
+                                },
+                                status_code=200
+                            )
                     else:
-                        raise HTTPException(status_code=401, detail="Invalid customer ID")
+                        # Customer ID is invalid
+                        return JSONResponse(
+                            content={
+                                "authenticated": False,
+                                "message": "Customer ID is invalid"
+                            },
+                            status_code=200
+                        )
                         
                 except httpx.RequestError as e:
                     raise HTTPException(status_code=503, detail=f"MongoDB service unavailable: {str(e)}")
