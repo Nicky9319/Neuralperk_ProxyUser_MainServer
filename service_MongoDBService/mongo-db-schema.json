@@ -39,6 +39,10 @@
               "bsonType": "string",
               "description": "unique object identifier, must be a string and is required"
             },
+            "blendFileName": {
+              "bsonType": ["string", "null"],
+              "description": "name of the blend file (e.g., 'chair_model.blend'), must be a string if present, or null if not available"
+            },
             "blendFilePath": {
               "bsonType": ["string", "null"],
               "description": "must be a string if present, or null if not available"

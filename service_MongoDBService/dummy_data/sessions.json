@@ -1,26 +1,26 @@
 [
   {
-    "sessionId": "sess001",
-    "customerId": "cust001",
-    "blenderObjectId": "obj001",
+    "sessionId": "sess_001",
+    "customerId": "cust_001",
+    "blenderObjectId": "obj_001",
     "status": "queued"
   },
   {
-    "sessionId": "sess002",
-    "customerId": "cust002",
-    "blenderObjectId": "obj002",
+    "sessionId": "sess_002",
+    "customerId": "cust_002",
+    "blenderObjectId": "obj_002",
     "status": "rendering"
   },
   {
-    "sessionId": "sess003",
-    "customerId": "cust003",
-    "blenderObjectId": "obj003",
+    "sessionId": "sess_003",
+    "customerId": "cust_003",
+    "blenderObjectId": "obj_003",
     "status": "completed"
   },
   {
-    "sessionId": "sess004",
-    "customerId": "cust001",
-    "blenderObjectId": "obj001",
+    "sessionId": "sess_004",
+    "customerId": "cust_001",
+    "blenderObjectId": "obj_001",
     "status": "failed"
   }
 ]

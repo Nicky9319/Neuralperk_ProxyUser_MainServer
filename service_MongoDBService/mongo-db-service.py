@@ -209,7 +209,7 @@ class HTTP_SERVER():
         async def add_blender_object(request: Request):
             """Add a new blender object to the database
             Required fields: objectId, customerId
-            Optional fields: blendFilePath, renderedVideoPath
+            Optional fields: blendFileName, blendFilePath, renderedVideoPath
             Returns: Success message with object details
             """
             try:
@@ -234,6 +234,7 @@ class HTTP_SERVER():
                 # Create blender object document
                 object_doc = {
                     "objectId": body["objectId"],
+                    "blendFileName": body.get("blendFileName", None),
                     "blendFilePath": body.get("blendFilePath", None),
                     "renderedVideoPath": body.get("renderedVideoPath", None),
                     "customerId": body["customerId"]
@@ -245,7 +246,8 @@ class HTTP_SERVER():
                     content={
                         "message": "Blender object added successfully",
                         "objectId": body["objectId"],
-                        "customerId": body["customerId"]
+                        "customerId": body["customerId"],
+                        "blendFileName": object_doc["blendFileName"]
                     },
                     status_code=201
                 )
@@ -643,6 +645,85 @@ class HTTP_SERVER():
                     status_code=200
                 )
                 
+            except HTTPException:
+                raise
+            except Exception as e:
+                raise HTTPException(status_code=500, detail=f"Internal server error: {str(e)}")
+        
+        # ========================================
+        # BLEND FILE NAME MANAGEMENT ENDPOINTS
+        # ========================================
+        
+        @self.app.put("/api/mongodb-service/blender-objects/update-blend-file-name")
+        async def update_blend_file_name(request: Request):
+            """Update the blend file name for a blender object
+            Required fields: objectId, customerId, blendFileName
+            Returns: Success message with updated object details
+            """
+            try:
+                body = await request.json()
+                
+                # Validate required fields
+                required_fields = ["objectId", "customerId", "blendFileName"]
+                for field in required_fields:
+                    if field not in body:
+                        raise HTTPException(status_code=400, detail=f"Missing required field: {field}")
+                
+                # Check if customer exists
+                customer = self.customers_collection.find_one({"customerId": body["customerId"]})
+                if not customer:
+                    raise HTTPException(status_code=404, detail="Customer not found")
+                
+                # Update the blend file name
+                result = self.blender_objects_collection.update_one(
+                    {"objectId": body["objectId"], "customerId": body["customerId"]},
+                    {"$set": {"blendFileName": body["blendFileName"]}}
+                )
+                
+                if result.matched_count == 0:
+                    raise HTTPException(status_code=404, detail="Blender object not found")
+                
+                return JSONResponse(
+                    content={
+                        "message": "Blend file name updated successfully",
+                        "objectId": body["objectId"],
+                        "blendFileName": body["blendFileName"]
+                    },
+                    status_code=200
+                )
+                
+            except HTTPException:
+                raise
+            except Exception as e:
+                raise HTTPException(status_code=500, detail=f"Internal server error: {str(e)}")
+        
+        @self.app.get("/api/mongodb-service/blender-objects/get-blend-file-name/{object_id}")
+        async def get_blend_file_name(object_id: str, customer_id: str):
+            """Get the blend file name for a blender object
+            Parameters: object_id (path parameter), customer_id (query parameter)
+            Returns: Blend file name and object details
+            """
+            try:
+                # Check if blender object exists
+                blender_object = self.blender_objects_collection.find_one({
+                    "objectId": object_id,
+                    "customerId": customer_id
+                })
+                
+                if not blender_object:
+                    raise HTTPException(status_code=404, detail="Blender object not found")
+                
+                return JSONResponse(
+                    content={
+                        "objectId": object_id,
+                        "customerId": customer_id,
+                        "blendFileName": blender_object.get("blendFileName"),
+                        "blendFilePath": blender_object.get("blendFilePath"),
+                        "message": "Blend file name retrieved successfully"
+                    },
+                    status_code=200
+                )
+                    
             except HTTPException:
                 raise
             except Exception as e:

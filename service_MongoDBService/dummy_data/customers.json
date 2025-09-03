@@ -1,16 +1,16 @@
 [
   {
-    "customerId": "cust001",
+    "customerId": "cust_001",
     "email": "alice@example.com",
     "password": "hashed_password_123"
   },
   {
-    "customerId": "cust002",
+    "customerId": "cust_002",
     "email": "bob@example.com",
     "password": "hashed_password_456"
   },
   {
-    "customerId": "cust003",
+    "customerId": "cust_003",
     "email": "charlie@example.com",
     "password": "hashed_password_789"
   }
