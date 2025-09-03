@@ -1,0 +1,26 @@
+[
+  {
+    "sessionId": "sess001",
+    "customerId": "cust001",
+    "blenderObjectId": "obj001",
+    "status": "queued"
+  },
+  {
+    "sessionId": "sess002",
+    "customerId": "cust002",
+    "blenderObjectId": "obj002",
+    "status": "rendering"
+  },
+  {
+    "sessionId": "sess003",
+    "customerId": "cust003",
+    "blenderObjectId": "obj003",
+    "status": "completed"
+  },
+  {
+    "sessionId": "sess004",
+    "customerId": "cust001",
+    "blenderObjectId": "obj001",
+    "status": "failed"
+  }
+]

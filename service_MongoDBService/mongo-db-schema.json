@@ -1,66 +1,91 @@
 {
-    "database": "neuralperk",
-    "collections": [
-        {
-            "name": "customers",
-            "validator": {
-                "$jsonSchema": {
-                    "bsonType": "object",
-                    "title": "customers",
-                    "required": [
-                        "customerId",
-                        "email",
-                        "password"
-                    ],
-                    "properties": {
-                        "customerId": {
-                            "bsonType": "string"
-                        },
-                        "email": {
-                            "bsonType": "string"
-                        },
-                        "password": {
-                            "bsonType": "string"
-                        }
-                    }
-                }
+  "database": "neuralperk",
+  "collections": [
+    {
+      "name": "customers",
+      "validator": {
+        "$jsonSchema": {
+          "bsonType": "object",
+          "title": "customers",
+          "required": ["customerId", "email", "password"],
+          "properties": {
+            "customerId": {
+              "bsonType": "string",
+              "description": "unique customer identifier, must be a string and is required"
             },
-            "validationLevel": "strict",
-            "validationAction": "error"
-        },
-        {
-            "name": "blenderObjects",
-            "validator": {
-                "$jsonSchema": {
-                    "bsonType": "object",
-                    "title": "blenderObjects",
-                    "required": [
-                        "objectId",
-                        "blendFilePath",
-                        "customerId"
-                    ],
-                    "properties": {
-                        "objectId": {
-                            "bsonType": "string",
-                            "description": "unique object identifier, must be a string and is required"
-                        },
-                        "blendFilePath": {
-                            "bsonType": "string",
-                            "description": "must be a string and is required"
-                        },
-                        "renderedVideoPath": {
-                            "bsonType": ["string","null"],
-                            "description": "must be a string if present"
-                        },
-                        "customerId": {
-                            "bsonType": "string",
-                            "description": "reference to customerId in customers collection, must be a string and is required"
-                        }
-                    }
-                }
+            "email": {
+              "bsonType": "string",
+              "description": "must be a string and is required"
             },
-            "validationLevel": "strict",
-            "validationAction": "error"
+            "password": {
+              "bsonType": "string",
+              "description": "must be a string and is required"
+            }
+          }
         }
-    ]
+      },
+      "validationLevel": "strict",
+      "validationAction": "error"
+    },
+    {
+      "name": "blenderObjects",
+      "validator": {
+        "$jsonSchema": {
+          "bsonType": "object",
+          "title": "blenderObjects",
+          "required": ["objectId", "blendFilePath", "customerId"],
+          "properties": {
+            "objectId": {
+              "bsonType": "string",
+              "description": "unique object identifier, must be a string and is required"
+            },
+            "blendFilePath": {
+              "bsonType": "string",
+              "description": "must be a string and is required"
+            },
+            "renderedVideoPath": {
+              "bsonType": ["string", "null"],
+              "description": "must be a string if present, or null if not available"
+            },
+            "customerId": {
+              "bsonType": "string",
+              "description": "reference to customerId in customers collection, must be a string and is required"
+            }
+          }
+        }
+      },
+      "validationLevel": "strict",
+      "validationAction": "error"
+    },
+    {
+      "name": "sessions",
+      "validator": {
+        "$jsonSchema": {
+          "bsonType": "object",
+          "title": "sessions",
+          "required": ["sessionId", "customerId", "blenderObjectId", "status"],
+          "properties": {
+            "sessionId": {
+              "bsonType": "string",
+              "description": "unique session identifier, must be a string and is required"
+            },
+            "customerId": {
+              "bsonType": "string",
+              "description": "reference to customerId in customers collection, must be a string and is required"
+            },
+            "blenderObjectId": {
+              "bsonType": "string",
+              "description": "reference to objectId in blenderObjects collection, must be a string and is required"
+            },
+            "status": {
+              "bsonType": "string",
+              "description": "status of the session (e.g., queued, rendering, completed, failed), must be a string and is required"
+            }
+          }
+        }
+      },
+      "validationLevel": "strict",
+      "validationAction": "error"
+    }
+  ]
 }
