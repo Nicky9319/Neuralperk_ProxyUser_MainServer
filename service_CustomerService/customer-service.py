@@ -139,7 +139,6 @@ class HTTP_SERVER():
             )
         
 
-
     async def configure_routes(self):
 
         # @self.app.post("/api/customer-service/test-auth")

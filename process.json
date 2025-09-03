@@ -35,6 +35,15 @@
             "error_file": "./logs/authService-error.log",
             "merge_logs": true,
             "namespace": "neuralperk"
+        },
+        {
+            "name": "userService",
+            "script": "./service_UserService/user-service.py",
+            "interpreter": ".venv/bin/python",
+            "out_file": "./logs/userService-out.log",
+            "error_file": "./logs/userService-error.log",
+            "merge_logs": true,
+            "namespace": "neuralperk"
         }
     ]
 }
