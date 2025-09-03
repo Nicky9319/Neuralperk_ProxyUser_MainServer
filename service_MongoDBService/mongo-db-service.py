@@ -170,6 +170,37 @@ class HTTP_SERVER():
             except Exception as e:
                 raise HTTPException(status_code=500, detail=f"Internal server error: {str(e)}")
         
+        @self.app.get("/api/mongodb-service/customers/find-by-email/{email}")
+        async def find_customer_by_email(email: str):
+            """Find a customer by email address
+            Parameters: email (path parameter)
+            Returns: Customer details if found
+            """
+            try:
+                customer = self.customers_collection.find_one({"email": email})
+                
+                if customer:
+                    return JSONResponse(
+                        content={
+                            "exists": True,
+                            "customerId": customer["customerId"],
+                            "email": customer["email"],
+                            "password": customer["password"]  # Include hashed password for auth verification
+                        },
+                        status_code=200
+                    )
+                else:
+                    return JSONResponse(
+                        content={
+                            "exists": False,
+                            "message": "Customer not found"
+                        },
+                        status_code=404
+                    )
+                    
+            except Exception as e:
+                raise HTTPException(status_code=500, detail=f"Internal server error: {str(e)}")
+        
         # ========================================
         # BLENDER OBJECT MANAGEMENT ENDPOINTS
         # ========================================

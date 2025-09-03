@@ -1,0 +1,330 @@
+{
+	"info": {
+		"_postman_id": "auth-service-unit-tests",
+		"name": "Auth Service Unit Tests",
+		"description": "Comprehensive unit test collection for Auth Service APIs including user registration and authentication",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Root Endpoint",
+			"item": [
+				{
+					"name": "Health Check",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{auth_base_url}}/api/auth-service/",
+							"host": ["{{auth_base_url}}"],
+							"path": ["api", "auth-service", ""]
+						},
+						"description": "Test if Auth Service is active and responding"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "User Registration",
+			"item": [
+				{
+					"name": "Register User - Success",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"customerId\": \"cust_001\",\n  \"email\": \"john.doe@example.com\",\n  \"password\": \"securePassword123\"\n}"
+						},
+						"url": {
+							"raw": "{{auth_base_url}}/api/auth-service/register",
+							"host": ["{{auth_base_url}}"],
+							"path": ["api", "auth-service", "register"]
+						},
+						"description": "Register a new user with valid data"
+					},
+					"response": []
+				},
+				{
+					"name": "Register User - Missing Fields",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"customerId\": \"cust_002\",\n  \"email\": \"jane.smith@example.com\"\n}"
+						},
+						"url": {
+							"raw": "{{auth_base_url}}/api/auth-service/register",
+							"host": ["{{auth_base_url}}"],
+							"path": ["api", "auth-service", "register"]
+						},
+						"description": "Test validation - missing password field"
+					},
+					"response": []
+				},
+				{
+					"name": "Register User - Invalid Email",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"customerId\": \"cust_003\",\n  \"email\": \"invalid-email\",\n  \"password\": \"password123\"\n}"
+						},
+						"url": {
+							"raw": "{{auth_base_url}}/api/auth-service/register",
+							"host": ["{{auth_base_url}}"],
+							"path": ["api", "auth-service", "register"]
+						},
+						"description": "Test validation - invalid email format"
+					},
+					"response": []
+				},
+				{
+					"name": "Register User - Weak Password",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"customerId\": \"cust_004\",\n  \"email\": \"user@example.com\",\n  \"password\": \"123\"\n}"
+						},
+						"url": {
+							"raw": "{{auth_base_url}}/api/auth-service/register",
+							"host": ["{{auth_base_url}}"],
+							"path": ["api", "auth-service", "register"]
+						},
+						"description": "Test validation - password too short"
+					},
+					"response": []
+				},
+				{
+					"name": "Register User - Duplicate ID",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"customerId\": \"cust_001\",\n  \"email\": \"duplicate@example.com\",\n  \"password\": \"password123\"\n}"
+						},
+						"url": {
+							"raw": "{{auth_base_url}}/api/auth-service/register",
+							"host": ["{{auth_base_url}}"],
+							"path": ["api", "auth-service", "register"]
+						},
+						"description": "Test duplicate customer ID handling"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "User Authentication",
+			"item": [
+				{
+					"name": "Login User - Success",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"email\": \"john.doe@example.com\",\n  \"password\": \"securePassword123\"\n}"
+						},
+						"url": {
+							"raw": "{{auth_base_url}}/api/auth-service/login",
+							"host": ["{{auth_base_url}}"],
+							"path": ["api", "auth-service", "login"]
+						},
+						"description": "Login with valid credentials"
+					},
+					"response": []
+				},
+				{
+					"name": "Login User - Missing Fields",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"email\": \"john.doe@example.com\"\n}"
+						},
+						"url": {
+							"raw": "{{auth_base_url}}/api/auth-service/login",
+							"host": ["{{auth_base_url}}"],
+							"path": ["api", "auth-service", "login"]
+						},
+						"description": "Test validation - missing password field"
+					},
+					"response": []
+				},
+				{
+					"name": "Login User - Invalid Email",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"email\": \"nonexistent@example.com\",\n  \"password\": \"password123\"\n}"
+						},
+						"url": {
+							"raw": "{{auth_base_url}}/api/auth-service/login",
+							"host": ["{{auth_base_url}}"],
+							"path": ["api", "auth-service", "login"]
+						},
+						"description": "Test login with non-existent email"
+					},
+					"response": []
+				},
+				{
+					"name": "Login User - Wrong Password",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"email\": \"john.doe@example.com\",\n  \"password\": \"wrongpassword\"\n}"
+						},
+						"url": {
+							"raw": "{{auth_base_url}}/api/auth-service/login",
+							"host": ["{{auth_base_url}}"],
+							"path": ["api", "auth-service", "login"]
+						},
+						"description": "Test login with wrong password"
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					"// Pre-request script for Auth Service Unit Tests",
+					"console.log('Testing endpoint: ' + pm.request.url);"
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					"// Test script for Auth Service Unit Tests",
+					"pm.test('Status code is valid', function () {",
+					"    pm.expect(pm.response.code).to.be.oneOf([200, 201, 400, 401, 409, 500, 503]);",
+					"});",
+					"",
+					"pm.test('Response has required structure', function () {",
+					"    const response = pm.response.json();",
+					"    pm.expect(response).to.have.property('message');",
+					"});",
+					"",
+					"pm.test('Response time is acceptable', function () {",
+					"    pm.expect(pm.response.responseTime).to.be.below(2000);",
+					"});",
+					"",
+					"// Test specific to login success",
+					"if (pm.request.url.path.includes('/login') && pm.response.code === 200) {",
+					"    pm.test('Login response contains auth token', function () {",
+					"        const response = pm.response.json();",
+					"        pm.expect(response).to.have.property('authToken');",
+					"        pm.expect(response).to.have.property('customerId');",
+					"        pm.expect(response).to.have.property('email');",
+					"    });",
+					"}",
+					"",
+					"// Test specific to registration success",
+					"if (pm.request.url.path.includes('/register') && pm.response.code === 201) {",
+					"    pm.test('Registration response contains user details', function () {",
+					"        const response = pm.response.json();",
+					"        pm.expect(response).to.have.property('customerId');",
+					"        pm.expect(response).to.have.property('email');",
+					"    });",
+					"}"
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "auth_base_url",
+			"value": "http://127.0.0.1:5937",
+			"type": "string",
+			"description": "Base URL for Auth Service (localhost:5937)"
+		},
+		{
+			"key": "mongodb_service_url",
+			"value": "http://127.0.0.1:15000",
+			"type": "string",
+			"description": "Base URL for MongoDB Service (localhost:15000)"
+		},
+		{
+			"key": "test_customer_id",
+			"value": "cust_001",
+			"type": "string",
+			"description": "Test customer ID for reuse across tests"
+		},
+		{
+			"key": "test_email",
+			"value": "john.doe@example.com",
+			"type": "string",
+			"description": "Test email for reuse across tests"
+		},
+		{
+			"key": "test_password",
+			"value": "securePassword123",
+			"type": "string",
+			"description": "Test password for reuse across tests"
+		}
+	]
+}

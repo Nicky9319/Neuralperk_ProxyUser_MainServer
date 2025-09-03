@@ -11,3 +11,7 @@ uvicorn
 aiohttp
 aio_pika
 pymongo
+
+httpx
+
+dotenv
