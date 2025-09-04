@@ -1,6 +1,6 @@
 import asyncio
 
-from fastapi import FastAPI, Response, Request, HTTPException, Depends, File, Form, UploadFile
+from fastapi import FastAPI, Response, Request, HTTPException, Depends, File, Form, UploadFile, Query
 from fastapi.responses import StreamingResponse
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
@@ -19,6 +19,7 @@ import asyncio
 import aio_pika
 
 # from customerAgent import customerAgent
+from session_class import sessionClass
 
 import sys
 import os
@@ -88,108 +89,43 @@ class HTTP_SERVER():
             customer_id: str = Form(...),
             object_id: str = Form(...)
         ):
-            return JSONResponse(content={"message": "Start workload endpoint hit", "customer_id": customer_id, "object_id": object_id}, status_code=200)
             try:
-                # Get the access token from the Authorization header
-                auth_header = request.headers.get("authorization")
-                # access_token_from_header = None
-                # if auth_header and auth_header.lower().startswith("bearer "):
-                #     access_token_from_header = auth_header[7:]
-                # Prefer the token from Depends if available, else from header
-                token = access_token or access_token_from_header
-                if not token:
-                    raise HTTPException(status_code=401, detail="Access token missing")
+                if customer_id in self.data_class.customerSessionsMapping.keys():
+                    return JSONResponse(content={"message": "One workload already running. Your Access Plan doesnt allow to run another workload"}, status_code=400)
 
-                # Defensive: check object_id
-                if not object_id:
-                    raise HTTPException(status_code=400, detail="object_id is required")
+                new_session = sessionClass(customer_id=customer_id, object_id=object_id)
+                self.data_class.customerSessionsMapping[customer_id] = new_session
+                response = await new_session.start_workload()
+                # JSONResponse does not have a .content attribute; to print the response body, access .body and decode it
+                print(response.body.decode())
 
-                # Check if agent already exists for this customer
-                if token in self.data_class.customerAgentMapping:
-                    return JSONResponse(
-                        content={
-                            "message": "A workload is already running for your account. Only one workload can be started at a time.",
-                            "status": "workload_already_running"
-                        },
-                        status_code=400
-                    )
-
-                newCustomerAgent = customerAgent()
-                self.data_class.customerAgentMapping[token] = newCustomerAgent
-
-                try:
-                    newCustomerAgent.setObjectId(object_id)
-                    newCustomerAgent.startWorkload()
-                except Exception as e:
-                    # Clean up mapping if agent failed to start
-                    self.data_class.customerAgentMapping.pop(token, None)
-                    raise HTTPException(status_code=500, detail=f"Failed to start workload: {str(e)}")
-
-                return JSONResponse(content={"message": "Workload started", "customer_id": token}, status_code=200)
-            except HTTPException as he:
-                raise he
+                if response.status_code == 200:
+                    return JSONResponse(content={"message": "Workload started"}, status_code=response.status_code)
+                else:
+                    return JSONResponse(content={"message": "Failed to start workload"}, status_code=response.status_code)
             except Exception as e:
                 import traceback
                 print(f"Error in startWorkload: {traceback.format_exc()}")
-                raise HTTPException(status_code=500, detail=f"Internal server error: {str(e)}")
+                return JSONResponse(content={"message": "Internal server error", "details": str(e)}, status_code=500)
+            
 
-        @self.app.post("/api/session-supervisor-service/get-workload-status")
+        @self.app.get("/api/session-supervisor-service/get-workload-status")
         async def getWorkloadStatus(
-            customer_id: str = Form(...),
+            customer_id: str = Query(...),
         ):
-            return JSONResponse(content={"message": "Get workload status endpoint hit", "customer_id": customer_id}, status_code=200)
-            try:
-                print(f"Get workload status endpoint hit for customer: {access_token}")
-
-                if not access_token:
-                    raise HTTPException(status_code=401, detail="Access token missing")
-
-                if access_token not in self.data_class.customerAgentMapping:
-                    raise HTTPException(status_code=404, detail="No workload found for this customer")
-
-                newCustomerAgent = self.data_class.customerAgentMapping[access_token]
-                try:
-                    workloadStatus = newCustomerAgent.getWorkloadStatus()
-                except Exception as e:
-                    raise HTTPException(status_code=500, detail=f"Failed to get workload status: {str(e)}")
-                
-                return JSONResponse(content={"message": "Get workload status endpoint", "workload-status": workloadStatus}, status_code=200)
-            except HTTPException as he:
-                raise he
-            except Exception as e:
-                import traceback
-                print(f"Error in getWorkloadStatus: {traceback.format_exc()}")
-                raise HTTPException(status_code=500, detail=f"Internal server error: {str(e)}")
+            session_status = await self.data_class.customerSessionsMapping[customer_id].get_session_status()
+            return JSONResponse(content={"message": "Workload status", "status": session_status}, status_code=200)
 
         @self.app.post("/api/session-supervisor-service/stop-and-delete-workload")
         async def getWorkloadResults(
             customer_id: str = Form(...),
         ):
-            return JSONResponse(content={"message": "Stop and delete workload endpoint hit", "customer_id": customer_id}, status_code=200)
-            try:
-                print(f"Stop and delete workload endpoint hit for customer: {access_token}")
-
-                if not access_token:
-                    raise HTTPException(status_code=401, detail="Access token missing")
-
-                if access_token not in self.data_class.customerAgentMapping:
-                    raise HTTPException(status_code=404, detail="No workload found for this customer")
-
-                particularCustomerAgent = self.data_class.customerAgentMapping[access_token]
-                try:
-                    particularCustomerAgent.stopAndDeleteWorkload()
-                except Exception as e:
-                    raise HTTPException(status_code=500, detail=f"Failed to stop and delete workload: {str(e)}")
-                self.data_class.customerAgentMapping.pop(access_token, None)
-
-                return JSONResponse(content={"message": "Stop and delete workload endpoint", "details": "Workload stopped and deleted"}, status_code=200)
-            except HTTPException as he:
-                raise he
-            except Exception as e:
-                import traceback
-                print(f"Error in stopAndDeleteWorkload: {traceback.format_exc()}")
-                raise HTTPException(status_code=500, detail=f"Internal server error: {str(e)}")
-   
+            response = await self.data_class.customerSessionsMapping[customer_id].stop_and_delete_workload()
+            if response.status_code == 200:
+                return JSONResponse(content={"message": "Workload stopped and deleted"}, status_code=response.status_code)
+            else:
+                return JSONResponse(content={"message": "Failed to stop and delete workload"}, status_code=response.status_code)
+            
 
 
     async def run_app(self):
@@ -199,7 +135,7 @@ class HTTP_SERVER():
 
 class Data():
     def __init__(self):
-        self.customerAgentMapping = {}
+        self.customerSessionsMapping = {}
 
 class Service():
     def __init__(self, httpServer = None):

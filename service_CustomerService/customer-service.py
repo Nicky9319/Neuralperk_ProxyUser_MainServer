@@ -311,7 +311,7 @@ class HTTP_SERVER():
                 print(f"Error in startWorkload: {traceback.format_exc()}")
                 raise HTTPException(status_code=500, detail=f"Internal server error: {str(e)}")
 
-        @self.app.post("/api/customer-service/get-workload-status")
+        @self.app.get("/api/customer-service/get-workload-status")
         async def getWorkloadStatus(
             request: Request, 
             access_token: str = Depends(self.authenticate_token),
@@ -321,9 +321,9 @@ class HTTP_SERVER():
                 print(f"Redirecting get-workload-status request to session supervisor service for customer: {customer_id}")
                 
                 # Forward the request to session supervisor service with form data
-                response = await self.http_client.post(
+                response = await self.http_client.get(
                     f"{self.session_supervisor_service_url}/api/session-supervisor-service/get-workload-status",
-                    data={"customer_id": customer_id}
+                    params={"customer_id": customer_id}
                 )
                 
                 # Return the response directly to the client
@@ -511,7 +511,7 @@ class HTTP_SERVER():
 
 class Data():
     def __init__(self):
-        self.customerAgentMapping = {}
+        pass
 
 class Service():
     def __init__(self, httpServer = None):
