@@ -767,7 +767,78 @@ class HTTP_SERVER():
                 raise
             except Exception as e:
                 raise HTTPException(status_code=500, detail=f"Internal server error: {str(e)}")
+        
+        @self.app.get("/api/mongodb-service/blender-objects/find-by-hash/{file_hash}")
+        async def find_blend_file_by_hash(file_hash: str):
+            """Find blend file path by SHA-256 hash
+            Parameters: file_hash (path parameter) - SHA-256 hash of the blend file
+            Returns: Blend file path and object details (without hash)
+            """
+            try:
+                # Validate hash format (SHA-256 should be 64 characters)
+                if len(file_hash) != 64 or not all(c in '0123456789abcdef' for c in file_hash.lower()):
+                    raise HTTPException(status_code=400, detail="Invalid SHA-256 hash format")
+                
+                # Find blender object with matching hash
+                blender_object = self.blender_objects_collection.find_one({
+                    "blendFileHash": file_hash
+                })
+                
+                if not blender_object:
+                    raise HTTPException(status_code=404, detail="No blend file found with this hash")
+                
+                return JSONResponse(
+                    content={
+                        "objectId": blender_object["objectId"],
+                        "customerId": blender_object["customerId"],
+                        "blendFileName": blender_object.get("blendFileName"),
+                        "blendFilePath": blender_object.get("blendFilePath"),
+                        "message": "Blend file found successfully by hash"
+                    },
+                    status_code=200
+                )
+                    
+            except HTTPException:
+                raise
+            except Exception as e:
+                raise HTTPException(status_code=500, detail=f"Internal server error: {str(e)}")
      
+        @self.app.get("/api/mongodb-service/blender-objects/get-blend-file-from-path")
+        async def get_blend_file_from_path(file_path: str):
+            """Get blend file path from database by calculating hash of input path and finding matching record
+            Parameters: file_path (query parameter) - File path to search for in database
+            Returns: Blend file details if found in database
+            """
+            try:
+                if not file_path:
+                    raise HTTPException(status_code=400, detail="file_path query parameter is required")
+                
+                # Calculate hash of the input file path
+                input_hash = self.calculate_file_hash(file_path)
+                
+                # Search in database for any record with matching hash
+                blender_object = self.blender_objects_collection.find_one({
+                    "blendFileHash": input_hash
+                })
+                
+                if not blender_object:
+                    raise HTTPException(status_code=404, detail="No blend file found with this path hash")
+                
+                return JSONResponse(
+                    content={
+                        "objectId": blender_object["objectId"],
+                        "customerId": blender_object["customerId"],
+                        "blendFileName": blender_object.get("blendFileName"),
+                        "blendFilePath": blender_object.get("blendFilePath"),
+                        "message": "Blend file found successfully by path hash"
+                    },
+                    status_code=200
+                )
+            except HTTPException:
+                raise
+            except Exception as e:
+                raise HTTPException(status_code=500, detail=f"Internal server error: {str(e)}")
+
     async def run_app(self):
         config = uvicorn.Config(self.app, host=self.host, port=self.port)
         server = uvicorn.Server(config)

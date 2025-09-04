@@ -470,6 +470,156 @@
 						"description": "Test getting blend file name with wrong customer ID"
 					},
 					"response": []
+				},
+				{
+					"name": "Find Blend File By Hash - Success",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/mongodb-service/blender-objects/find-by-hash/1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef",
+							"host": ["{{base_url}}"],
+							"path": ["api", "mongodb-service", "blender-objects", "find-by-hash", "1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef"]
+						},
+						"description": "Find blend file by SHA-256 hash (success case)"
+					},
+					"response": []
+				},
+				{
+					"name": "Find Blend File By Hash - Invalid Hash Format",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/mongodb-service/blender-objects/find-by-hash/invalid_hash",
+							"host": ["{{base_url}}"],
+							"path": ["api", "mongodb-service", "blender-objects", "find-by-hash", "invalid_hash"]
+						},
+						"description": "Test with invalid SHA-256 hash format (should fail)"
+					},
+					"response": []
+				},
+				{
+					"name": "Find Blend File By Hash - Hash Not Found",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/mongodb-service/blender-objects/find-by-hash/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+							"host": ["{{base_url}}"],
+							"path": ["api", "mongodb-service", "blender-objects", "find-by-hash", "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"]
+						},
+						"description": "Test with valid hash format but hash not found in database"
+					},
+					"response": []
+				},
+				{
+					"name": "Find Blend File By Hash - Hash Too Short",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/mongodb-service/blender-objects/find-by-hash/1234567890abcdef",
+							"host": ["{{base_url}}"],
+							"path": ["api", "mongodb-service", "blender-objects", "find-by-hash", "1234567890abcdef"]
+						},
+						"description": "Test with hash that is too short (less than 64 characters)"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Blend File From Path - Success",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/mongodb-service/blender-objects/get-blend-file-from-path?file_path=path%2Fto%2Fsample.blend",
+							"host": ["{{base_url}}"],
+							"path": ["api", "mongodb-service", "blender-objects", "get-blend-file-from-path"],
+							"query": [
+								{
+									"key": "file_path",
+									"value": "path/to/sample.blend"
+								}
+							]
+						},
+						"description": "Find blend file in database by calculating hash of input path (success case)"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Blend File From Path - Empty Path",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/mongodb-service/blender-objects/get-blend-file-from-path?file_path=",
+							"host": ["{{base_url}}"],
+							"path": ["api", "mongodb-service", "blender-objects", "get-blend-file-from-path"],
+							"query": [
+								{
+									"key": "file_path",
+									"value": ""
+								}
+							]
+						},
+						"description": "Test with empty file path (should fail)"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Blend File From Path - Path Not Found",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/mongodb-service/blender-objects/get-blend-file-from-path?file_path=nonexistent%2Fpath%2Ffile.blend",
+							"host": ["{{base_url}}"],
+							"path": ["api", "mongodb-service", "blender-objects", "get-blend-file-from-path"],
+							"query": [
+								{
+									"key": "file_path",
+									"value": "nonexistent/path/file.blend"
+								}
+							]
+						},
+						"description": "Test with file path that doesn't exist in database (should return 404)"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Blend File From Path - Special Characters",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/mongodb-service/blender-objects/get-blend-file-from-path?file_path=path%2Fwith%20spaces%20and%20special%20chars%21%40%23.blend",
+							"host": ["{{base_url}}"],
+							"path": ["api", "mongodb-service", "blender-objects", "get-blend-file-from-path"],
+							"query": [
+								{
+									"key": "file_path",
+									"value": "path/with spaces and special chars!@#.blend"
+								}
+							]
+						},
+						"description": "Test with file path containing spaces and special characters"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Blend File From Path - Missing Parameter",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/mongodb-service/blender-objects/get-blend-file-from-path",
+							"host": ["{{base_url}}"],
+							"path": ["api", "mongodb-service", "blender-objects", "get-blend-file-from-path"]
+						},
+						"description": "Test without file_path query parameter (should fail)"
+					},
+					"response": []
 				}
 			]
 		},
