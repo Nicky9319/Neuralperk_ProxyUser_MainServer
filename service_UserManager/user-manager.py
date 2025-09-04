@@ -4,6 +4,7 @@ from typing import Any, Dict
 
 import aio_pika
 from aio_pika import ExchangeType, Message
+from click.core import F
 from dotenv import load_dotenv
 from fastapi import FastAPI
 from fastapi import Request
@@ -151,9 +152,21 @@ class HTTP_SERVER():
         """
 
         async def handleUserServiceEvent(payload):
-            if payload["topic"] == "user-frame-rendered":
+            """
+                payload should contain a Mandatory topic field and the supervisor id field.
+            """
+
+            topic = payload.get("topic", None)
+            supervisor_id = payload.get("supervisor-id", None)
+
+            if topic is None or supervisor_id is None:
+                print("Invalid Payload")
+                print("Payload Need to contain the topic and supervisor-id fields. It is mandatory")
+                return
+
+            if topic == "user-frame-rendered":
                 print("user Frame Rendered Event Received")
-            elif payload["topic"] == "user-rendering-completed":
+            elif topic == "user-rendering-completed":
                 print("user Rendering Completed Event Received")
             else:
                 print("Unknown Event Type")
@@ -167,15 +180,42 @@ class HTTP_SERVER():
         return
         
 
-    
+    async def callbackSessionSupervisorMessages(self, message):
+        """
+            Callback Function to Listen to events emitted by the Session Supervisor
+            Currently It is only works with json format data.
+            other data types like bytes and all Can be added later if needed.
+
+        """
+        print("Received Message from Session Supervisor")
+        decoded_message = message.body.decode()
+        json_message = json.loads(decoded_message)
+
+        async def handleSessionSupervisorEvent(payload):
+            if payload["topic"] == "session-supervisor-initialized":
+                print("Session Supervisor Initialized Event Received")
+            elif payload["topic"] == "session-supervisor-ready":
+                print("Session Supervisor Ready Event Received")
+            else:
+                print("Unknown Event Type")
+                print("Received Event: ", payload)
+
+        await handleSessionSupervisorEvent(json_message)
+        return
+
     async def initialization(self):
         await self.mq_client.connect()
 
         await self.mq_client.declare_exchange("USER_MANAGER_EXCHANGE", exchange_type=ExchangeType.DIRECT)
+
         await self.mq_client.declare_queue("USER_SERVICE")
         await self.mq_client.bind_queue("USER_SERVICE", "USER_MANAGER_EXCHANGE", routing_key="USER_SERVICE")
-    
         await self.mq_client.consume("USER_SERVICE" , self.callbackUserServiceMessages)
+
+
+        await self.mq_client.declare_queue("SESSION_SUPERVISOR")
+        await self.mq_client.bind_queue("SESSION_SUPERVISOR", "USER_MANAGER_EXCHANGE", routing_key="SESSION_SUPERVISOR")
+        await self.mq_client.consume("SESSION_SUPERVISOR" , self.callbackSessionSupervisorMessages)
 
 
     async def configure_routes(self):
@@ -185,6 +225,12 @@ class HTTP_SERVER():
             print("User Manager Service Root Endpoint Hit")
             return JSONResponse(content={"message": "User Manager Service is active"}, status_code=200)
 
+        @self.app.post("/api/user-manager/session-supervisor/new-session")
+        async def newSession(
+            user_count: int = Form(...),
+            session_supervisor_id: str = Form(...)
+        ):
+            pass
 
 
     async def run_app(self):
