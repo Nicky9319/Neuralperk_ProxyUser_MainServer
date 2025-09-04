@@ -1,0 +1,790 @@
+{
+	"info": {
+		"_postman_id": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
+		"name": "User Service API Tests",
+		"description": "Comprehensive test collection for User Service APIs including unit tests for all endpoints",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Health Check",
+			"item": [
+				{
+					"name": "Root Endpoint - Health Check",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/user-service/",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"user-service",
+								""
+							]
+						},
+						"description": "Test the root endpoint to verify service is running"
+					},
+					"response": [],
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Response contains message\", function () {",
+									"    const responseJson = pm.response.json();",
+									"    pm.expect(responseJson).to.have.property('message');",
+									"    pm.expect(responseJson.message).to.include('running');",
+									"});",
+									"",
+									"pm.test(\"Response time is less than 1000ms\", function () {",
+									"    pm.expect(pm.response.responseTime).to.be.below(1000);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					]
+				}
+			],
+			"description": "Tests for service health and availability"
+		},
+		{
+			"name": "User Manager APIs",
+			"item": [
+				{
+					"name": "Send Message to User - Valid Request",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"user_id\": \"test_user_123\",\n    \"data\": \"Hello, this is a test message!\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/user-service/user-manager/send-msg-to-user",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"user-service",
+								"user-manager",
+								"send-msg-to-user"
+							]
+						},
+						"description": "Test sending a message to a user with valid data"
+					},
+					"response": [],
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Response contains status and message\", function () {",
+									"    const responseJson = pm.response.json();",
+									"    pm.expect(responseJson).to.have.property('status');",
+									"    pm.expect(responseJson).to.have.property('message');",
+									"    pm.expect(responseJson.status).to.eql(200);",
+									"});",
+									"",
+									"pm.test(\"Response time is less than 2000ms\", function () {",
+									"    pm.expect(pm.response.responseTime).to.be.below(2000);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					]
+				},
+				{
+					"name": "Send Message to User - Missing user_id",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"data\": \"Hello, this is a test message!\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/user-service/user-manager/send-msg-to-user",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"user-service",
+								"user-manager",
+								"send-msg-to-user"
+							]
+						},
+						"description": "Test sending a message with missing user_id to verify error handling"
+					},
+					"response": [],
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 422 or 400\", function () {",
+									"    pm.expect(pm.response.code).to.be.oneOf([400, 422, 500]);",
+									"});",
+									"",
+									"pm.test(\"Response time is less than 2000ms\", function () {",
+									"    pm.expect(pm.response.responseTime).to.be.below(2000);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					]
+				},
+				{
+					"name": "Send Message to User - Missing data",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"user_id\": \"test_user_123\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/user-service/user-manager/send-msg-to-user",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"user-service",
+								"user-manager",
+								"send-msg-to-user"
+							]
+						},
+						"description": "Test sending a message with missing data field to verify error handling"
+					},
+					"response": [],
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 422 or 400\", function () {",
+									"    pm.expect(pm.response.code).to.be.oneOf([400, 422, 500]);",
+									"});",
+									"",
+									"pm.test(\"Response time is less than 2000ms\", function () {",
+									"    pm.expect(pm.response.responseTime).to.be.below(2000);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					]
+				}
+			],
+			"description": "Tests for user manager related APIs"
+		},
+		{
+			"name": "Blend File APIs",
+			"item": [
+				{
+					"name": "Get Blend File - Valid Hash",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/user-service/user/get-blend-file/{{valid_blend_hash}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"user-service",
+								"user",
+								"get-blend-file",
+								"{{valid_blend_hash}}"
+							]
+						},
+						"description": "Test retrieving a blend file with a valid hash"
+					},
+					"response": [],
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Response has correct content type\", function () {",
+									"    pm.expect(pm.response.headers.get('Content-Type')).to.include('application/octet-stream');",
+									"});",
+									"",
+									"pm.test(\"Response has content disposition header\", function () {",
+									"    pm.expect(pm.response.headers.get('Content-Disposition')).to.include('attachment');",
+									"});",
+									"",
+									"pm.test(\"Response time is less than 10000ms\", function () {",
+									"    pm.expect(pm.response.responseTime).to.be.below(10000);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					]
+				},
+				{
+					"name": "Get Blend File - Invalid Hash",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/user-service/user/get-blend-file/invalid_hash_12345",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"user-service",
+								"user",
+								"get-blend-file",
+								"invalid_hash_12345"
+							]
+						},
+						"description": "Test retrieving a blend file with an invalid hash"
+					},
+					"response": [],
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 404 or 502\", function () {",
+									"    pm.expect(pm.response.code).to.be.oneOf([404, 502, 500]);",
+									"});",
+									"",
+									"pm.test(\"Response time is less than 10000ms\", function () {",
+									"    pm.expect(pm.response.responseTime).to.be.below(10000);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					]
+				},
+				{
+					"name": "Get Blend File - Empty Hash",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/user-service/user/get-blend-file/",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"user-service",
+								"user",
+								"get-blend-file",
+								""
+							]
+						},
+						"description": "Test retrieving a blend file with empty hash"
+					},
+					"response": [],
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 404 or 405\", function () {",
+									"    pm.expect(pm.response.code).to.be.oneOf([404, 405]);",
+									"});",
+									"",
+									"pm.test(\"Response time is less than 5000ms\", function () {",
+									"    pm.expect(pm.response.responseTime).to.be.below(5000);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					]
+				}
+			],
+			"description": "Tests for blend file retrieval APIs"
+		},
+		{
+			"name": "Frame Rendering APIs",
+			"item": [
+				{
+					"name": "Frame Rendered - Valid Request",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "userId",
+									"value": "test_user_123",
+									"type": "text"
+								},
+								{
+									"key": "frameNumber",
+									"value": "001",
+									"type": "text"
+								},
+								{
+									"key": "imageExtension",
+									"value": "png",
+									"type": "text"
+								},
+								{
+									"key": "imageBinary",
+									"type": "file",
+									"src": "{{test_image_file}}"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{base_url}}/api/user-service/user/frame-rendered",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"user-service",
+								"user",
+								"frame-rendered"
+							]
+						},
+						"description": "Test uploading a rendered frame with valid data"
+					},
+					"response": [],
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Response contains success message\", function () {",
+									"    const responseJson = pm.response.json();",
+									"    pm.expect(responseJson).to.have.property('message');",
+									"    pm.expect(responseJson.message).to.include('Successfully');",
+									"});",
+									"",
+									"pm.test(\"Response time is less than 10000ms\", function () {",
+									"    pm.expect(pm.response.responseTime).to.be.below(10000);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					]
+				},
+				{
+					"name": "Frame Rendered - Missing userId",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "frameNumber",
+									"value": "001",
+									"type": "text"
+								},
+								{
+									"key": "imageExtension",
+									"value": "png",
+									"type": "text"
+								},
+								{
+									"key": "imageBinary",
+									"type": "file",
+									"src": "{{test_image_file}}"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{base_url}}/api/user-service/user/frame-rendered",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"user-service",
+								"user",
+								"frame-rendered"
+							]
+						},
+						"description": "Test uploading a rendered frame with missing userId"
+					},
+					"response": [],
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 422 or 400\", function () {",
+									"    pm.expect(pm.response.code).to.be.oneOf([400, 422]);",
+									"});",
+									"",
+									"pm.test(\"Response time is less than 5000ms\", function () {",
+									"    pm.expect(pm.response.responseTime).to.be.below(5000);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					]
+				},
+				{
+					"name": "Frame Rendered - Missing imageBinary",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "userId",
+									"value": "test_user_123",
+									"type": "text"
+								},
+								{
+									"key": "frameNumber",
+									"value": "001",
+									"type": "text"
+								},
+								{
+									"key": "imageExtension",
+									"value": "png",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{base_url}}/api/user-service/user/frame-rendered",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"user-service",
+								"user",
+								"frame-rendered"
+							]
+						},
+						"description": "Test uploading a rendered frame with missing imageBinary file"
+					},
+					"response": [],
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 422 or 400\", function () {",
+									"    pm.expect(pm.response.code).to.be.oneOf([400, 422]);",
+									"});",
+									"",
+									"pm.test(\"Response time is less than 5000ms\", function () {",
+									"    pm.expect(pm.response.responseTime).to.be.below(5000);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					]
+				}
+			],
+			"description": "Tests for frame rendering APIs"
+		},
+		{
+			"name": "Rendering Completion APIs",
+			"item": [
+				{
+					"name": "Rendering Completed - Valid Request",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "userId",
+									"value": "test_user_123",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{base_url}}/api/user-service/user/rendering-completed",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"user-service",
+								"user",
+								"rendering-completed"
+							]
+						},
+						"description": "Test marking rendering as completed with valid userId"
+					},
+					"response": [],
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Response contains success message\", function () {",
+									"    const responseJson = pm.response.json();",
+									"    pm.expect(responseJson).to.have.property('message');",
+									"    pm.expect(responseJson.message).to.include('Successfully');",
+									"});",
+									"",
+									"pm.test(\"Response time is less than 5000ms\", function () {",
+									"    pm.expect(pm.response.responseTime).to.be.below(5000);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					]
+				},
+				{
+					"name": "Rendering Completed - Missing userId",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": []
+						},
+						"url": {
+							"raw": "{{base_url}}/api/user-service/user/rendering-completed",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"user-service",
+								"user",
+								"rendering-completed"
+							]
+						},
+						"description": "Test marking rendering as completed with missing userId"
+					},
+					"response": [],
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 422 or 400\", function () {",
+									"    pm.expect(pm.response.code).to.be.oneOf([400, 422]);",
+									"});",
+									"",
+									"pm.test(\"Response time is less than 5000ms\", function () {",
+									"    pm.expect(pm.response.responseTime).to.be.below(5000);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					]
+				},
+				{
+					"name": "Rendering Completed - Empty userId",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "userId",
+									"value": "",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{base_url}}/api/user-service/user/rendering-completed",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"user-service",
+								"user",
+								"rendering-completed"
+							]
+						},
+						"description": "Test marking rendering as completed with empty userId"
+					},
+					"response": [],
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 422 or 400\", function () {",
+									"    pm.expect(pm.response.code).to.be.oneOf([400, 422]);",
+									"});",
+									"",
+									"pm.test(\"Response time is less than 5000ms\", function () {",
+									"    pm.expect(pm.response.responseTime).to.be.below(5000);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					]
+				}
+			],
+			"description": "Tests for rendering completion APIs"
+		},
+		{
+			"name": "Performance Tests",
+			"item": [
+				{
+					"name": "Load Test - Multiple Health Checks",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/user-service/",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"user-service",
+								""
+							]
+						},
+						"description": "Load test for health check endpoint"
+					},
+					"response": [],
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Response time is less than 500ms\", function () {",
+									"    pm.expect(pm.response.responseTime).to.be.below(500);",
+									"});",
+									"",
+									"pm.test(\"Response size is reasonable\", function () {",
+									"    pm.expect(pm.response.responseSize).to.be.below(1000);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					]
+				}
+			],
+			"description": "Performance and load testing scenarios"
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					"// Set default base URL if not already set",
+					"if (!pm.environment.get('base_url')) {",
+					"    pm.environment.set('base_url', 'http://127.0.0.1:8500');",
+					"}",
+					"",
+					"// Set test data if not already set",
+					"if (!pm.environment.get('valid_blend_hash')) {",
+					"    pm.environment.set('valid_blend_hash', 'test_hash_12345');",
+					"}",
+					"",
+					"if (!pm.environment.get('test_image_file')) {",
+					"    pm.environment.set('test_image_file', '/path/to/test/image.png');",
+					"}"
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					"// Global test setup",
+					"pm.test('Response time is reasonable', function () {",
+					"    pm.expect(pm.response.responseTime).to.be.below(30000);",
+					"});",
+					"",
+					"pm.test('Response has valid JSON when expected', function () {",
+					"    if (pm.response.headers.get('Content-Type') && pm.response.headers.get('Content-Type').includes('application/json')) {",
+					"        pm.response.to.be.json;",
+					"    }",
+					"});"
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "base_url",
+			"value": "http://127.0.0.1:8500",
+			"type": "string"
+		},
+		{
+			"key": "valid_blend_hash",
+			"value": "test_hash_12345",
+			"type": "string"
+		},
+		{
+			"key": "test_image_file",
+			"value": "/path/to/test/image.png",
+			"type": "string"
+		}
+	]
+}

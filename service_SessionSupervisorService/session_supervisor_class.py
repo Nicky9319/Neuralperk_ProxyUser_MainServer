@@ -19,6 +19,7 @@ import uvicorn
 
 import uuid
 import json
+import datetime
 
 import requests
 
@@ -162,7 +163,7 @@ class sessionSupervisorClass:
         self.remaining_frame_list = []
         self.first_frame = None
         self.last_frame = None
-    
+
 
     async def initialization(self):
         await self.mq_client.connect()
@@ -189,6 +190,41 @@ class sessionSupervisorClass:
             if payload["topic"] == "new-session":
                 self.session_id = payload["session-id"]
                 self.sessionRoutingKey = f"SESSION_SUPERVISOR_{self.session_id}"
+            elif payload["topic"] == "user-frame-rendered":
+                # Handle frame rendered event from user service
+                frame_data = payload["payload"]
+                user_id = frame_data["user-id"]
+                frame_number = int(frame_data["frame-number"])
+                image_extension = frame_data["image-extension"]
+                image_binary_path = frame_data["image-binary-path"]
+                
+                print(f"Received frame rendered event: user={user_id}, frame={frame_number}")
+                
+                # Process the rendered frame
+                result = await self.user_frame_rendered(
+                    user_id=user_id,
+                    frame_number=frame_number,
+                    image_binary_path=image_binary_path,
+                    image_extension=image_extension
+                )
+                
+                print(f"Frame processing result: {result}")
+                
+            elif payload["topic"] == "user-rendering-completed":
+                # Handle user rendering completed event
+                user_id = payload["payload"]["user-id"]
+                print(f"User {user_id} completed all assigned frames")
+                
+                # You could add logic here to reassign remaining frames if needed
+                
+            elif payload["topic"] == "user-disconnected":
+                # Handle user disconnection event
+                user_id = payload["payload"]["user-id"]
+                print(f"User {user_id} disconnected")
+                
+                # Handle user disconnection and reassign frames
+                await self.handle_user_disconnection(user_id)
+                
             else:
                 print("Unknown Event Type")
                 print("Received Event: ", payload)
@@ -404,7 +440,6 @@ class sessionSupervisorClass:
     # User Management Section
     # -------------------------
 
-    
     async def releaseUsers(self, user_id):
         self.user_list.remove(user_id)
         self.number_of_users -= 1
@@ -424,11 +459,30 @@ class sessionSupervisorClass:
     async def remove_users(self, user_list):
         for user in user_list:
             await self.releaseUsers(user)
+        
+        if self.workload_status == "running":
+            if len(self.user_list) == 0:
+                background_task = asyncio.create_task(self.check_and_demand_users())
+            else:
+                await self.distributeWorkload()
 
     async def user_added(self, user_id):
         self.user_list.append(user_id)
         self.number_of_users += 1
 
+        if self.workload_status == "running":
+            await self.distributeWorkload()
+
+    async def demand_users(self, user_count):
+        payload = {
+            "topic" : "more-users",
+            "session-id" : self.session_id,
+            "data" : {
+                "user_count" : user_count
+            }
+        }
+
+        await self.mq_client.publish_message("SESSION_SUPERVISOR_EXCHANGE", "SESSION_SUPERVISOR", json.dumps(payload))
 
     # -------------------------
     # Workload Management Section
@@ -438,6 +492,7 @@ class sessionSupervisorClass:
         """
         Distribute workload among available users.
         This method should be called after getAndAssignFrameRange() to distribute frames.
+        frameNumberMappedToUser maps frame_number -> user_id (not user_id -> frame_list)
         """
         if not self.remaining_frame_list or not self.user_list:
             print("No frames to distribute or no users available")
@@ -464,8 +519,9 @@ class sessionSupervisorClass:
             user_frames = self.remaining_frame_list[frame_index:frame_index + user_frame_count]
             frame_index += user_frame_count
             
-            # Store frame mapping
-            self.frameNumberMappedToUser[user_id] = user_frames
+            # Store frame mapping: frame_number -> user_id
+            for frame_number in user_frames:
+                self.frameNumberMappedToUser[frame_number] = user_id
             
             # Send frames to user
             await self.sendUserStartRendering(user_id, user_frames)
@@ -473,25 +529,175 @@ class sessionSupervisorClass:
             print(f"Assigned {len(user_frames)} frames to user {user_id}: {user_frames}")
         
         print("Workload distribution completed")
+        print(f"Frame mapping: {self.frameNumberMappedToUser}")
 
+    async def user_frame_rendered(self, user_id: str, frame_number: int, image_binary_path: str, image_extension: str):
+        """
+        Handle when a user completes rendering a frame.
+        1. Remove frame from frameNumberMappedToUser dictionary
+        2. Download image from blob storage (temp bucket)
+        3. Delete image from temp bucket
+        4. Store image in correct location: customer_id/object_id/frame_number.png
+        """
+        try:
+            print(f"Processing rendered frame {frame_number} from user {user_id}")
+            
+            # Step 1: Remove frame from mapping dictionary
+            if frame_number in self.frameNumberMappedToUser:
+                del self.frameNumberMappedToUser[frame_number]
+                print(f"Removed frame {frame_number} from mapping dictionary")
+            else:
+                print(f"Warning: Frame {frame_number} not found in mapping dictionary")
+            
+            # Step 2: Download image from temp bucket in blob storage
+            print(f"Downloading image from temp bucket: {image_binary_path}")
+            
+            async with httpx.AsyncClient(timeout=30.0) as client:
+                # Download from temp bucket
+                download_response = await client.get(
+                    f"{self.blob_service_url}/api/blob-service/retrieve-temp",
+                    params={"key": image_binary_path}
+                )
+                
+                if download_response.status_code != 200:
+                    raise Exception(f"Failed to download image from temp bucket. Status: {download_response.status_code}")
+                
+                image_data = download_response.content
+                print(f"Downloaded image data: {len(image_data)} bytes")
+                
+                # Step 3: Delete image from temp bucket
+                print(f"Deleting image from temp bucket: {image_binary_path}")
+                delete_response = await client.delete(
+                    f"{self.blob_service_url}/api/blob-service/delete-temp",
+                    params={"key": image_binary_path}
+                )
+                
+                if delete_response.status_code not in [200, 204]:
+                    print(f"Warning: Failed to delete temp image. Status: {delete_response.status_code}")
+                else:
+                    print("Successfully deleted image from temp bucket")
+                
+                # Step 4: Store image in correct location
+                # Format: customer_id/object_id/frame_number.png
+                frame_filename = f"{frame_number:03d}.{image_extension}"  # Zero-padded frame number
+                final_image_path = f"{self.customer_id}/{self.object_id}/{frame_filename}"
+                
+                print(f"Storing image in final location: {final_image_path}")
+                
+                # Upload to rendered-frames bucket
+                upload_response = await client.post(
+                    f"{self.blob_service_url}/api/blob-service/store-image",
+                    data={
+                        "bucket": "rendered-frames",        # ✅ Correct: Form fields go in 'data'
+                        "key": final_image_path,            # ✅ Correct: Form fields go in 'data'
+                        "type": image_extension             # ✅ Correct: Form fields go in 'data'
+                    },
+                    files={
+                        "image": (frame_filename, image_data, "application/octet-stream")  # ✅ Correct: Only file goes in 'files'
+                    }
+                )
+                
+                if upload_response.status_code != 200:
+                    raise Exception(f"Failed to upload image to final location. Status: {upload_response.status_code}")
+                
+                print(f"Successfully stored frame {frame_number} at {final_image_path}")
+                
+                # Step 5: Check if all frames are completed
+                remaining_frames = len(self.frameNumberMappedToUser)
+                total_original_frames = len(self.remaining_frame_list) if self.remaining_frame_list else 0
+                completed_frames = total_original_frames - remaining_frames
+                
+                print(f"Progress: {completed_frames}/{total_original_frames} frames completed")
+                
+                if remaining_frames == 0:
+                    print("🎉 All frames have been rendered!")
+                    await self.handle_all_frames_completed()
+                
+                return {
+                    "status": "success",
+                    "frame_number": frame_number,
+                    "final_path": final_image_path,
+                    "remaining_frames": remaining_frames,
+                    "total_frames": total_original_frames
+                }
+                
+        except Exception as e:
+            print(f"Error processing rendered frame {frame_number}: {e}")
+            return {
+                "status": "error",
+                "frame_number": frame_number,
+                "error": str(e)
+            }
+
+    async def handle_all_frames_completed(self):
+        """
+        Handle when all frames have been rendered.
+        This method can be extended to trigger video compilation, notifications, etc.
+        """
+        print("🎬 All frames completed! Starting post-processing...")
+        
+        # Update workload status
+        self.workload_status = "completed"
+        
+        # Here you could:
+        # 1. Trigger video compilation from frames
+        # 2. Send completion notification to customer
+        # 3. Clean up resources
+        # 4. Update database with completion status
+        
+        # Example: Send completion message to user manager
+        try:
+            payload = {
+                "topic": "rendering-completed",
+                "session-id": self.session_id,
+                "data": {
+                    "customer_id": self.customer_id,
+                    "object_id": self.object_id,
+                    "total_frames": len(self.remaining_frame_list) if self.remaining_frame_list else 0
+                }
+            }
+            
+            await self.mq_client.publish_message(
+                "SESSION_SUPERVISOR_EXCHANGE", 
+                "SESSION_SUPERVISOR", 
+                json.dumps(payload)
+            )
+            print("Sent rendering completion notification")
+            
+        except Exception as e:
+            print(f"Error sending completion notification: {e}")
+
+    async def get_rendering_progress(self):
+        """
+        Get the current rendering progress.
+        Returns information about completed frames, remaining frames, etc.
+        """
+        total_frames = len(self.remaining_frame_list) if self.remaining_frame_list else 0
+        remaining_frames = len(self.frameNumberMappedToUser)
+        completed_frames = total_frames - remaining_frames
+        
+        progress_percentage = (completed_frames / total_frames * 100) if total_frames > 0 else 0
+        
+        return {
+            "total_frames": total_frames,
+            "completed_frames": completed_frames,
+            "remaining_frames": remaining_frames,
+            "progress_percentage": round(progress_percentage, 2),
+            "workload_status": self.workload_status,
+            "active_users": len(self.user_list),
+            "frame_mapping": dict(self.frameNumberMappedToUser)  # Convert to regular dict for JSON serialization
+        }
+
+    async def check_and_demand_users(self):
+        while True:
+            if self.number_of_users == 0:
+                await self.demand_users(1)
+                await asyncio.sleep(20)
+            else:
+                break
 
     async def start_workload(self):
-        if self.customer_id is None or self.object_id is None:
-            return JSONResponse(content={"message": "Customer ID or Object ID is missing"}, status_code=400)
-        
-        # Test the new getAndAssignFrameRange functionality
-        try:
-            print("Testing getAndAssignFrameRange with blob storage...")
-            frame_info = await self.getAndAssignFrameRange()
-            print(f"Frame range test successful: {frame_info}")
-            return JSONResponse(content={
-                "message": "Workload started successfully",
-                "frame_info": frame_info
-            }, status_code=200)
-        except Exception as e:
-            print(f"Error in start_workload: {e}")
-            return JSONResponse(content={"message": f"Error starting workload: {str(e)}"}, status_code=500)
-
+        background_task = asyncio.create_task(self.check_and_demand_users())
 
     def __del__(self):
         """
@@ -544,11 +750,12 @@ class sessionSupervisorClass:
 
 
 
-async def main():
-    session_supervisor = sessionSupervisorClass(customer_id="2e4110a3-1003-4153-934a-4cc39c98d858", object_id="678f72d7-7284-4160-9c9a-03c12a8aa6ab", session_id="789")
-    await session_supervisor.getAndAssignFrameRange()
+# async def main():
+#     session_supervisor = sessionSupervisorClass(customer_id="2e4110a3-1003-4153-934a-4cc39c98d858", object_id="678f72d7-7284-4160-9c9a-03c12a8aa6ab", session_id="789")
+#     # await session_supervisor.getAndAssignFrameRange()
 
-    print(session_supervisor.remaining_frame_list)
+#     await session_supervisor.user_frame_rendered(user_id="123", frame_number=1, 
+#     image_binary_path="2e4110a3-1003-4153-934a-4cc39c98d858/001_ccd26e11-5113-4f2a-a8a7-ba600f3e9ab8.png", image_extension="png")
 
-if __name__ == "__main__":
-    asyncio.run(main())
+# if __name__ == "__main__":  
+#     asyncio.run(main())
