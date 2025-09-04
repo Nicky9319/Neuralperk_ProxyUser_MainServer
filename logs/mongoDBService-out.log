@@ -1,0 +1,29 @@
+Applied schema validation to collection: customers
+Applied schema validation to collection: blenderObjects
+Applied schema validation to collection: sessions
+INFO:     127.0.0.1:60496 - "POST /api/mongodb-service/customers/add HTTP/1.1" 201 Created
+Warning: File not found for hashing: /path/to/model.blend
+INFO:     127.0.0.1:55730 - "POST /api/mongodb-service/blender-objects/add HTTP/1.1" 201 Created
+Applied schema validation to collection: customers
+Applied schema validation to collection: blenderObjects
+Applied schema validation to collection: sessions
+/path/to/model.blend
+Warning: File not found for hashing: /path/to/model.blend
+INFO:     127.0.0.1:40218 - "POST /api/mongodb-service/blender-objects/add HTTP/1.1" 201 Created
+Applied schema validation to collection: customers
+Applied schema validation to collection: blenderObjects
+Applied schema validation to collection: sessions
+/path/to/model.blend
+chair_model.blend
+Warning: File not found for hashing: /path/to/model.blend
+INFO:     127.0.0.1:36664 - "POST /api/mongodb-service/blender-objects/add HTTP/1.1" 201 Created
+Applied schema validation to collection: customers
+Applied schema validation to collection: blenderObjects
+Applied schema validation to collection: sessions
+/path/to/model.blend
+/path/to/model.blend
+INFO:     127.0.0.1:56234 - "POST /api/mongodb-service/blender-objects/add HTTP/1.1" 201 Created
+/path/to/model.blend
+/path/to/model.blend
+INFO:     127.0.0.1:38300 - "POST /api/mongodb-service/blender-objects/add HTTP/1.1" 201 Created
+INFO:     127.0.0.1:53142 - "PUT /api/mongodb-service/blender-objects/update-blend-file HTTP/1.1" 200 OK

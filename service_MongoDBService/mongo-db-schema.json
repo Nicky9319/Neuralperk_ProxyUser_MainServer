@@ -47,6 +47,10 @@
               "bsonType": ["string", "null"],
               "description": "must be a string if present, or null if not available"
             },
+            "blendFileHash": {
+              "bsonType": ["string", "null"],
+              "description": "SHA-256 hash of the blend file content, must be a string if present, or null if not available"
+            },
             "renderedVideoPath": {
               "bsonType": ["string", "null"],
               "description": "must be a string if present, or null if not available"

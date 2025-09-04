@@ -6,6 +6,8 @@ import uvicorn
 import json
 from datetime import datetime
 import uuid
+import hashlib
+import os
 
 import asyncio
 import aio_pika
@@ -86,6 +88,23 @@ class HTTP_SERVER():
     def generate_uuid(self):
         """Generate a unique UUID string"""
         return str(uuid.uuid4())
+
+    def calculate_file_hash(self, file_path):
+        """Calculate SHA-256 hash of the string value of file_path
+        Args:
+            file_path (str): Path to the file (as a string) to hash
+        Returns:
+            str: SHA-256 hash of the string value of file_path
+        """
+        try:
+            if not isinstance(file_path, str):
+                raise ValueError("file_path must be a string")
+            hash_sha256 = hashlib.sha256()
+            hash_sha256.update(file_path.encode("utf-8"))
+            return hash_sha256.hexdigest()
+        except Exception as e:
+            print(f"Error calculating hash for file path string '{file_path}': {str(e)}")
+            return None
 
        
     async def configure_routes(self):
@@ -235,12 +254,21 @@ class HTTP_SERVER():
                 
                 # Generate unique object ID
                 object_id = self.generate_uuid()
+
+                print(body["blendFilePath"])
+                print(body.get("blendFilePath"))
+                
+                # Calculate blend file hash if blendFilePath is provided
+                blend_file_hash = None
+                if body.get("blendFilePath"):
+                    blend_file_hash = self.calculate_file_hash(body["blendFilePath"])
                 
                 # Create blender object document
                 object_doc = {
                     "objectId": object_id,
                     "blendFileName": body.get("blendFileName", None),
                     "blendFilePath": body.get("blendFilePath", None),
+                    "blendFileHash": blend_file_hash,
                     "renderedVideoPath": body.get("renderedVideoPath", None),
                     "customerId": body["customerId"]
                 }
@@ -252,7 +280,7 @@ class HTTP_SERVER():
                         "message": "Blender object added successfully",
                         "objectId": object_id,
                         "customerId": body["customerId"],
-                        "blendFileName": object_doc["blendFileName"]
+                        "blendFileName": object_doc["blendFileName"],
                     },
                     status_code=201
                 )
@@ -266,7 +294,7 @@ class HTTP_SERVER():
         async def update_blend_file_path(request: Request):
             """Update the blend file path for a blender object
             Required fields: objectId, customerId, blendFilePath
-            Returns: Success message with updated object details
+            Returns: Success message with updated object details including calculated blendFileHash
             """
             try:
                 body = await request.json()
@@ -282,10 +310,18 @@ class HTTP_SERVER():
                 if not customer:
                     raise HTTPException(status_code=404, detail="Customer not found")
                 
-                # Update the blend file path
+                # Calculate SHA-256 hash of the new blend file
+                blend_file_hash = self.calculate_file_hash(body["blendFilePath"])
+                
+                # Update the blend file path and hash
                 result = self.blender_objects_collection.update_one(
                     {"objectId": body["objectId"], "customerId": body["customerId"]},
-                    {"$set": {"blendFilePath": body["blendFilePath"]}}
+                    {
+                        "$set": {
+                            "blendFilePath": body["blendFilePath"],
+                            "blendFileHash": blend_file_hash
+                        }
+                    }
                 )
                 
                 if result.matched_count == 0:
@@ -293,9 +329,9 @@ class HTTP_SERVER():
                 
                 return JSONResponse(
                     content={
-                        "message": "Blend file path updated successfully",
+                        "message": "Blend file path and hash updated successfully",
                         "objectId": body["objectId"],
-                        "blendFilePath": body["blendFilePath"]
+                        "blendFilePath": body["blendFilePath"],
                     },
                     status_code=200
                 )
