@@ -1,20 +1,104 @@
 import asyncio
-import httpx
-import socketio
-import uvicorn
+import os
+from typing import Any, Dict
+
+import aio_pika
+from aio_pika import ExchangeType, Message
+from dotenv import load_dotenv
 from fastapi import FastAPI
 from fastapi import Request
+from fastapi import HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse, StreamingResponse
-from fastapi import HTTPException
+from fastapi import UploadFile, Form, File
+import httpx
 from pydantic import BaseModel
-from typing import Dict, Any
-from dotenv import load_dotenv
+import socketio
+import uvicorn
 
-import os
-
+import uuid
+import json
 
 load_dotenv()
+
+# ---------------- Message Queue ---------------- #
+
+class MessageQueue:
+
+    def __init__(self, connection_url="amqp://guest:guest@localhost/"):
+        """
+        Generic RabbitMQ wrapper.
+        Works for both producer and consumer roles.
+        """
+        self.connection_url = connection_url
+        self.connection = None
+        self.channel = None
+        self.exchanges = {}  # store declared exchanges
+        self.queues = {}     # store declared queues
+
+    async def connect(self):
+        """Establish robust async connection and channel"""
+        self.connection = await aio_pika.connect_robust(self.connection_url)
+        self.channel = await self.connection.channel()
+
+    async def declare_exchange(self, name, exchange_type=ExchangeType.DIRECT):
+        """
+        Declare an exchange of any type (direct, fanout, topic, headers)
+        """
+        if name not in self.exchanges:
+            exchange = await self.channel.declare_exchange(name, exchange_type, durable=True)
+            self.exchanges[name] = exchange
+        return self.exchanges[name]
+
+    async def declare_queue(self, name, **kwargs):
+        """
+        Declare a queue. If not durable, it will vanish when broker restarts.
+        """
+        if name not in self.queues:
+            queue = await self.channel.declare_queue(name, durable=True, **kwargs)
+            self.queues[name] = queue
+        return self.queues[name]
+
+    async def bind_queue(self, queue_name, exchange_name, routing_key=""):
+        """
+        Bind a queue to an exchange with an optional routing key.
+        """
+        queue = self.queues.get(queue_name)
+        exchange = self.exchanges.get(exchange_name)
+
+        if not queue or not exchange:
+            raise Exception("Queue or Exchange not declared before binding.")
+
+        await queue.bind(exchange, routing_key=routing_key)
+
+    async def publish_message(self, exchange_name, routing_key, message_body, headers=None):
+        """
+        Publish message to exchange with routing key.
+        """
+        if exchange_name not in self.exchanges:
+            raise Exception(f"Exchange '{exchange_name}' not declared!")
+
+        message = Message(
+            body=message_body.encode() if isinstance(message_body, str) else message_body,
+            headers=headers or {},
+            delivery_mode=aio_pika.DeliveryMode.PERSISTENT
+        )
+
+        await self.exchanges[exchange_name].publish(message, routing_key=routing_key)
+
+    async def consume(self, queue_name, callback, no_ack=False):
+        """
+        Consume messages from a queue.
+        """
+        if queue_name not in self.queues:
+            raise Exception(f"Queue '{queue_name}' not declared!")
+
+        await self.queues[queue_name].consume(callback, no_ack=no_ack)
+
+    async def close(self):
+        """Close connection gracefully"""
+        await self.connection.close()
+
 
 
 # ---------------- Shared Data ---------------- #
@@ -23,6 +107,18 @@ class Data:
         self.connected_users: Dict[str, Any] = {}
         # You can attach more shared objects herele
         self.donna_agent_instance = None  # attach your donna agent here
+
+        self.mq_client = MessageQueue()
+    
+    async def initialization(self):
+        await self.mq_client.connect()
+
+
+        # This Configs are just for Development and Tetsing purposes
+        
+        # await self.mq_client.declare_exchange("USER_MANAGER_EXCHANGE", exchange_type=ExchangeType.DIRECT)
+        # await self.mq_client.declare_queue("USER_SERVICE")
+        # await self.mq_client.bind_queue("USER_SERVICE", "USER_MANAGER_EXCHANGE", routing_key="USER_SERVICE")
 
 
 # ---------------- Unified Service ---------------- #
@@ -35,6 +131,7 @@ class Service:
         self.http_client = httpx.AsyncClient()
 
         self.privileged_ip_address = httpServerPrivilegedIpAddress
+        self.user_manager_exchange_name = "USER_MANAGER_EXCHANGE"
 
         # FastAPI app
         self.app = FastAPI()
@@ -75,6 +172,10 @@ class Service:
         else:
             self.blob_service_url = blob_env_url
         
+
+        self.user_manager_exchange_name = "USER_MANAGER_EXCHANGE"
+
+
         
 
     # -------- Utility Functions -------- #
@@ -208,8 +309,71 @@ class Service:
                 )
 
         @self.app.post("/api/user-service/user/frame-rendered")
-        async def frame_rendered():
-            pass
+        async def frame_rendered(
+            userId: str = Form(...),
+            frameNumber: str = Form(...),
+            imageBinary: UploadFile = File(...),
+            imageExtension: str = Form(...)
+        ):
+            try:
+                random_id = str(uuid.uuid4())
+                # Try to upload the image to the blob service
+                try:
+                    response = await self.http_client.post(
+                        f"{self.blob_service_url}/api/blob-service/store-temp",
+                        data={
+                            "key": f"{userId}/{frameNumber}_{random_id}.{imageExtension}",
+                        },
+                        files={"file": (imageBinary.filename, await imageBinary.read(), "application/octet-stream")}
+                    )
+                except Exception as e:
+                    print(f"Error uploading to blob service: {e}")
+                    return JSONResponse(
+                        content={"error": f"Failed to upload image to blob service: {str(e)}"},
+                        status_code=500
+                    )
+
+                # Check if the blob service returned an error
+                if response.status_code != 200:
+                    try:
+                        error_content = await response.aread()
+                        error_detail = error_content.decode(errors="replace")
+                    except Exception:
+                        error_detail = "Unknown error"
+                    print(f"Blob service returned error: {response.status_code} - {error_detail}")
+                    return JSONResponse(
+                        content={"error": f"Blob service error: {error_detail}"},
+                        status_code=response.status_code
+                    )
+
+                print(response)
+
+                new_payload = {
+                    "topic": "user-frame-rendered",
+                    "payload": {
+                        "user-id": userId,
+                        "frame-number": frameNumber,
+                        "image-extension": imageExtension,
+                        "image-binary-path": f"{userId}/{frameNumber}_{random_id}.{imageExtension}"
+                    }
+                }
+
+                try:
+                    await self.data_class.mq_client.publish_message(self.user_manager_exchange_name, "USER_SERVICE", json.dumps(new_payload))
+                except Exception as e:
+                    print(f"Error publishing message to MQ: {e}")
+                    return JSONResponse(
+                        content={"error": f"Failed to publish message to user manager: {str(e)}"},
+                        status_code=500
+                    )
+
+                return JSONResponse(content={"message": "Rendered Image Recevied Successfully"}, status_code=200)
+            except Exception as e:
+                print(f"Unexpected error in frame_rendered: {e}")
+                return JSONResponse(
+                    content={"error": f"Internal server error: {str(e)}"},
+                    status_code=500
+                )
         
         @self.app.post("/api/user-service/user/rendering-completed")
         async def rendering_completed():
@@ -266,6 +430,7 @@ class Service:
 async def start_service():
     try:
         data_class = Data()
+        await data_class.initialization()
         service = Service(host="127.0.0.1", httpServerPrivilegedIpAddress=["127.0.0.1"], port=8500, data_class_instance=data_class)
         await service.start_server()
     except KeyboardInterrupt:

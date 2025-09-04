@@ -41,7 +41,7 @@ class HTTP_SERVER():
         """Initialize default buckets if they don't exist"""
         try:
             # List of default buckets to create
-            default_buckets = ["blend-files", "rendered-videos", "rendered-frames"]
+            default_buckets = ["blend-files", "rendered-videos", "rendered-frames", "temp"]
             
             for bucket_name in default_buckets:
                 try:
@@ -221,6 +221,76 @@ class HTTP_SERVER():
                     "error": f"Failed to create bucket: {str(e)}"
                 }, status_code=500)
 
+        # 7. Store file in temp bucket
+        @self.app.post("/api/blob-service/store-temp")
+        async def storeTemp(
+            file: UploadFile = Form(...),
+            key: str = Form(...)
+        ):
+            """Store any file in the temp bucket with the given key (including extension)"""
+            print(f"Storing file in temp bucket: {file.filename}")
+            print(f"Key: {key}")
+            
+            # Upload to temp bucket
+            result = await self.uploadFileToTempBucket(file, key)
+            
+            if "error" in result:
+                return JSONResponse(content={"error": result["error"]}, status_code=500)
+            
+            return JSONResponse(content={
+                "message": "File stored successfully in temp bucket",
+                "filename": file.filename,
+                "key": key,
+                "bucket": "temp"
+            }, status_code=200)
+
+        # 8. Retrieve file from temp bucket
+        @self.app.get("/api/blob-service/retrieve-temp")
+        async def retrieveTemp(key: str):
+            """Retrieve file from temp bucket using the key"""
+            print(f"Retrieving file from temp bucket")
+            print(f"Key: {key}")
+            
+            # Retrieve from temp bucket
+            data = await self.retrieveFileFromTempBucket(key)
+            
+            if isinstance(data, dict) and "error" in data:
+                return JSONResponse(content={"error": data["error"]}, status_code=404)
+            
+            # Determine media type based on file extension
+            media_type = "application/octet-stream"  # Default
+            if key.lower().endswith(('.png', '.jpg', '.jpeg', '.gif', '.bmp')):
+                media_type = "image/" + key.split('.')[-1].lower()
+            elif key.lower().endswith(('.mp4', '.avi', '.mov', '.mkv')):
+                media_type = "video/" + key.split('.')[-1].lower()
+            elif key.lower().endswith(('.pdf')):
+                media_type = "application/pdf"
+            elif key.lower().endswith(('.txt')):
+                media_type = "text/plain"
+            elif key.lower().endswith(('.json')):
+                media_type = "application/json"
+            
+            return Response(content=data, media_type=media_type)
+
+        # 9. Delete file from temp bucket
+        @self.app.delete("/api/blob-service/delete-temp")
+        async def deleteTemp(key: str):
+            """Delete file from temp bucket using the key"""
+            print(f"Deleting file from temp bucket")
+            print(f"Key: {key}")
+            
+            # Delete from temp bucket
+            result = await self.deleteFileFromTempBucket(key)
+            
+            if "error" in result:
+                return JSONResponse(content={"error": result["error"]}, status_code=500)
+            
+            return JSONResponse(content={
+                "message": "File deleted successfully from temp bucket",
+                "key": key,
+                "bucket": "temp"
+            }, status_code=200)
+
     async def uploadImageToBlobStorage(self, image: UploadFile, bucket: str, key: str):
         print(image)
         try:
@@ -274,6 +344,48 @@ class HTTP_SERVER():
             data = response['Body'].read()
             print(type(data))
             return data
+        except Exception as e:
+            return {"error": str(e)}
+
+    # Temp bucket helper methods
+    async def uploadFileToTempBucket(self, file: UploadFile, key: str):
+        """Upload any file to the temp bucket with the given key"""
+        try:
+            # Ensure temp bucket exists
+            bucket_created = await self.ensure_bucket_exists("temp")
+            if not bucket_created:
+                return {"error": "Failed to create temp bucket"}
+            
+            contents = await file.read()
+            self.client.put_object(Bucket="temp", Key=key, Body=contents)
+            return {"filename": file.filename, "key": key}
+        except Exception as e:
+            return {"error": str(e)}
+    
+    async def retrieveFileFromTempBucket(self, key: str):
+        """Retrieve any file from the temp bucket using the key"""
+        try:
+            # Ensure temp bucket exists
+            bucket_created = await self.ensure_bucket_exists("temp")
+            if not bucket_created:
+                return {"error": "Failed to create temp bucket"}
+            
+            response = self.client.get_object(Bucket="temp", Key=key)
+            data = response['Body'].read()
+            return data
+        except Exception as e:
+            return {"error": str(e)}
+    
+    async def deleteFileFromTempBucket(self, key: str):
+        """Delete any file from the temp bucket using the key"""
+        try:
+            # Ensure temp bucket exists
+            bucket_created = await self.ensure_bucket_exists("temp")
+            if not bucket_created:
+                return {"error": "Failed to create temp bucket"}
+            
+            self.client.delete_object(Bucket="temp", Key=key)
+            return {"message": f"File '{key}' deleted successfully from temp bucket"}
         except Exception as e:
             return {"error": str(e)}
 
