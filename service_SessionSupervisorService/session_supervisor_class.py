@@ -851,10 +851,12 @@ class sessionSupervisorClass:
 
 # async def main():
 #     session_supervisor = sessionSupervisorClass(customer_id="2e4110a3-1003-4153-934a-4cc39c98d858", object_id="678f72d7-7284-4160-9c9a-03c12a8aa6ab", session_id="789")
-#     # await session_supervisor.getAndAssignFrameRange()
+#     await session_supervisor.getAndAssignFrameRange()
 
-#     await session_supervisor.user_frame_rendered(user_id="123", frame_number=1, 
-#     image_binary_path="2e4110a3-1003-4153-934a-4cc39c98d858/001_ccd26e11-5113-4f2a-a8a7-ba600f3e9ab8.png", image_extension="png")
+#     print(session_supervisor.remaining_frame_list)
+
+#     # await session_supervisor.user_frame_rendered(user_id="123", frame_number=1, 
+#     # image_binary_path="2e4110a3-1003-4153-934a-4cc39c98d858/001_ccd26e11-5113-4f2a-a8a7-ba600f3e9ab8.png", image_extension="png")
 
 # if __name__ == "__main__":  
 #     asyncio.run(main())
