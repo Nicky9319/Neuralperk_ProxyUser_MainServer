@@ -150,8 +150,10 @@ class sessionSupervisorClass:
         await self.mq_client.connect()
 
         await self.mq_client.declare_exchange("SESSION_SUPERVISOR_EXCHANGE", exchange_type=ExchangeType.DIRECT)
-        await self.mq_client.declare_queue(f"SESSION_SUPERVISOR_{self.session_id}")
 
+        await self.mq_client.declare_queue(f"SESSION_SUPERVISOR_{self.session_id}")
+        await self.mq_client.bind_queue(f"SESSION_SUPERVISOR_{self.session_id}", "SESSION_SUPERVISOR_EXCHANGE", routing_key=f"SESSION_SUPERVISOR_{self.session_id}")
+        await self.mq_client.consume(f"SESSION_SUPERVISOR_{self.session_id}", self.callbackUserManagerMessages)
 
         
     async def callbackUserManagerMessages(self, message):
