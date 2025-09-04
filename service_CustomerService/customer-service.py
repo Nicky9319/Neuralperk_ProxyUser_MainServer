@@ -63,6 +63,13 @@ class HTTP_SERVER():
         else:
             self.blob_service_url = blob_env_url
         
+        # Get Session Supervisor service URL from environment
+        session_supervisor_env_url = os.getenv("SESSION_SUPERVISOR_SERVICE", "").strip()
+        if not session_supervisor_env_url or not (session_supervisor_env_url.startswith("http://") or session_supervisor_env_url.startswith("https://")):
+            self.session_supervisor_service_url = "http://127.0.0.1:7500"
+        else:
+            self.session_supervisor_service_url = session_supervisor_env_url
+        
         # HTTP client for making requests to MongoDB service and Auth service
         self.http_client = httpx.AsyncClient(timeout=30.0)
 
@@ -274,44 +281,31 @@ class HTTP_SERVER():
             object_id: str = Form(...)
         ):
             try:
-                # Get the access token from the Authorization header
-                auth_header = request.headers.get("authorization")
-                access_token_from_header = None
-                if auth_header and auth_header.lower().startswith("bearer "):
-                    access_token_from_header = auth_header[7:]
-                # Prefer the token from Depends if available, else from header
-                token = access_token or access_token_from_header
-                if not token:
-                    raise HTTPException(status_code=401, detail="Access token missing")
-
-                # Defensive: check object_id
-                if not object_id:
-                    raise HTTPException(status_code=400, detail="object_id is required")
-
-                # Check if agent already exists for this customer
-                if token in self.data_class.customerAgentMapping:
-                    return JSONResponse(
-                        content={
-                            "message": "A workload is already running for your account. Only one workload can be started at a time.",
-                            "status": "workload_already_running"
-                        },
-                        status_code=400
-                    )
-
-                newCustomerAgent = customerAgent()
-                self.data_class.customerAgentMapping[token] = newCustomerAgent
-
-                try:
-                    newCustomerAgent.setObjectId(object_id)
-                    newCustomerAgent.startWorkload()
-                except Exception as e:
-                    # Clean up mapping if agent failed to start
-                    self.data_class.customerAgentMapping.pop(token, None)
-                    raise HTTPException(status_code=500, detail=f"Failed to start workload: {str(e)}")
-
-                return JSONResponse(content={"message": "Workload started", "customer_id": token}, status_code=200)
-            except HTTPException as he:
-                raise he
+                print(f"Redirecting start-workload request to session supervisor service for customer: {customer_id}")
+                
+                # Forward the request to session supervisor service with form data
+                response = await self.http_client.post(
+                    f"{self.session_supervisor_service_url}/api/session-supervisor-service/start-workload",
+                    data={
+                        "customer_id": customer_id,
+                        "object_id": object_id
+                    }
+                )
+                
+                # Return the response directly to the client
+                return JSONResponse(
+                    content=response.json(),
+                    status_code=response.status_code
+                )
+                
+            except httpx.RequestError as e:
+                print(f"Error connecting to session supervisor service: {str(e)}")
+                raise HTTPException(
+                    status_code=503,
+                    detail="Session supervisor service unavailable"
+                )
+            except HTTPException:
+                raise
             except Exception as e:
                 import traceback
                 print(f"Error in startWorkload: {traceback.format_exc()}")
@@ -324,23 +318,28 @@ class HTTP_SERVER():
             customer_id: str = Depends(self.getCustomerIdFromAuthorizationHeader)
         ):
             try:
-                print(f"Get workload status endpoint hit for customer: {access_token}")
-
-                if not access_token:
-                    raise HTTPException(status_code=401, detail="Access token missing")
-
-                if access_token not in self.data_class.customerAgentMapping:
-                    raise HTTPException(status_code=404, detail="No workload found for this customer")
-
-                newCustomerAgent = self.data_class.customerAgentMapping[access_token]
-                try:
-                    workloadStatus = newCustomerAgent.getWorkloadStatus()
-                except Exception as e:
-                    raise HTTPException(status_code=500, detail=f"Failed to get workload status: {str(e)}")
+                print(f"Redirecting get-workload-status request to session supervisor service for customer: {customer_id}")
                 
-                return JSONResponse(content={"message": "Get workload status endpoint", "workload-status": workloadStatus}, status_code=200)
-            except HTTPException as he:
-                raise he
+                # Forward the request to session supervisor service with form data
+                response = await self.http_client.post(
+                    f"{self.session_supervisor_service_url}/api/session-supervisor-service/get-workload-status",
+                    data={"customer_id": customer_id}
+                )
+                
+                # Return the response directly to the client
+                return JSONResponse(
+                    content=response.json(),
+                    status_code=response.status_code
+                )
+                
+            except httpx.RequestError as e:
+                print(f"Error connecting to session supervisor service: {str(e)}")
+                raise HTTPException(
+                    status_code=503,
+                    detail="Session supervisor service unavailable"
+                )
+            except HTTPException:
+                raise
             except Exception as e:
                 import traceback
                 print(f"Error in getWorkloadStatus: {traceback.format_exc()}")
@@ -353,24 +352,28 @@ class HTTP_SERVER():
             customer_id: str = Depends(self.getCustomerIdFromAuthorizationHeader)
         ):
             try:
-                print(f"Stop and delete workload endpoint hit for customer: {access_token}")
-
-                if not access_token:
-                    raise HTTPException(status_code=401, detail="Access token missing")
-
-                if access_token not in self.data_class.customerAgentMapping:
-                    raise HTTPException(status_code=404, detail="No workload found for this customer")
-
-                particularCustomerAgent = self.data_class.customerAgentMapping[access_token]
-                try:
-                    particularCustomerAgent.stopAndDeleteWorkload()
-                except Exception as e:
-                    raise HTTPException(status_code=500, detail=f"Failed to stop and delete workload: {str(e)}")
-                self.data_class.customerAgentMapping.pop(access_token, None)
-
-                return JSONResponse(content={"message": "Stop and delete workload endpoint", "details": "Workload stopped and deleted"}, status_code=200)
-            except HTTPException as he:
-                raise he
+                print(f"Redirecting stop-and-delete-workload request to session supervisor service for customer: {customer_id}")
+                
+                # Forward the request to session supervisor service with form data
+                response = await self.http_client.post(
+                    f"{self.session_supervisor_service_url}/api/session-supervisor-service/stop-and-delete-workload",
+                    data={"customer_id": customer_id}
+                )
+                
+                # Return the response directly to the client
+                return JSONResponse(
+                    content=response.json(),
+                    status_code=response.status_code
+                )
+                
+            except httpx.RequestError as e:
+                print(f"Error connecting to session supervisor service: {str(e)}")
+                raise HTTPException(
+                    status_code=503,
+                    detail="Session supervisor service unavailable"
+                )
+            except HTTPException:
+                raise
             except Exception as e:
                 import traceback
                 print(f"Error in stopAndDeleteWorkload: {traceback.format_exc()}")

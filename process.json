@@ -44,6 +44,15 @@
             "error_file": "./logs/userService-error.log",
             "merge_logs": true,
             "namespace": "neuralperk"
+        },
+        {
+            "name": "sessionSupervisorService",
+            "script": "./service_SessionSupervisorService/session-supervisor-service.py",
+            "interpreter": ".venv/bin/python",
+            "out_file": "./logs/sessionSupervisorService-out.log",
+            "error_file": "./logs/sessionSupervisorService-error.log",
+            "merge_logs": true,
+            "namespace": "neuralperk"
         }
     ]
 }
