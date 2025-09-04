@@ -5,9 +5,14 @@ import uvicorn
 from fastapi import FastAPI
 from fastapi import Request
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import JSONResponse, StreamingResponse
+from fastapi import HTTPException
 from pydantic import BaseModel
 from typing import Dict, Any
 from dotenv import load_dotenv
+
+import os
+
 
 load_dotenv()
 
@@ -16,8 +21,7 @@ load_dotenv()
 class Data:
     def __init__(self):
         self.connected_users: Dict[str, Any] = {}
-        # You can attach more shared objects here
-        self.db_service_url = "127.0.0.1:8000"  # example
+        # You can attach more shared objects herele
         self.donna_agent_instance = None  # attach your donna agent here
 
 
@@ -27,6 +31,8 @@ class Service:
         self.host = host
         self.port = port
         self.data_class = data_class_instance or Data()
+
+        self.http_client = httpx.AsyncClient()
 
         self.privileged_ip_address = httpServerPrivilegedIpAddress
 
@@ -55,6 +61,22 @@ class Service:
         # uvicorn server instance
         self.server = None
 
+        # Get MongoDB service URL from environment
+        env_url = os.getenv("MONGO_DB_SERVICE", "").strip()
+        if not env_url or not (env_url.startswith("http://") or env_url.startswith("https://")):
+            self.mongodb_service_url = "http://127.0.0.1:12000"
+        else:
+            self.mongodb_service_url = env_url
+        
+        # Get Blob service URL from environment
+        blob_env_url = os.getenv("BLOB_SERVICE", "").strip()
+        if not blob_env_url or not (blob_env_url.startswith("http://") or blob_env_url.startswith("https://")):
+            self.blob_service_url = "http://127.0.0.1:13000"
+        else:
+            self.blob_service_url = blob_env_url
+        
+        
+
     # -------- Utility Functions -------- #
     async def send_message_to_user(self, sid, message):
         self.sio.emit("request-buffer", message, to=sid)
@@ -73,9 +95,117 @@ class Service:
             await self.send_message_to_user(user_id, message)
             return {"status": 200, "message": "Message sent to user"}
 
-        @self.app.get("/api/user-service/user/get-blend-file")
-        async def get_blend_file():
-            pass
+        @self.app.get("/api/user-service/user/get-blend-file/{blend_file_hash}")
+        async def get_blend_file(blend_file_hash: str):
+            try:
+                # Step 1: Query MongoDB service for blend file path
+                try:
+                    blend_file_data = await self.http_client.get(
+                        f"{self.mongodb_service_url}/api/mongodb-service/blender-objects/find-by-hash/{blend_file_hash}",
+                        timeout=10.0
+                    )
+                except Exception as e:
+                    print(f"Error contacting MongoDB service: {str(e)}")
+                    raise HTTPException(
+                        status_code=502,
+                        detail=f"Failed to contact MongoDB service: {str(e)}"
+                    )
+
+                if blend_file_data.status_code != 200:
+                    try:
+                        error_detail = blend_file_data.json().get("detail", blend_file_data.text)
+                    except Exception:
+                        error_detail = blend_file_data.text
+                    print(f"MongoDB service returned error: {blend_file_data.status_code} - {error_detail}")
+                    raise HTTPException(
+                        status_code=blend_file_data.status_code,
+                        detail=f"MongoDB service error: {error_detail}"
+                    )
+
+                try:
+                    blend_file_json = blend_file_data.json()
+                except Exception as e:
+                    print(f"Failed to parse MongoDB response JSON: {str(e)}")
+                    raise HTTPException(
+                        status_code=500,
+                        detail="Failed to parse MongoDB service response"
+                    )
+
+                blend_file_path = blend_file_json.get("blendFilePath")
+                if not blend_file_path:
+                    print("blendFilePath not found in MongoDB response")
+                    raise HTTPException(
+                        status_code=404,
+                        detail="Blend file not found for the given hash"
+                    )
+
+                bucket = "blend-files"
+                key = blend_file_path
+
+                print(f"Retrieving from bucket: {bucket}, key: {key}")
+
+                # Step 2: Proxy the response directly from blob service to client
+                print(f"Proxying blend file from blob service...")
+
+                # Create a streaming response that proxies the blob service
+                async def proxy_blend_file():
+                    try:
+                        async with httpx.AsyncClient() as proxy_client:
+                            async with proxy_client.stream(
+                                "GET",
+                                f"{self.blob_service_url}/api/blob-service/retrieve-blend",
+                                params={
+                                    "bucket": bucket,
+                                    "key": key
+                                },
+                                timeout=30.0
+                            ) as response:
+                                if response.status_code != 200:
+                                    # If blob service fails, we need to handle it differently
+                                    try:
+                                        error_content = await response.aread()
+                                        error_detail = error_content.decode(errors="replace")
+                                    except Exception:
+                                        error_detail = "Unknown error"
+                                    print(f"Blob service returned error: {response.status_code} - {error_detail}")
+                                    raise HTTPException(
+                                        status_code=response.status_code,
+                                        detail=f"Blob service error: {error_detail}"
+                                    )
+
+                                # Stream the response directly to the client
+                                async for chunk in response.aiter_bytes():
+                                    yield chunk
+
+                    except HTTPException:
+                        raise
+                    except Exception as e:
+                        print(f"Error in proxy stream: {str(e)}")
+                        raise HTTPException(
+                            status_code=500,
+                            detail=f"Failed to proxy blend file: {str(e)}"
+                        )
+
+                # Return streaming response with proper headers
+                file_name = os.path.basename(blend_file_path) if blend_file_path else "blendfile.blend"
+                print(f"Proxying blend file: {file_name}")
+
+                return StreamingResponse(
+                    proxy_blend_file(),
+                    media_type="application/octet-stream",
+                    headers={
+                        "Content-Disposition": f"attachment; filename=\"{file_name}\"",
+                        "Cache-Control": "no-cache"
+                    }
+                )
+            except HTTPException:
+                raise
+            except Exception as e:
+                print(f"Unexpected error in get_blend_file: {str(e)}")
+                raise HTTPException(
+                    status_code=500,
+                    detail=f"Internal server error: {str(e)}"
+                )
 
         @self.app.post("/api/user-service/user/frame-rendered")
         async def frame_rendered():

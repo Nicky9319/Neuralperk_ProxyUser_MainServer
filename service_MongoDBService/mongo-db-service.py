@@ -255,8 +255,8 @@ class HTTP_SERVER():
                 # Generate unique object ID
                 object_id = self.generate_uuid()
 
-                print(body["blendFilePath"])
-                print(body.get("blendFilePath"))
+                # print(body["blendFilePath"])
+                # print(body.get("blendFilePath"))
                 
                 # Calculate blend file hash if blendFilePath is provided
                 blend_file_hash = None

@@ -1,2 +1,30 @@
 Authenticating token... is being processed...
 INFO:     127.0.0.1:33486 - "POST /api/customer-service/upload-blend-file HTTP/1.1" 401 Unauthorized
+Authenticating token... is being processed...
+785b969d-bd50-4a03-bbd9-8a766d7a553b
+INFO:     127.0.0.1:55640 - "POST /api/customer-service/upload-blend-file HTTP/1.1" 401 Unauthorized
+Authenticating token... is being processed...
+2e4110a3-1003-4153-934a-4cc39c98d858
+INFO:     127.0.0.1:48034 - "POST /api/customer-service/upload-blend-file HTTP/1.1" 422 Unprocessable Entity
+Authenticating token... is being processed...
+2e4110a3-1003-4153-934a-4cc39c98d858
+Upload blend file endpoint hit for customer: 2e4110a3-1003-4153-934a-4cc39c98d858
+Blend file name: test_character_model
+Blend file size: 171421576 bytes
+access token: 2e4110a3-1003-4153-934a-4cc39c98d858
+customer id from authorization header: 2e4110a3-1003-4153-934a-4cc39c98d858
+Creating empty blender object in MongoDB...
+INFO:     127.0.0.1:52926 - "POST /api/customer-service/upload-blend-file HTTP/1.1" 500 Internal Server Error
+Authenticating token... is being processed...
+2e4110a3-1003-4153-934a-4cc39c98d858
+Upload blend file endpoint hit for customer: 2e4110a3-1003-4153-934a-4cc39c98d858
+Blend file name: test_character_model
+Blend file size: 171421576 bytes
+access token: 2e4110a3-1003-4153-934a-4cc39c98d858
+customer id from authorization header: 2e4110a3-1003-4153-934a-4cc39c98d858
+Creating empty blender object in MongoDB...
+Created blender object with ID: 678f72d7-7284-4160-9c9a-03c12a8aa6ab
+Storing blend file in blob storage...
+Blend file stored successfully: {'message': 'Blend file stored successfully', 'filename': 'test_character_model', 'bucket': 'blend-files', 'key': '2e4110a3-1003-4153-934a-4cc39c98d858/678f72d7-7284-4160-9c9a-03c12a8aa6ab/test_character_model.blend'}
+Updating MongoDB object with blend file path...
+INFO:     127.0.0.1:54610 - "POST /api/customer-service/upload-blend-file HTTP/1.1" 200 OK
