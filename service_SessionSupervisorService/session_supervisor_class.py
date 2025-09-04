@@ -215,7 +215,9 @@ class sessionSupervisorClass:
                 user_id = payload["payload"]["user-id"]
                 print(f"User {user_id} completed all assigned frames")
                 
-                # You could add logic here to reassign remaining frames if needed
+                # Call the new user_rendering_completed method
+                result = await self.user_rendering_completed(user_id)
+                print(f"User completion handling result: {result}")
                 
             elif payload["topic"] == "user-disconnected":
                 # Handle user disconnection event
@@ -229,7 +231,7 @@ class sessionSupervisorClass:
                 print("Unknown Event Type")
                 print("Received Event: ", payload)
 
-        await self.handleUserManagerMessages(json_message)
+        await handleUserManagerMessages(json_message)
 
 
 
@@ -488,6 +490,10 @@ class sessionSupervisorClass:
     # Workload Management Section
     # -------------------------
 
+    async def workload_completed(self):
+        await self.remove_users(self.user_list)
+        print("Workload Completed")
+
     async def distributeWorkload(self):
         """
         Distribute workload among available users.
@@ -629,6 +635,99 @@ class sessionSupervisorClass:
                 "error": str(e)
             }
 
+    async def user_rendering_completed(self, user_id: str):
+        """
+        Handle when a user completes all their assigned frames.
+        1. Check if all frames are completed
+        2. If all frames are completed, invoke workload_completed method
+        3. If not all frames are completed, redistribute remaining frames between available users
+        """
+        try:
+            print(f"User {user_id} completed all assigned frames")
+            
+            # Step 1: Check if all frames are completed
+            remaining_frames = len(self.frameNumberMappedToUser)
+            total_original_frames = len(self.remaining_frame_list) if self.remaining_frame_list else 0
+            completed_frames = total_original_frames - remaining_frames
+            
+            print(f"Progress check: {completed_frames}/{total_original_frames} frames completed")
+            print(f"Remaining frames: {remaining_frames}")
+            
+            # Step 2: If all frames are completed, invoke workload_completed method
+            if remaining_frames == 0:
+                print("🎉 All frames have been rendered!")
+                await self.workload_completed()
+                return {
+                    "status": "all_completed",
+                    "message": "All frames completed, workload finished",
+                    "completed_frames": completed_frames,
+                    "total_frames": total_original_frames
+                }
+            
+            # Step 3: If not all frames are completed, redistribute remaining frames
+            print(f"Redistributing {remaining_frames} remaining frames among {len(self.user_list)} available users")
+            
+            # Get list of remaining frames
+            remaining_frame_numbers = list(self.frameNumberMappedToUser.keys())
+            
+            # Redistribute frames among available users
+            if self.user_list and remaining_frame_numbers:
+                # Calculate frames per user for redistribution
+                num_users = len(self.user_list)
+                frames_per_user = len(remaining_frame_numbers) // num_users
+                extra_frames = len(remaining_frame_numbers) % num_users
+                
+                print(f"Redistribution: {frames_per_user} frames per user, {extra_frames} extra frames")
+                
+                # Distribute frames to users
+                frame_index = 0
+                for i, user_id in enumerate(self.user_list):
+                    # Calculate how many frames this user gets
+                    user_frame_count = frames_per_user
+                    if i < extra_frames:  # Distribute extra frames to first few users
+                        user_frame_count += 1
+                    
+                    # Get frames for this user
+                    user_frames = remaining_frame_numbers[frame_index:frame_index + user_frame_count]
+                    frame_index += user_frame_count
+                    
+                    if user_frames:  # Only send if there are frames to assign
+                        # Update frame mapping: frame_number -> user_id
+                        for frame_number in user_frames:
+                            self.frameNumberMappedToUser[frame_number] = user_id
+                        
+                        # Send frames to user
+                        await self.sendUserStartRendering(user_id, user_frames)
+                        
+                        print(f"Reassigned {len(user_frames)} frames to user {user_id}: {user_frames}")
+                
+                print("Frame redistribution completed")
+                print(f"Updated frame mapping: {self.frameNumberMappedToUser}")
+                
+                return {
+                    "status": "redistributed",
+                    "message": f"Redistributed {len(remaining_frame_numbers)} frames among {num_users} users",
+                    "remaining_frames": len(remaining_frame_numbers),
+                    "total_frames": total_original_frames,
+                    "completed_frames": completed_frames
+                }
+            else:
+                print("No users available for redistribution")
+                return {
+                    "status": "no_users",
+                    "message": "No users available for frame redistribution",
+                    "remaining_frames": remaining_frames,
+                    "total_frames": total_original_frames
+                }
+                
+        except Exception as e:
+            print(f"Error in user_rendering_completed: {e}")
+            return {
+                "status": "error",
+                "message": f"Error handling user completion: {str(e)}",
+                "user_id": user_id
+            }
+   
     async def handle_all_frames_completed(self):
         """
         Handle when all frames have been rendered.
