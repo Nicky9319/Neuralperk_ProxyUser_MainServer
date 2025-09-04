@@ -141,6 +141,51 @@ class sessionSupervisorClass:
         self.user_list = []
         self.frameNumberMappedToUser = {}
 
+        self.http_client = httpx.AsyncClient(timeout=30.0)
+        self.mq_client = MessageQueue()
+
+    
+
+    async def initialization(self):
+        await self.mq_client.connect()
+
+        await self.mq_client.declare_exchange("SESSION_SUPERVISOR_EXCHANGE", exchange_type=ExchangeType.DIRECT)
+        await self.mq_client.declare_queue(f"SESSION_SUPERVISOR_{self.session_id}")
+
+
+        
+    async def callbackUserManagerMessages(self, message):
+        """
+            Callback Function to Listen to events emitted by the User Manager
+            Currently It is only works with json format data.
+            other data types like bytes and all Can be added later if needed.
+
+        """
+
+        decoded_message = message.body.decode()
+        json_message = json.loads(decoded_message)
+
+        async def handleUserManagerMessages(payload):
+            if payload["topic"] == "new-session":
+                self.session_id = payload["session-id"]
+                self.sessionRoutingKey = f"SESSION_SUPERVISOR_{self.session_id}"
+            else:
+                print("Unknown Event Type")
+                print("Received Event: ", payload)
+
+        await self.handleUserManagerMessages(json_message)
+
+    
+
     async def start_workload(self):
         if self.customer_id is None or self.object_id is None:
             return JSONResponse(content={"message": "Customer ID or Object ID is missing"}, status_code=400)
+
+
+
+# async def main():
+#     session_supervisor = sessionSupervisorClass(customer_id="2e4110a3-1003-4153-934a-4cc39c98d858", object_id="678f72d7-7284-4160-9c9a-03c12a8aa6ab", session_id="789")
+#     await session_supervisor.start_workload()
+
+# if __name__ == "__main__":
+#     asyncio.run(main())
