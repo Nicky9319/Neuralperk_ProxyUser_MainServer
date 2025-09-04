@@ -115,7 +115,7 @@ class Data:
 
 
         # This Configs are just for Development and Tetsing purposes
-        
+
         # await self.mq_client.declare_exchange("USER_MANAGER_EXCHANGE", exchange_type=ExchangeType.DIRECT)
         # await self.mq_client.declare_queue("USER_SERVICE")
         # await self.mq_client.bind_queue("USER_SERVICE", "USER_MANAGER_EXCHANGE", routing_key="USER_SERVICE")
@@ -376,8 +376,32 @@ class Service:
                 )
         
         @self.app.post("/api/user-service/user/rendering-completed")
-        async def rendering_completed():
-            pass
+        async def rendering_completed(
+            userId: str = Form(...)
+        ):
+            try:
+                new_payload = {
+                    "topic": "user-rendering-completed",
+                    "payload": {
+                        "user-id": userId
+                    }
+                }
+                try:
+                    await self.data_class.mq_client.publish_message(self.user_manager_exchange_name, "USER_SERVICE", json.dumps(new_payload))
+                except Exception as e:
+                    print(f"Error publishing rendering completed message to MQ: {e}")
+                    return JSONResponse(
+                        content={"error": f"Failed to publish rendering completed event: {str(e)}"},
+                        status_code=500
+                    )
+
+                return JSONResponse(content={"message": "Rendering Completed Event Received Successfully"}, status_code=200)
+            except Exception as e:
+                print(f"Unexpected error in rendering_completed: {e}")
+                return JSONResponse(
+                    content={"error": f"Internal server error: {str(e)}"},
+                    status_code=500
+                )
         
 
         # Add more FastAPI routes here as needed...
