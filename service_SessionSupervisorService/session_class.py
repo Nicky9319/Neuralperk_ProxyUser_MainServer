@@ -29,7 +29,7 @@ class sessionClass:
         self.object_id = object_id
 
         self.session_id = str(uuid.uuid4())
-        self.sessionRoutingKey = f"{self.session_id}"
+        self.sessionRoutingKey = f"SESSION_SUPERVISOR_{self.session_id}"
 
     # -------------------------
     # Workload Management Section

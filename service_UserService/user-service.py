@@ -116,7 +116,7 @@ class Data:
 
         # This Configs are just for Development and Tetsing purposes
 
-        # await self.mq_client.declare_exchange("USER_MANAGER_EXCHANGE", exchange_type=ExchangeType.DIRECT)
+        await self.mq_client.declare_exchange("USER_MANAGER_EXCHANGE", exchange_type=ExchangeType.DIRECT)
         # await self.mq_client.declare_queue("USER_SERVICE")
         # await self.mq_client.bind_queue("USER_SERVICE", "USER_MANAGER_EXCHANGE", routing_key="USER_SERVICE")
 
