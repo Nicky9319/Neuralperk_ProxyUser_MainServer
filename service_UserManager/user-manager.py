@@ -153,15 +153,17 @@ class HTTP_SERVER():
 
         async def handleUserServiceEvent(payload):
             """
-                payload should contain a Mandatory topic field and the supervisor id field.
+                payload should contain a Mandatory topic field and the data field.
             """
 
-            topic = payload.get("topic", None)
-            supervisor_id = payload.get("supervisor-id", None)
 
-            if topic is None or supervisor_id is None:
+
+            topic = payload.get("topic", None)
+            data = payload.get("data", None)
+
+            if topic is None or data is None:
                 print("Invalid Payload")
-                print("Payload Need to contain the topic and supervisor-id fields. It is mandatory")
+                print("Payload Need to contain the topic and data fields. It is mandatory")
                 return
 
             if topic == "user-frame-rendered":
@@ -192,6 +194,18 @@ class HTTP_SERVER():
         json_message = json.loads(decoded_message)
 
         async def handleSessionSupervisorEvent(payload):
+            """
+                payload should contain a Mandatory topic field, supervisor id and the data field.
+            """
+            topic = payload.get("topic", None)
+            supervisor_id = payload.get("supervisor-id", None)
+            data = payload.get("data", None)
+
+            if topic is None or supervisor_id is None or data is None:
+                print("Invalid Payload")
+                print("Payload Need to contain the topic, supervisor-id and data fields. It is mandatory")
+                return
+
             if payload["topic"] == "session-supervisor-initialized":
                 print("Session Supervisor Initialized Event Received")
             elif payload["topic"] == "session-supervisor-ready":

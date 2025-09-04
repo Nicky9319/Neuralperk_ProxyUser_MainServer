@@ -8,6 +8,8 @@ import sys
 
 import pickle
 
+from typing import Literal
+
 import aio_pika
 from fastapi.responses import JSONResponse
 
@@ -24,7 +26,7 @@ class sessionClass:
     # Initialization Section
     # -------------------------
     def __init__(self, customer_id = None, object_id = None):
-        self.session_status = None
+        self.session_status : Literal["queued", "rendering", "completed", "failed" , None] = None
         self.customer_id = customer_id
         self.object_id = object_id
 

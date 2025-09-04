@@ -192,7 +192,7 @@ class Service:
         async def send_msg_to_user(request: Request):
             data = await request.json()
             user_id = data["user_id"]
-            message = data["message"]
+            message = data["data"]
             await self.send_message_to_user(user_id, message)
             return {"status": 200, "message": "Message sent to user"}
 
