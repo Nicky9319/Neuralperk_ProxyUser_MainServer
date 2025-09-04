@@ -184,6 +184,56 @@ class sessionSupervisorClass:
             return JSONResponse(content={"message": "Customer ID or Object ID is missing"}, status_code=400)
 
 
+    def __del__(self):
+        """
+        Destructor - handles cleanup when object is garbage collected.
+        Note: This is a fallback mechanism. Prefer calling cleanup() explicitly.
+        """
+        try:
+            # Try to get the current event loop
+            loop = asyncio.get_event_loop()
+            if loop.is_running():
+                # If loop is running, schedule the cleanup task
+                asyncio.create_task(self._async_cleanup())
+            else:
+                # If no loop is running, run the cleanup in a new event loop
+                asyncio.run(self._async_cleanup())
+        except RuntimeError:
+            # No event loop available, cleanup will be skipped
+            print("Warning: Could not perform async cleanup in destructor - no event loop available")
+    
+    async def _async_cleanup(self):
+        """Internal async cleanup method"""
+        try:
+            payload = {
+                "topic": "users-released",
+                "session-id": self.session_id,
+                "data": {
+                    "user_list": self.user_list,
+                }
+            }
+            
+            # Convert payload to JSON string for message queue
+            import json
+            message_body = json.dumps(payload)
+            
+            await self.mq_client.publish_message("SESSION_SUPERVISOR_EXCHANGE", "SESSION_SUPERVISOR", message_body)
+            
+            # Close the message queue connection
+            if self.mq_client.connection:
+                await self.mq_client.close()
+                
+        except Exception as e:
+            print(f"Error during async cleanup: {e}")
+    
+    async def cleanup(self):
+        """
+        Explicit cleanup method that should be called when the session supervisor is no longer needed.
+        This is the preferred way to clean up resources.
+        """
+        await self._async_cleanup()
+
+
 
 # async def main():
 #     session_supervisor = sessionSupervisorClass(customer_id="2e4110a3-1003-4153-934a-4cc39c98d858", object_id="678f72d7-7284-4160-9c9a-03c12a8aa6ab", session_id="789")
