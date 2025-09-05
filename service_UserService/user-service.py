@@ -465,7 +465,7 @@ async def start_service():
     try:
         data_class = Data()
         await data_class.initialization()
-        service = Service(host="127.0.0.1", httpServerPrivilegedIpAddress=["127.0.0.1"], port=8500, data_class_instance=data_class)
+        service = Service(host="0.0.0.0", httpServerPrivilegedIpAddress=["127.0.0.1"], port=8500, data_class_instance=data_class)
         await service.start_server()
     except KeyboardInterrupt:
         print("\n🛑 Server stopped by user")
