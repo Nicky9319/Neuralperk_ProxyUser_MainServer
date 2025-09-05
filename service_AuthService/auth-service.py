@@ -80,14 +80,14 @@ class HTTP_SERVER():
                 body = await request.json()
                 
                 # Validate required fields
-                required_fields = ["username", "password"]
+                required_fields = ["email", "password"]
                 for field in required_fields:
                     if field not in body:
                         raise HTTPException(status_code=400, detail=f"Missing required field: {field}")
                 
                 # Validate username format (basic validation)
-                username = body["username"]
-                if len(username) < 3:
+                email = body["email"]
+                if len(email) < 3:
                     raise HTTPException(status_code=400, detail="Username must be at least 3 characters long")
                 
                 # Validate password strength (basic validation)
@@ -100,7 +100,7 @@ class HTTP_SERVER():
                 
                 # Prepare user data for MongoDB service (using username as email)
                 user_data = {
-                    "email": username,  # Using username as email for MongoDB service
+                    "email": email,  # Using username as email for MongoDB service
                     "password": hashed_password
                 }
                 
