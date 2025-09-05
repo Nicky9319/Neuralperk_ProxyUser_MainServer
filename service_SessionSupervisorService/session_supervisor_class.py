@@ -219,7 +219,7 @@ class sessionSupervisorClass:
                 # Call the new user_rendering_completed method
                 result = await self.user_rendering_completed(user_id)
                 print(f"User completion handling result: {result}")
-                
+
             elif payload["topic"] == "user-disconnected":
                 # Handle user disconnection event
                 user_id = payload["payload"]["user-id"]
@@ -228,6 +228,14 @@ class sessionSupervisorClass:
                 # Handle user disconnection and reassign frames
                 await self.handle_user_disconnection(user_id)
                 
+            elif payload["topic"] == "new-users":
+                # Handle more users event
+                user_count = payload["data"]["user_count"]
+                user_list = payload["data"]["user_list"]
+                print(f"More users event received: {user_count}")
+                
+                await self.users_added(user_list)
+
             else:
                 print("Unknown Event Type")
                 print("Received Event: ", payload)
@@ -467,9 +475,10 @@ class sessionSupervisorClass:
             else:
                 await self.distributeWorkload()
 
-    async def user_added(self, user_id):
-        self.user_list.append(user_id)
-        self.number_of_users += 1
+    async def users_added(self, user_list):
+        for user_id in user_list:
+            self.user_list.append(user_id)
+            self.number_of_users += 1
 
         if self.workload_status == "running":
             await self.distributeWorkload()

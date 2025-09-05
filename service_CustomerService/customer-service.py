@@ -18,8 +18,6 @@ import secrets
 import asyncio
 import aio_pika
 
-from customerAgent import customerAgent
-
 
 import sys
 import os

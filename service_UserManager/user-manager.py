@@ -142,9 +142,12 @@ class HTTP_SERVER():
         self.mq_client = MessageQueue()
 
 
+        self.user_demand_queue = []
+
         self.activeSessions = []
         self.users = []
-        
+        self.idle_users = []
+
         self.userToSupervisorIdMapping = {} # This is Mapping from the user id to the Session supervisor ID itself
         self.supervisorToRoutingKeyMapping = {} # This is Mapping from the session supervisor Id to the routing key itself
 
@@ -188,6 +191,12 @@ class HTTP_SERVER():
                 supervisor_routing_key = self.supervisorToRoutingKeyMapping[supervisor_id]
 
                 self.mq_client.publish_message("SESSION_SUPERVISOR_EXCHANGE", supervisor_routing_key, payload)
+            elif topic == "new-user":
+                print("New User Event Received")
+                data = data["data"]
+                user_id = data["user_id"]
+                self.users.append(user_id)
+                self.idle_users.append(user_id)
             else:
                 print("Unknown Event Type")
                 print("Received Event: ", payload)
@@ -247,6 +256,42 @@ class HTTP_SERVER():
         await self.mq_client.declare_queue("SESSION_SUPERVISOR")
         await self.mq_client.bind_queue("SESSION_SUPERVISOR", "USER_MANAGER_EXCHANGE", routing_key="SESSION_SUPERVISOR")
         await self.mq_client.consume("SESSION_SUPERVISOR" , self.callbackSessionSupervisorMessages)
+
+
+    async def sendUserToSessionSupervisor(self, user_list, session_supervisor_id):
+        pass
+
+
+    async def distributeUsers(self):
+        while len(self.user_demand_queue) > 0:
+            user_demand_record = self.user_demand_queue.pop(0)
+            user_count = user_demand_record["user_count"]
+            session_supervisor_id = user_demand_record["session_supervisor_id"]
+
+            if user_count <= len(self.user_demand_queue):
+                payload = {
+                    "topic": "new-users",
+                    "data": {
+                        "user_list": self.idle_users,
+                        "session_supervisor_id": session_supervisor_id
+                    }
+                }
+
+                self.publish_message("SESSION_SUPERVISOR_EXCHANGE", self.supervisorToRoutingKeyMapping[session_supervisor_id], payload)
+                self.idle_users = self.idle_users[user_count:]
+            else:
+                payload = {
+                    "topic": "more-users",
+                    "data": {
+                        "user_count": user_count - len(self.idle_users),
+                        "session_supervisor_id": session_supervisor_id
+                    }
+                }
+                self.publish_message("SESSION_SUPERVISOR_EXCHANGE", self.supervisorToRoutingKeyMapping[session_supervisor_id], payload)
+                self.user_demand_queue.append({
+                    "user_count": user_count - len(self.idle_users),
+                    "session_supervisor_id": session_supervisor_id
+                })
 
 
     async def configure_routes(self):
