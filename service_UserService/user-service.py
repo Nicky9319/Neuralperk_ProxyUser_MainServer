@@ -380,6 +380,7 @@ class Service:
         async def rendering_completed(
             userId: str = Form(...)
         ):
+            print(f"Rendering completed event received for user: {userId}")
             try:
                 new_payload = {
                     "topic": "user-rendering-completed",
