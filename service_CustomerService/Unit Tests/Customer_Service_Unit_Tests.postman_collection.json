@@ -1,0 +1,1261 @@
+{
+	"info": {
+		"_postman_id": "customer-service-unit-tests",
+		"name": "Customer Service Unit Tests",
+		"description": "Comprehensive unit tests for all Customer Service API endpoints",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Authentication Tests",
+			"item": [
+				{
+					"name": "Test Root Endpoint - No Auth Required",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/customer-service/",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"customer-service",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Test Protected Endpoint - No Token",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/customer-service/upload-blend-file",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"customer-service",
+								"upload-blend-file"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Test Protected Endpoint - Invalid Token",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer invalid_token_123",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/customer-service/upload-blend-file",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"customer-service",
+								"upload-blend-file"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Test Protected Endpoint - Valid Token",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{valid_customer_id}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/customer-service/upload-blend-file",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"customer-service",
+								"upload-blend-file"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Upload Blend File Tests",
+			"item": [
+				{
+					"name": "Upload Blend File - Success",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{valid_customer_id}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "blend_file_name",
+									"value": "test_model.blend",
+									"type": "text"
+								},
+								{
+									"key": "blend_file",
+									"type": "file",
+									"src": "test_model.blend"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{base_url}}/api/customer-service/upload-blend-file",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"customer-service",
+								"upload-blend-file"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Upload Blend File - Missing File Name",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{valid_customer_id}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "blend_file",
+									"type": "file",
+									"src": "test_model.blend"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{base_url}}/api/customer-service/upload-blend-file",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"customer-service",
+								"upload-blend-file"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Upload Blend File - Missing File",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{valid_customer_id}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "blend_file_name",
+									"value": "test_model.blend",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{base_url}}/api/customer-service/upload-blend-file",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"customer-service",
+								"upload-blend-file"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Upload Blend File - Large File",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{valid_customer_id}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "blend_file_name",
+									"value": "large_model.blend",
+									"type": "text"
+								},
+								{
+									"key": "blend_file",
+									"type": "file",
+									"src": "large_model.blend"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{base_url}}/api/customer-service/upload-blend-file",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"customer-service",
+								"upload-blend-file"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Upload Blend File - Invalid File Type",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{valid_customer_id}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "blend_file_name",
+									"value": "test_model.txt",
+									"type": "text"
+								},
+								{
+									"key": "blend_file",
+									"type": "file",
+									"src": "test_model.txt"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{base_url}}/api/customer-service/upload-blend-file",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"customer-service",
+								"upload-blend-file"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Workload Management Tests",
+			"item": [
+				{
+					"name": "Start Workload - Success",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{valid_customer_id}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "object_id",
+									"value": "{{valid_object_id}}",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{base_url}}/api/customer-service/start-workload",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"customer-service",
+								"start-workload"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Start Workload - Missing Object ID",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{valid_customer_id}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": []
+						},
+						"url": {
+							"raw": "{{base_url}}/api/customer-service/start-workload",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"customer-service",
+								"start-workload"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Start Workload - Invalid Object ID",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{valid_customer_id}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "object_id",
+									"value": "invalid_object_id_123",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{base_url}}/api/customer-service/start-workload",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"customer-service",
+								"start-workload"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Workload Status - Success",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{valid_customer_id}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/customer-service/get-workload-status",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"customer-service",
+								"get-workload-status"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Workload Status - No Active Workload",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{customer_with_no_workload}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/customer-service/get-workload-status",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"customer-service",
+								"get-workload-status"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Stop and Delete Workload - Success",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{valid_customer_id}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/customer-service/stop-and-delete-workload",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"customer-service",
+								"stop-and-delete-workload"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Stop and Delete Workload - No Active Workload",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{customer_with_no_workload}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/customer-service/stop-and-delete-workload",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"customer-service",
+								"stop-and-delete-workload"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Blend File Retrieval Tests",
+			"item": [
+				{
+					"name": "Get Blend File - Success",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{valid_customer_id}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/customer-service/get-blend-file/{{valid_object_id}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"customer-service",
+								"get-blend-file",
+								"{{valid_object_id}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Blend File - Invalid Object ID",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{valid_customer_id}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/customer-service/get-blend-file/invalid_object_id_123",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"customer-service",
+								"get-blend-file",
+								"invalid_object_id_123"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Blend File - Object Not Found",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{valid_customer_id}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/customer-service/get-blend-file/507f1f77bcf86cd799439011",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"customer-service",
+								"get-blend-file",
+								"507f1f77bcf86cd799439011"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Blend File - Unauthorized Access",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{other_customer_id}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/customer-service/get-blend-file/{{valid_object_id}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"customer-service",
+								"get-blend-file",
+								"{{valid_object_id}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Blend File - Missing Authorization",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/customer-service/get-blend-file/{{valid_object_id}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"customer-service",
+								"get-blend-file",
+								"{{valid_object_id}}"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Rendered Content Tests",
+			"item": [
+				{
+					"name": "Get Rendered Video - Success",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{valid_customer_id}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/customer-service/get-rendered-video",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"customer-service",
+								"get-rendered-video"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Rendered Video - No Video Available",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{customer_with_no_renders}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/customer-service/get-rendered-video",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"customer-service",
+								"get-rendered-video"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Rendered Video - Missing Authorization",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/customer-service/get-rendered-video",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"customer-service",
+								"get-rendered-video"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Rendered Images - Success",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{valid_customer_id}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/api/customer-service/get-rendered-images",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"customer-service",
+								"get-rendered-images"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Rendered Images - No Images Available",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{customer_with_no_renders}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/api/customer-service/get-rendered-images",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"customer-service",
+								"get-rendered-images"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Rendered Images - Missing Authorization",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/api/customer-service/get-rendered-images",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"customer-service",
+								"get-rendered-images"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Service Integration Tests",
+			"item": [
+				{
+					"name": "Test MongoDB Service Integration",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{valid_customer_id}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "blend_file_name",
+									"value": "integration_test.blend",
+									"type": "text"
+								},
+								{
+									"key": "blend_file",
+									"type": "file",
+									"src": "integration_test.blend"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{base_url}}/api/customer-service/upload-blend-file",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"customer-service",
+								"upload-blend-file"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Test Blob Service Integration",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{valid_customer_id}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/customer-service/get-blend-file/{{valid_object_id}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"customer-service",
+								"get-blend-file",
+								"{{valid_object_id}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Test Session Supervisor Service Integration",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{valid_customer_id}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "object_id",
+									"value": "{{valid_object_id}}",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{base_url}}/api/customer-service/start-workload",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"customer-service",
+								"start-workload"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Test Auth Service Integration",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{valid_customer_id}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/customer-service/get-workload-status",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"customer-service",
+								"get-workload-status"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Error Handling Tests",
+			"item": [
+				{
+					"name": "Test Service Unavailable - MongoDB",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{valid_customer_id}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "blend_file_name",
+									"value": "test_unavailable.blend",
+									"type": "text"
+								},
+								{
+									"key": "blend_file",
+									"type": "file",
+									"src": "test_unavailable.blend"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{base_url}}/api/customer-service/upload-blend-file",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"customer-service",
+								"upload-blend-file"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Test Service Unavailable - Blob Service",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{valid_customer_id}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/customer-service/get-blend-file/{{valid_object_id}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"customer-service",
+								"get-blend-file",
+								"{{valid_object_id}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Test Service Unavailable - Session Supervisor",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{valid_customer_id}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "object_id",
+									"value": "{{valid_object_id}}",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{base_url}}/api/customer-service/start-workload",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"customer-service",
+								"start-workload"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Test Service Unavailable - Auth Service",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{valid_customer_id}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/customer-service/get-workload-status",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"customer-service",
+								"get-workload-status"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Performance Tests",
+			"item": [
+				{
+					"name": "Concurrent Upload Test",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{valid_customer_id}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "blend_file_name",
+									"value": "concurrent_test.blend",
+									"type": "text"
+								},
+								{
+									"key": "blend_file",
+									"type": "file",
+									"src": "concurrent_test.blend"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{base_url}}/api/customer-service/upload-blend-file",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"customer-service",
+								"upload-blend-file"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Large File Upload Test",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{valid_customer_id}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "blend_file_name",
+									"value": "large_file_test.blend",
+									"type": "text"
+								},
+								{
+									"key": "blend_file",
+									"type": "file",
+									"src": "large_file_test.blend"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{base_url}}/api/customer-service/upload-blend-file",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"customer-service",
+								"upload-blend-file"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Rapid Status Check Test",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{valid_customer_id}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/customer-service/get-workload-status",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"customer-service",
+								"get-workload-status"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					"// Set up test environment variables",
+					"pm.environment.set('base_url', 'http://127.0.0.1:11000');",
+					"pm.environment.set('valid_customer_id', 'test_customer_123');",
+					"pm.environment.set('valid_object_id', '507f1f77bcf86cd799439012');",
+					"pm.environment.set('other_customer_id', 'other_customer_456');",
+					"pm.environment.set('customer_with_no_workload', 'customer_no_workload_789');",
+					"pm.environment.set('customer_with_no_renders', 'customer_no_renders_101');"
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					"// Common test assertions",
+					"pm.test('Response time is less than 5000ms', function () {",
+					"    pm.expect(pm.response.responseTime).to.be.below(5000);",
+					"});",
+					"",
+					"pm.test('Response has proper content type', function () {",
+					"    if (pm.response.headers.get('Content-Type')) {",
+					"        pm.expect(pm.response.headers.get('Content-Type')).to.include('application/json');",
+					"    }",
+					"});",
+					"",
+					"// Test specific to authentication endpoints",
+					"if (pm.info.requestName.includes('No Token') || pm.info.requestName.includes('Invalid Token')) {",
+					"    pm.test('Should return 401 Unauthorized', function () {",
+					"        pm.response.to.have.status(401);",
+					"    });",
+					"}",
+					"",
+					"// Test for successful endpoints",
+					"if (pm.info.requestName.includes('Success') && !pm.info.requestName.includes('No')) {",
+					"    pm.test('Should return 2xx status code', function () {",
+					"        pm.expect(pm.response.code).to.be.oneOf([200, 201, 202]);",
+					"    });",
+					"}",
+					"",
+					"// Test for service unavailable scenarios",
+					"if (pm.info.requestName.includes('Service Unavailable')) {",
+					"    pm.test('Should return 503 Service Unavailable', function () {",
+					"        pm.response.to.have.status(503);",
+					"    });",
+					"}"
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "base_url",
+			"value": "http://127.0.0.1:11000",
+			"type": "string"
+		},
+		{
+			"key": "valid_customer_id",
+			"value": "test_customer_123",
+			"type": "string"
+		},
+		{
+			"key": "valid_object_id",
+			"value": "507f1f77bcf86cd799439012",
+			"type": "string"
+		},
+		{
+			"key": "other_customer_id",
+			"value": "other_customer_456",
+			"type": "string"
+		},
+		{
+			"key": "customer_with_no_workload",
+			"value": "customer_no_workload_789",
+			"type": "string"
+		},
+		{
+			"key": "customer_with_no_renders",
+			"value": "customer_no_renders_101",
+			"type": "string"
+		}
+	]
+}
