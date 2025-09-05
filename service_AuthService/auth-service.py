@@ -202,25 +202,25 @@ class HTTP_SERVER():
         @self.app.post("/api/auth-service/login")
         async def login(request: Request):
             """Login user with username and password
-            Required fields: username, password
+            Required fields: email, password
             Returns: Access token and refresh token
             """
             try:
                 body = await request.json()
                 
                 # Validate required fields
-                required_fields = ["username", "password"]
+                required_fields = ["email", "password"]
                 for field in required_fields:
                     if field not in body:
                         raise HTTPException(status_code=400, detail=f"Missing required field: {field}")
                 
-                username = body["username"]
+                email = body["email"]
                 password = body["password"]
                 
                 # Find user by username (stored as email in MongoDB) using MongoDB service
                 try:
                     response = await self.http_client.get(
-                        f"{self.mongodb_service_url}/api/mongodb-service/customers/find-by-email/{username}"
+                        f"{self.mongodb_service_url}/api/mongodb-service/customers/find-by-email/{email}"
                     )
                     
                     if response.status_code == 200:
