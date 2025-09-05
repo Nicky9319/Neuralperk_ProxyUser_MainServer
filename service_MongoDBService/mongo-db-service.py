@@ -758,6 +758,7 @@ class HTTP_SERVER():
                         "customerId": customer_id,
                         "blendFileName": blender_object.get("blendFileName"),
                         "blendFilePath": blender_object.get("blendFilePath"),
+                        "blendFileHash": blender_object.get("blendFileHash"),
                         "message": "Blend file name retrieved successfully"
                     },
                     status_code=200

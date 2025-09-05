@@ -133,6 +133,7 @@ class sessionSupervisorClass:
         if response.status_code == 200:
             response_data = response.json()
             self.blendFilePath = response_data.get("blendFilePath")
+            self.blendFileHash = response_data.get("blendFileHash")
             print(self.blendFilePath)
             if not self.blendFilePath:
                 raise ValueError("blendFilePath not found in API response")
@@ -412,25 +413,23 @@ class sessionSupervisorClass:
         for user_id in user_list:
             payload = {
                 "user_id": user_id,
+                "topic": "stop-work",
                 "data": {
-                    "topic": "stop-work",
                 }
             }
             await self.sendMessageToUser(user_id, payload)
 
-    async def sendUserStartRendering(self, user_id, frame_list, blend_file_path=None):
+    async def sendUserStartRendering(self, user_id, frame_list):
         """
         Send start rendering message to user with frame list and blend file path.
         If blend_file_path is None, uses the blob storage path from self.blendFilePath.
         """
-        if blend_file_path is None:
-            blend_file_path = self.blendFilePath
             
         payload = {
             "user_id" : user_id,
+            "topic": "start-rendering",
             "data" : {
-                "topic" : "start-rendering",
-                "blend_file_path": blend_file_path,
+                "blend_file_hash": self.blendFileHash,
                 "frame_list": frame_list,
             }
         }
@@ -849,14 +848,18 @@ class sessionSupervisorClass:
 
 
 
-# async def main():
-#     session_supervisor = sessionSupervisorClass(customer_id="2e4110a3-1003-4153-934a-4cc39c98d858", object_id="678f72d7-7284-4160-9c9a-03c12a8aa6ab", session_id="789")
-#     await session_supervisor.getAndAssignFrameRange()
+async def main():
+    session_supervisor = sessionSupervisorClass(
+        customer_id="336f66fb-3831-43ec-b20f-c0cb477c835a", 
+        object_id="3200243b-4e5a-419a-8bcf-2f589c69ae07", 
+        session_id="789"
+    )
+    # await session_supervisor.getAndAssignFrameRange()
 
-#     print(session_supervisor.remaining_frame_list)
+    # print(session_supervisor.remaining_frame_list)
 
-#     # await session_supervisor.user_frame_rendered(user_id="123", frame_number=1, 
-#     # image_binary_path="2e4110a3-1003-4153-934a-4cc39c98d858/001_ccd26e11-5113-4f2a-a8a7-ba600f3e9ab8.png", image_extension="png")
+    # await session_supervisor.user_frame_rendered(user_id="123", frame_number=1, 
+    # image_binary_path="2e4110a3-1003-4153-934a-4cc39c98d858/001_ccd26e11-5113-4f2a-a8a7-ba600f3e9ab8.png", image_extension="png")
 
-# if __name__ == "__main__":  
-#     asyncio.run(main())
+if __name__ == "__main__":  
+    asyncio.run(main())

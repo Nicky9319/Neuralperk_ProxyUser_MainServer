@@ -179,8 +179,8 @@ class Service:
         
 
     # -------- Utility Functions -------- #
-    async def send_message_to_user(self, sid, message):
-        self.sio.emit("request-buffer", message, to=sid)
+    async def send_message_to_user(self, sid, topic, message):
+        self.sio.emit(topic, message, to=sid)
 
     # -------- Configure Routes -------- #
     async def configure_http_routes(self):
@@ -192,8 +192,9 @@ class Service:
         async def send_msg_to_user(request: Request):
             data = await request.json()
             user_id = data["user_id"]
+            topic = data["topic"]
             message = data["data"]
-            await self.send_message_to_user(user_id, message)
+            await self.send_message_to_user(user_id, topic, message)
             return {"status": 200, "message": "Message sent to user"}
 
         @self.app.get("/api/user-service/user/get-blend-file/{blend_file_hash}")
