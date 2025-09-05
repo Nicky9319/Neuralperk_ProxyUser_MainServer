@@ -174,7 +174,7 @@ class HTTP_SERVER():
             if topic is None or data is None:
                 print(payload)
                 print("Invalid Payload")
-                print("Payloadgi Need to contain the topic and data fields. It is mandatory")
+                print("Payload Need to contain the topic and data fields. It is mandatory")
                 return
 
             if topic == "user-frame-rendered":
@@ -259,7 +259,15 @@ class HTTP_SERVER():
 
 
     async def sendUserToSessionSupervisor(self, user_list, session_supervisor_id):
-        pass
+        payload = {
+            "topic": "new-users",
+            "data": {
+                "user_list": user_list,
+                "session_supervisor_id": session_supervisor_id
+            }
+        }
+
+        await self.mq_client.publish_message("SESSION_SUPERVISOR_EXCHANGE", self.supervisorToRoutingKeyMapping[session_supervisor_id], payload)
 
 
     async def distributeUsers(self):
@@ -269,29 +277,15 @@ class HTTP_SERVER():
             session_supervisor_id = user_demand_record["session_supervisor_id"]
 
             if user_count <= len(self.user_demand_queue):
-                payload = {
-                    "topic": "new-users",
-                    "data": {
-                        "user_list": self.idle_users,
-                        "session_supervisor_id": session_supervisor_id
-                    }
-                }
-
-                self.publish_message("SESSION_SUPERVISOR_EXCHANGE", self.supervisorToRoutingKeyMapping[session_supervisor_id], payload)
+                await self.sendUserToSessionSupervisor(self.idle_users[:user_count], session_supervisor_id)
                 self.idle_users = self.idle_users[user_count:]
             else:
-                payload = {
-                    "topic": "more-users",
-                    "data": {
-                        "user_count": user_count - len(self.idle_users),
-                        "session_supervisor_id": session_supervisor_id
-                    }
-                }
-                self.publish_message("SESSION_SUPERVISOR_EXCHANGE", self.supervisorToRoutingKeyMapping[session_supervisor_id], payload)
+                await self.sendUserToSessionSupervisor(self.idle_users, session_supervisor_id)
                 self.user_demand_queue.append({
                     "user_count": user_count - len(self.idle_users),
                     "session_supervisor_id": session_supervisor_id
                 })
+                
 
 
     async def configure_routes(self):
