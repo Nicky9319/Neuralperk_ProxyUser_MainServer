@@ -18,3 +18,5 @@ dotenv
 boto3
 
 multipart
+
+vastai
