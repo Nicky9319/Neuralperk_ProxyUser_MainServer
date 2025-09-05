@@ -174,7 +174,7 @@ class HTTP_SERVER():
             if topic is None or data is None:
                 print(payload)
                 print("Invalid Payload")
-                print("Payload Need to contain the topic and data fields. It is mandatory")
+                print("Payloadgi Need to contain the topic and data fields. It is mandatory")
                 return
 
             if topic == "user-frame-rendered":

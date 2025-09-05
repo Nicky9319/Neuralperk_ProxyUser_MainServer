@@ -16,3 +16,5 @@ httpx
 
 dotenv
 boto3
+
+multipart
