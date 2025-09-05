@@ -73,7 +73,7 @@ class HTTP_SERVER():
         @self.app.post("/api/auth-service/register")
         async def register(request: Request):
             """Register a new user
-            Required fields: username, password
+            Required fields: email, password
             Returns: Success message with user details including auto-generated customerId
             """
             try:
@@ -119,8 +119,7 @@ class HTTP_SERVER():
                         return JSONResponse(
                             content={
                                 "message": "User registered successfully",
-                                "customerId": generated_customer_id,
-                                "username": username
+                                "customerId": generated_customer_id
                             },
                             status_code=201
                         )
