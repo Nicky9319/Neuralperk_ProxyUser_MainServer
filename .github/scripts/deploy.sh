@@ -8,20 +8,20 @@ echo "🚀 Deploying to production..."
 TARGET_DIR="/home/paarth/Backend"
 
 # Clean old deployment
-sudo rm -rf $TARGET_DIR  # Use -rf to avoid prompt and handle directories properly
-sudo mkdir -p $TARGET_DIR
+echo '226044' | sudo rm -rf $TARGET_DIR  # Use -rf to avoid prompt and handle directories properly
+echo '226044' | sudo mkdir -p $TARGET_DIR
 
 # Copy new files
-sudo cp -r ./* $TARGET_DIR/
+echo '226044' | sudo cp -r ./* $TARGET_DIR/
 
 # Change ownership (optional, but safer if other services access this folder)
-sudo chown -R paarth:paarth $TARGET_DIR
+echo '226044' | sudo chown -R paarth:paarth $TARGET_DIR
 
 # Move into the target directory
 cd $TARGET_DIR
 
 # Installing the latest version of Python 3.12 venv
-sudo apt install python3.12-venv -y
+echo '226044' | sudo apt install python3.12-venv -y
 
 # Define environmental variables
 python3.12 -m venv .venv
@@ -45,7 +45,7 @@ pm2 stop all || echo "⚠️ PM2 stop failed, continuing..."
 pm2 flush
 pm2 start process.json
 
-sudo docker-compose down --volumes --remove-orphans || echo "⚠️ docker-compose down failed, continuing..."
-sudo docker-compose up -d 
+echo '226044' | sudo docker-compose down --volumes --remove-orphans || echo "⚠️ docker-compose down failed, continuing..."
+echo '226044' |sudo docker-compose up -d 
 
 echo "✅ Deployment complete."
