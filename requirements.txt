@@ -17,6 +17,6 @@ httpx
 dotenv
 boto3
 
-multipart
+python-multipart
 
 vastai
