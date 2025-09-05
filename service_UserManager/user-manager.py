@@ -195,7 +195,6 @@ class HTTP_SERVER():
                 self.mq_client.publish_message("SESSION_SUPERVISOR_EXCHANGE", supervisor_routing_key, payload)
             elif topic == "new-user":
                 print("New User Event Received")
-                data = data["data"]
                 user_id = data["user_id"]
                 self.users.append(user_id)
                 self.idle_users.append(user_id)
