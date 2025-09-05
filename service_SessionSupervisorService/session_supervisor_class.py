@@ -455,7 +455,7 @@ class sessionSupervisorClass:
             }
         }
 
-        await self.mq_client.publish_message("SESSION_SUPERVISOR_EXCHANGE", "SESSION_SUPERVISOR", json.dumps(payload))
+        await self.mq_client.publish_message("USER_MANAGER_EXCHANGE", "SESSION_SUPERVISOR", json.dumps(payload))
 
     async def remove_users(self, user_list):
         for user in user_list:
@@ -483,7 +483,7 @@ class sessionSupervisorClass:
             }
         }
 
-        await self.mq_client.publish_message("SESSION_SUPERVISOR_EXCHANGE", "SESSION_SUPERVISOR", json.dumps(payload))
+        await self.mq_client.publish_message("USER_MANAGER_EXCHANGE", "SESSION_SUPERVISOR", json.dumps(payload))
 
     # -------------------------
     # Workload Management Section
@@ -744,27 +744,7 @@ class sessionSupervisorClass:
         # 4. Update database with completion status
         
         # Example: Send completion message to user manager
-        try:
-            payload = {
-                "topic": "rendering-completed",
-                "session-id": self.session_id,
-                "data": {
-                    "customer_id": self.customer_id,
-                    "object_id": self.object_id,
-                    "total_frames": len(self.remaining_frame_list) if self.remaining_frame_list else 0
-                }
-            }
-            
-            await self.mq_client.publish_message(
-                "SESSION_SUPERVISOR_EXCHANGE", 
-                "SESSION_SUPERVISOR", 
-                json.dumps(payload)
-            )
-            print("Sent rendering completion notification")
-            
-        except Exception as e:
-            print(f"Error sending completion notification: {e}")
-
+        
     async def get_rendering_progress(self):
         """
         Get the current rendering progress.

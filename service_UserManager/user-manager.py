@@ -141,8 +141,10 @@ class HTTP_SERVER():
 
         self.mq_client = MessageQueue()
 
-        self.userToSupervisorIdMapping = {}
-        self.supervisorToRoutingKeyMapping = {}
+
+        self.activeSessions = []
+        self.userToSupervisorIdMapping = {} # This is Mapping from the user id to the Session supervisor ID itself
+        self.supervisorToRoutingKeyMapping = {} # This is Mapping from the session supervisor Id to the routing key itself
 
 
     # Callback Function to Listen to events emitted by the User Service
@@ -219,10 +221,10 @@ class HTTP_SERVER():
                 print("Payload Need to contain the topic, supervisor-id and data fields. It is mandatory")
                 return
 
-            if payload["topic"] == "session-supervisor-initialized":
-                print("Session Supervisor Initialized Event Received")
-            elif payload["topic"] == "session-supervisor-ready":
-                print("Session Supervisor Ready Event Received")
+            if payload["topic"] == "more-users":
+                print("More Users Event Received")
+            elif payload["topic"] == "users-released":
+                print("Users Released Event Received")
             else:
                 print("Unknown Event Type")
                 print("Received Event: ", payload)
@@ -257,8 +259,8 @@ class HTTP_SERVER():
             user_count: int = Form(...),
             session_supervisor_id: str = Form(...)
         ):
-            pass
-
+            self.activeSessions.append(session_supervisor_id)
+            self.supervisorToRoutingKeyMapping[session_supervisor_id] = f"SESSION_SUPERVISOR_{session_supervisor_id}"
 
     async def run_app(self):
         config = uvicorn.Config(self.app, host=self.host, port=self.port)
