@@ -33,6 +33,8 @@ class sessionClass:
         self.session_id = str(uuid.uuid4())
         self.sessionRoutingKey = f"SESSION_SUPERVISOR_{self.session_id}"
 
+        self.session_supervisor_instance = sessionSupervisorClass(customer_id=self.customer_id, object_id=self.object_id, session_id=self.session_id)
+
     # -------------------------
     # Workload Management Section
     # -------------------------
@@ -41,6 +43,9 @@ class sessionClass:
             return JSONResponse(content={"message": "Customer ID or Object ID is missing"}, status_code=400)
         
         self.session_status = "running"
+
+        await self.session_supervisor_instance.initialization()
+        await self.session_supervisor_instance.start_workload()
 
         return JSONResponse(content={"message": "Workload started"}, status_code=200)
 

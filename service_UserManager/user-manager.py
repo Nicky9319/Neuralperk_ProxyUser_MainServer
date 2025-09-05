@@ -232,6 +232,7 @@ class HTTP_SERVER():
             if topic is None or supervisor_id is None or data is None:
                 print("Invalid Payload")
                 print("Payload Need to contain the topic, supervisor-id and data fields. It is mandatory")
+                print("Payload: ", payload)
                 return
 
             if payload["topic"] == "more-users":

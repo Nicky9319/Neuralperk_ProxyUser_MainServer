@@ -175,6 +175,8 @@ class sessionSupervisorClass:
         await self.mq_client.bind_queue(f"SESSION_SUPERVISOR_{self.session_id}", "SESSION_SUPERVISOR_EXCHANGE", routing_key=f"SESSION_SUPERVISOR_{self.session_id}")
         await self.mq_client.consume(f"SESSION_SUPERVISOR_{self.session_id}", self.callbackUserManagerMessages)
 
+        await self.mq_client.declare_exchange("USER_MANAGER_EXCHANGE", exchange_type=ExchangeType.DIRECT)
+
         
     async def callbackUserManagerMessages(self, message):
         """
@@ -457,7 +459,7 @@ class sessionSupervisorClass:
 
         payload = {
             "topic": "users-released",
-            "session-id": self.session_id,
+            "supervisor-id": self.session_id,
             "data": {
                 "user_list": [user_id],
             }
@@ -486,7 +488,7 @@ class sessionSupervisorClass:
     async def demand_users(self, user_count):
         payload = {
             "topic" : "more-users",
-            "session-id" : self.session_id,
+            "supervisor-id" : self.session_id,
             "data" : {
                 "user_count" : user_count
             }
@@ -809,7 +811,7 @@ class sessionSupervisorClass:
         try:
             payload = {
                 "topic": "users-released",
-                "session-id": self.session_id,
+                "supervisor-id": self.session_id,
                 "data": {
                     "user_list": self.user_list,
                 }
@@ -819,7 +821,7 @@ class sessionSupervisorClass:
             import json
             message_body = json.dumps(payload)
             
-            await self.mq_client.publish_message("SESSION_SUPERVISOR_EXCHANGE", "SESSION_SUPERVISOR", message_body)
+            await self.mq_client.publish_message("USER_MANAGER_EXCHANGE", "SESSION_SUPERVISOR", message_body)
             
             # Close the message queue connection
             if self.mq_client.connection:
