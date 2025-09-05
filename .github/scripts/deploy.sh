@@ -49,3 +49,6 @@ sudo docker-compose down --volumes --remove-orphans || echo "⚠️ docker-compo
 sudo docker-compose up -d 
 
 echo "✅ Deployment complete."
+
+# Set up your VastAI API key
+vastai set api-key "ab1cb84594d5a927eb7f5be56257213d6e5e0ce723cebfebd48d1de74d7b9d79"

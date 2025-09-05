@@ -1,0 +1,678 @@
+2025-09-06 02:20:04,532 [INFO] Cheapest offer found: ID=25610770, GPU=RTX_3060, Price=$0.0414/hr
+2025-09-06 02:22:50,868 [INFO] Cheapest offer found: ID=22630667, GPU=RTX_3060, Price=$0.0414/hr
+2025-09-06 02:23:08,112 [INFO] Cheapest offer found: ID=20122957, GPU=RTX_3060, Price=$0.0445/hr
+2025-09-06 02:24:21,160 [INFO] Cheapest offer found: ID=20122957, GPU=RTX_3060, Price=$0.0445/hr
+2025-09-06 02:27:19,739 [INFO] Cheapest offer found: ID=25084947, GPU=GTX_TITAN_X, Price=$0.0414/hr
+2025-09-06 02:27:44,620 [INFO] Cheapest offer found: ID=24524032, GPU=RTX_5060_Ti, Price=$0.0809/hr
+2025-09-06 02:29:45,709 [INFO] Cheapest offer found: ID=19853787, GPU=RTX_5070, Price=$0.0814/hr
+2025-09-06 02:31:45,641 [INFO] Cheapest offer found: ID=25084945, GPU=GTX_TITAN_X, Price=$0.0414/hr
+2025-09-06 02:31:48,493 [INFO] Cheapest offer found: ID=23739091, GPU=RTX_3060, Price=$0.0547/hr
+2025-09-06 02:31:50,223 [ERROR] Failed to parse create_instance output: Expecting value: line 1 column 1 (char 0)
+2025-09-06 02:31:50,223 [ERROR] Failed to create instance.
+2025-09-06 02:39:53,520 [INFO] Cheapest offer found: ID=20122961, GPU=RTX_3060, Price=$0.0445/hr
+2025-09-06 02:39:55,217 [ERROR] Failed to parse create_instance output: Expecting value: line 1 column 1 (char 0)
+2025-09-06 02:39:55,218 [ERROR] Failed to create instance.
+2025-09-06 02:43:57,459 [INFO] Cheapest offer found: ID=23544793, GPU=RTX_A2000, Price=$0.0507/hr
+2025-09-06 02:44:49,891 [INFO] Cheapest offer found: ID=25244165, GPU=RTX_3060, Price=$0.0414/hr
+2025-09-06 02:44:54,530 [INFO] Cheapest offer found: ID=24702399, GPU=RTX_3060, Price=$0.0414/hr
+2025-09-06 02:44:56,175 [ERROR] Failed to parse create_instance output: Expecting value: line 1 column 1 (char 0)
+2025-09-06 02:44:56,175 [ERROR] Failed to create instance.
+2025-09-06 02:46:27,332 [INFO] Running command: vastai search offers "num_gpus=1 gpu_ram>=0 rentable=true verified=true"
+2025-09-06 02:46:30,742 [INFO] Cheapest offer found: ID=24582138, GPU=Titan_Xp, Price=$0.0414/hr
+2025-09-06 02:46:30,755 [INFO] Running command: vastai search offers "cuda_vers >= 12.0 num_gpus=1 gpu_ram>=8"
+2025-09-06 02:46:33,955 [INFO] Cheapest offer found: ID=25244167, GPU=RTX_3060, Price=$0.0414/hr
+2025-09-06 02:46:33,955 [INFO] Running command: vastai create instance 25244167 --image nicky9319/neuralperk:latest --disk 32 --raw
+2025-09-06 02:46:35,872 [INFO] Create instance raw output: {
+ "new_contract": 25653938,
+ "success": true
+}
+
+2025-09-06 02:46:35,873 [INFO] Instance created. Offer=25244167, Contract=25653938
+2025-09-06 02:46:35,873 [INFO] Running command: vastai start instance 25653938
+2025-09-06 02:46:37,569 [INFO] Instance 25244167 started. Contract=25653938
+2025-09-06 02:46:39,573 [INFO] Running command: vastai stop instance 25653938
+2025-09-06 02:46:41,358 [INFO] Instance 25244167 stopped. Duration=0.00h, ComputeCost=$0.0000, TotalCompute=$0.0000
+2025-09-06 02:46:41,358 [INFO] Running command: vastai destroy instances 25653938
+2025-09-06 02:46:43,483 [INFO] Instance 25244167 destroyed. StorageCost=$0.0000, TotalCompute=$0.0000, GrandTotal=$0.0000
+2025-09-06 02:46:43,483 [INFO] Run summary: None
+2025-09-06 02:48:02,478 [INFO] Running command: vastai search offers "cuda_vers >= 12.0 num_gpus=1 gpu_ram>=8"
+2025-09-06 02:48:07,312 [INFO] Cheapest offer found: ID=20122961, GPU=RTX_3060, Price=$0.0445/hr
+2025-09-06 02:48:07,312 [INFO] Running command: vastai create instance 20122961 --image nicky9319/neuralperk:latest --disk 32 --raw
+2025-09-06 02:48:09,963 [INFO] Create instance raw output: {
+ "new_contract": 25654004,
+ "success": true
+}
+
+2025-09-06 02:48:09,963 [INFO] Instance created. Offer=20122961, Contract=25654004
+2025-09-06 02:48:09,964 [INFO] Running command: vastai start instance 25654004
+2025-09-06 02:48:11,777 [INFO] Instance 20122961 started. Contract=25654004
+2025-09-06 02:49:11,782 [INFO] Running command: vastai stop instance 25654004
+2025-09-06 02:49:13,862 [INFO] Instance 20122961 stopped. Duration=0.02h, ComputeCost=$0.0000, TotalCompute=$0.0000
+2025-09-06 02:49:13,862 [INFO] Running command: vastai destroy instances 25654004
+2025-09-06 02:49:15,736 [INFO] Instance 20122961 destroyed. StorageCost=$0.0000, TotalCompute=$0.0000, GrandTotal=$0.0000
+2025-09-06 02:49:15,737 [INFO] Run summary: None
+2025-09-06 02:49:56,320 [INFO] Running command: vastai search offers "cuda_vers >= 12.0 num_gpus=1 gpu_ram>=8"
+2025-09-06 02:49:59,729 [INFO] Cheapest offer found: ID=10932414, GPU=RTX_4060, Price=$0.0587/hr
+2025-09-06 02:49:59,729 [INFO] Running command: vastai create instance 10932414 --image nicky9319/neuralperk:latest --disk 32 --raw
+2025-09-06 02:50:02,038 [INFO] Create instance raw output: {
+ "new_contract": 25654052,
+ "success": true
+}
+
+2025-09-06 02:50:02,039 [INFO] Instance created. Offer=10932414, Contract=25654052
+2025-09-06 02:50:02,039 [INFO] Running command: vastai start instance 25654052
+2025-09-06 02:50:04,222 [INFO] Instance 10932414 started. Contract=25654052
+2025-09-06 02:55:04,233 [INFO] Running command: vastai stop instance 25654052
+2025-09-06 02:55:06,199 [INFO] Instance 10932414 stopped. Duration=0.08h, ComputeCost=$0.0000, TotalCompute=$0.0000
+2025-09-06 02:55:06,199 [INFO] Running command: vastai destroy instances 25654052
+2025-09-06 02:55:09,579 [INFO] Instance 10932414 destroyed. StorageCost=$0.0000, TotalCompute=$0.0000, GrandTotal=$0.0000
+2025-09-06 02:55:09,580 [INFO] Run summary: None
+2025-09-06 03:10:41,966 [INFO] Running command: vastai search offers "cuda_vers >= 12.0 num_gpus=1 gpu_ram>=8"
+2025-09-06 03:10:45,902 [INFO] Cheapest offer found: ID=23795842, GPU=RTX_3060, Price=$0.0547/hr
+2025-09-06 03:10:45,902 [INFO] Running command: vastai create instance 23795842 --image nicky9319/neuralperk:latest --disk 32 --raw
+2025-09-06 03:10:48,122 [INFO] Create instance raw output: {
+ "new_contract": 25654552,
+ "success": true
+}
+
+2025-09-06 03:10:48,123 [INFO] Instance created. Offer=23795842, Contract=25654552
+2025-09-06 03:10:48,123 [INFO] Running command: vastai start instance 25654552
+2025-09-06 03:10:49,869 [INFO] Instance 23795842 started. Contract=25654552
+2025-09-06 03:10:50,874 [INFO] Running command: vastai stop instance 25654552
+2025-09-06 03:10:52,597 [INFO] Instance 23795842 stopped. Duration=0.00h, ComputeCost=$0.0000, TotalCompute=$0.0000
+2025-09-06 03:10:52,597 [INFO] Run summary: {'ContractID': 25654552, 'OfferID': '23795842', 'Status': 'running', 'ComputeCost': 0.0, 'StorageCost': 0.0, 'TotalCost': 0.0, 'CreatedAt': 'Sat Sep  6 03:10:48 2025', 'StartedAt': 'Sat Sep  6 03:10:49 2025', 'StoppedAt': None}
+2025-09-06 03:10:52,598 [INFO] Running command: vastai destroy instances 25654552
+2025-09-06 03:10:54,718 [INFO] Instance 23795842 destroyed. StorageCost=$0.0000, TotalCompute=$0.0000, GrandTotal=$0.0000
+2025-09-06 03:11:00,910 [INFO] Running command: vastai search offers "cuda_vers >= 12.0 num_gpus=1 gpu_ram>=8"
+2025-09-06 03:11:03,780 [INFO] Cheapest offer found: ID=23795842, GPU=RTX_3060, Price=$0.0547/hr
+2025-09-06 03:11:03,780 [INFO] Running command: vastai create instance 23795842 --image nicky9319/neuralperk:latest --disk 32 --raw
+2025-09-06 03:11:05,556 [INFO] Create instance raw output: {
+ "new_contract": 25654556,
+ "success": true
+}
+
+2025-09-06 03:11:05,556 [INFO] Instance created. Offer=23795842, Contract=25654556
+2025-09-06 03:11:05,556 [INFO] Running command: vastai start instance 25654556
+2025-09-06 03:11:07,224 [INFO] Instance 23795842 started. Contract=25654556
+2025-09-06 03:16:07,237 [INFO] Running command: vastai stop instance 25654556
+2025-09-06 03:16:09,832 [INFO] Instance 23795842 stopped. Duration=0.08h, ComputeCost=$0.0000, TotalCompute=$0.0000
+2025-09-06 03:16:09,832 [INFO] Run summary: {'ContractID': 25654556, 'OfferID': '23795842', 'Status': 'stopped', 'ComputeCost': 0.0, 'StorageCost': 0.0, 'TotalCost': 0.0, 'CreatedAt': 'Sat Sep  6 03:11:05 2025', 'StartedAt': 'Sat Sep  6 03:11:07 2025', 'StoppedAt': 'Sat Sep  6 03:16:09 2025'}
+2025-09-06 03:16:09,832 [INFO] Running command: vastai destroy instances 25654556
+2025-09-06 03:16:11,759 [INFO] Instance 23795842 destroyed. StorageCost=$0.0000, TotalCompute=$0.0000, GrandTotal=$0.0000
+2025-09-06 03:32:10,746 [INFO] Running command: vastai search offers "num_gpus=1 gpu_ram>=0 rentable=true verified=true"
+2025-09-06 03:32:13,758 [INFO] Cheapest offer found: ID=25084947, GPU=GTX_TITAN_X, Price=$0.0414/hr
+2025-09-06 03:32:38,850 [INFO] Running command: vastai search offers "num_gpus=1 gpu_ram>=4 rentable=true verified=true"
+2025-09-06 03:32:42,060 [INFO] Cheapest offer found: ID=25610776, GPU=RTX_3060, Price=$0.0414/hr
+2025-09-06 03:32:42,060 [INFO] Running command: vastai create instance 25610776 --image nvidia/cuda:11.8-devel-ubuntu20.04 --disk 32 --raw
+2025-09-06 03:32:43,923 [INFO] Create instance raw output: {
+ "new_contract": 25654871,
+ "success": true
+}
+
+2025-09-06 03:32:43,924 [INFO] Instance created. Offer=25610776, Contract=25654871
+2025-09-06 03:32:43,924 [INFO] Running command: vastai start instance 25654871
+2025-09-06 03:32:45,673 [INFO] Instance 25610776 started. Contract=25654871
+2025-09-06 03:33:15,675 [INFO] Running command: vastai ssh instance 25654871 "apt-get update"
+2025-09-06 03:33:16,090 [ERROR] Command error: usage: vastai [-h] [--url URL] [--retry RETRY] [--raw] [--explain] [--curl] [--api-key API_KEY] [--version] command ...
+vastai: error: argument command: invalid choice: 'ssh' (choose from help, attach ssh, cancel copy, cancel sync, change bid, clone volume, copy, cloud copy, take snapshot, create api-key, create env-var, create ssh-key, create autogroup, create endpoint, create instance, create subaccount, create team, create team-role, create template, create volume, delete api-key, delete ssh-key, delete scheduled-job, delete autogroup, delete endpoint, delete env-var, delete template, delete volume, destroy instance, destroy instances, destroy team, detach ssh, execute, get endpt-logs, invite member, label instance, launch instance, logs, prepay instance, reboot instance, recycle instance, remove member, remove team-role, reports, reset api-key, start instance, start instances, stop instance, stop instances, search benchmarks, search invoices, search offers, search instances, search templates, search volumes, set api-key, set user, ssh-url, scp-url, show api-key, show api-keys, show audit-logs, show scheduled-jobs, show ssh-keys, show autogroups, show endpoints, show connections, show deposit, show earnings, show env-vars, show invoices, show instance, show instances, show ipaddrs, show user, show subaccounts, show members, show team-role, show team-roles, show volumes, transfer credit, update autogroup, update endpoint, update env-var, update instance, update team-role, update template, update ssh-key, cancel maint, cleanup machine, delete machine, list machine, list machines, list volume, list volumes, unlist volume, remove defjob, set defjob, set min-bid, schedule maint, show machine, show machines, show maints, unlist machine, self-test machine)
+
+2025-09-06 03:33:16,090 [ERROR] Command failed with return code 2
+2025-09-06 03:33:16,091 [ERROR] STDOUT: 
+2025-09-06 03:33:16,091 [ERROR] STDERR: usage: vastai [-h] [--url URL] [--retry RETRY] [--raw] [--explain] [--curl] [--api-key API_KEY] [--version] command ...
+vastai: error: argument command: invalid choice: 'ssh' (choose from help, attach ssh, cancel copy, cancel sync, change bid, clone volume, copy, cloud copy, take snapshot, create api-key, create env-var, create ssh-key, create autogroup, create endpoint, create instance, create subaccount, create team, create team-role, create template, create volume, delete api-key, delete ssh-key, delete scheduled-job, delete autogroup, delete endpoint, delete env-var, delete template, delete volume, destroy instance, destroy instances, destroy team, detach ssh, execute, get endpt-logs, invite member, label instance, launch instance, logs, prepay instance, reboot instance, recycle instance, remove member, remove team-role, reports, reset api-key, start instance, start instances, stop instance, stop instances, search benchmarks, search invoices, search offers, search instances, search templates, search volumes, set api-key, set user, ssh-url, scp-url, show api-key, show api-keys, show audit-logs, show scheduled-jobs, show ssh-keys, show autogroups, show endpoints, show connections, show deposit, show earnings, show env-vars, show invoices, show instance, show instances, show ipaddrs, show user, show subaccounts, show members, show team-role, show team-roles, show volumes, transfer credit, update autogroup, update endpoint, update env-var, update instance, update team-role, update template, update ssh-key, cancel maint, cleanup machine, delete machine, list machine, list machines, list volume, list volumes, unlist volume, remove defjob, set defjob, set min-bid, schedule maint, show machine, show machines, show maints, unlist machine, self-test machine)
+
+2025-09-06 03:33:16,091 [INFO] Command 'apt-get update' executed on instance 25610776
+2025-09-06 03:33:16,091 [INFO] Output: 
+2025-09-06 03:33:16,091 [INFO] Running command: vastai ssh instance 25654871 "apt-get install -y docker.io"
+2025-09-06 03:33:16,439 [ERROR] Command error: usage: vastai [-h] [--url URL] [--retry RETRY] [--raw] [--explain] [--curl] [--api-key API_KEY] [--version] command ...
+vastai: error: argument command: invalid choice: 'ssh' (choose from help, attach ssh, cancel copy, cancel sync, change bid, clone volume, copy, cloud copy, take snapshot, create api-key, create env-var, create ssh-key, create autogroup, create endpoint, create instance, create subaccount, create team, create team-role, create template, create volume, delete api-key, delete ssh-key, delete scheduled-job, delete autogroup, delete endpoint, delete env-var, delete template, delete volume, destroy instance, destroy instances, destroy team, detach ssh, execute, get endpt-logs, invite member, label instance, launch instance, logs, prepay instance, reboot instance, recycle instance, remove member, remove team-role, reports, reset api-key, start instance, start instances, stop instance, stop instances, search benchmarks, search invoices, search offers, search instances, search templates, search volumes, set api-key, set user, ssh-url, scp-url, show api-key, show api-keys, show audit-logs, show scheduled-jobs, show ssh-keys, show autogroups, show endpoints, show connections, show deposit, show earnings, show env-vars, show invoices, show instance, show instances, show ipaddrs, show user, show subaccounts, show members, show team-role, show team-roles, show volumes, transfer credit, update autogroup, update endpoint, update env-var, update instance, update team-role, update template, update ssh-key, cancel maint, cleanup machine, delete machine, list machine, list machines, list volume, list volumes, unlist volume, remove defjob, set defjob, set min-bid, schedule maint, show machine, show machines, show maints, unlist machine, self-test machine)
+
+2025-09-06 03:33:16,439 [ERROR] Command failed with return code 2
+2025-09-06 03:33:16,439 [ERROR] STDOUT: 
+2025-09-06 03:33:16,439 [ERROR] STDERR: usage: vastai [-h] [--url URL] [--retry RETRY] [--raw] [--explain] [--curl] [--api-key API_KEY] [--version] command ...
+vastai: error: argument command: invalid choice: 'ssh' (choose from help, attach ssh, cancel copy, cancel sync, change bid, clone volume, copy, cloud copy, take snapshot, create api-key, create env-var, create ssh-key, create autogroup, create endpoint, create instance, create subaccount, create team, create team-role, create template, create volume, delete api-key, delete ssh-key, delete scheduled-job, delete autogroup, delete endpoint, delete env-var, delete template, delete volume, destroy instance, destroy instances, destroy team, detach ssh, execute, get endpt-logs, invite member, label instance, launch instance, logs, prepay instance, reboot instance, recycle instance, remove member, remove team-role, reports, reset api-key, start instance, start instances, stop instance, stop instances, search benchmarks, search invoices, search offers, search instances, search templates, search volumes, set api-key, set user, ssh-url, scp-url, show api-key, show api-keys, show audit-logs, show scheduled-jobs, show ssh-keys, show autogroups, show endpoints, show connections, show deposit, show earnings, show env-vars, show invoices, show instance, show instances, show ipaddrs, show user, show subaccounts, show members, show team-role, show team-roles, show volumes, transfer credit, update autogroup, update endpoint, update env-var, update instance, update team-role, update template, update ssh-key, cancel maint, cleanup machine, delete machine, list machine, list machines, list volume, list volumes, unlist volume, remove defjob, set defjob, set min-bid, schedule maint, show machine, show machines, show maints, unlist machine, self-test machine)
+
+2025-09-06 03:33:16,439 [INFO] Command 'apt-get install -y docker.io' executed on instance 25610776
+2025-09-06 03:33:16,439 [INFO] Output: 
+2025-09-06 03:33:16,440 [INFO] Running command: vastai ssh instance 25654871 "systemctl start docker"
+2025-09-06 03:33:16,778 [ERROR] Command error: usage: vastai [-h] [--url URL] [--retry RETRY] [--raw] [--explain] [--curl] [--api-key API_KEY] [--version] command ...
+vastai: error: argument command: invalid choice: 'ssh' (choose from help, attach ssh, cancel copy, cancel sync, change bid, clone volume, copy, cloud copy, take snapshot, create api-key, create env-var, create ssh-key, create autogroup, create endpoint, create instance, create subaccount, create team, create team-role, create template, create volume, delete api-key, delete ssh-key, delete scheduled-job, delete autogroup, delete endpoint, delete env-var, delete template, delete volume, destroy instance, destroy instances, destroy team, detach ssh, execute, get endpt-logs, invite member, label instance, launch instance, logs, prepay instance, reboot instance, recycle instance, remove member, remove team-role, reports, reset api-key, start instance, start instances, stop instance, stop instances, search benchmarks, search invoices, search offers, search instances, search templates, search volumes, set api-key, set user, ssh-url, scp-url, show api-key, show api-keys, show audit-logs, show scheduled-jobs, show ssh-keys, show autogroups, show endpoints, show connections, show deposit, show earnings, show env-vars, show invoices, show instance, show instances, show ipaddrs, show user, show subaccounts, show members, show team-role, show team-roles, show volumes, transfer credit, update autogroup, update endpoint, update env-var, update instance, update team-role, update template, update ssh-key, cancel maint, cleanup machine, delete machine, list machine, list machines, list volume, list volumes, unlist volume, remove defjob, set defjob, set min-bid, schedule maint, show machine, show machines, show maints, unlist machine, self-test machine)
+
+2025-09-06 03:33:16,778 [ERROR] Command failed with return code 2
+2025-09-06 03:33:16,778 [ERROR] STDOUT: 
+2025-09-06 03:33:16,778 [ERROR] STDERR: usage: vastai [-h] [--url URL] [--retry RETRY] [--raw] [--explain] [--curl] [--api-key API_KEY] [--version] command ...
+vastai: error: argument command: invalid choice: 'ssh' (choose from help, attach ssh, cancel copy, cancel sync, change bid, clone volume, copy, cloud copy, take snapshot, create api-key, create env-var, create ssh-key, create autogroup, create endpoint, create instance, create subaccount, create team, create team-role, create template, create volume, delete api-key, delete ssh-key, delete scheduled-job, delete autogroup, delete endpoint, delete env-var, delete template, delete volume, destroy instance, destroy instances, destroy team, detach ssh, execute, get endpt-logs, invite member, label instance, launch instance, logs, prepay instance, reboot instance, recycle instance, remove member, remove team-role, reports, reset api-key, start instance, start instances, stop instance, stop instances, search benchmarks, search invoices, search offers, search instances, search templates, search volumes, set api-key, set user, ssh-url, scp-url, show api-key, show api-keys, show audit-logs, show scheduled-jobs, show ssh-keys, show autogroups, show endpoints, show connections, show deposit, show earnings, show env-vars, show invoices, show instance, show instances, show ipaddrs, show user, show subaccounts, show members, show team-role, show team-roles, show volumes, transfer credit, update autogroup, update endpoint, update env-var, update instance, update team-role, update template, update ssh-key, cancel maint, cleanup machine, delete machine, list machine, list machines, list volume, list volumes, unlist volume, remove defjob, set defjob, set min-bid, schedule maint, show machine, show machines, show maints, unlist machine, self-test machine)
+
+2025-09-06 03:33:16,779 [INFO] Command 'systemctl start docker' executed on instance 25610776
+2025-09-06 03:33:16,779 [INFO] Output: 
+2025-09-06 03:33:16,779 [INFO] Running command: vastai ssh instance 25654871 "systemctl enable docker"
+2025-09-06 03:33:17,115 [ERROR] Command error: usage: vastai [-h] [--url URL] [--retry RETRY] [--raw] [--explain] [--curl] [--api-key API_KEY] [--version] command ...
+vastai: error: argument command: invalid choice: 'ssh' (choose from help, attach ssh, cancel copy, cancel sync, change bid, clone volume, copy, cloud copy, take snapshot, create api-key, create env-var, create ssh-key, create autogroup, create endpoint, create instance, create subaccount, create team, create team-role, create template, create volume, delete api-key, delete ssh-key, delete scheduled-job, delete autogroup, delete endpoint, delete env-var, delete template, delete volume, destroy instance, destroy instances, destroy team, detach ssh, execute, get endpt-logs, invite member, label instance, launch instance, logs, prepay instance, reboot instance, recycle instance, remove member, remove team-role, reports, reset api-key, start instance, start instances, stop instance, stop instances, search benchmarks, search invoices, search offers, search instances, search templates, search volumes, set api-key, set user, ssh-url, scp-url, show api-key, show api-keys, show audit-logs, show scheduled-jobs, show ssh-keys, show autogroups, show endpoints, show connections, show deposit, show earnings, show env-vars, show invoices, show instance, show instances, show ipaddrs, show user, show subaccounts, show members, show team-role, show team-roles, show volumes, transfer credit, update autogroup, update endpoint, update env-var, update instance, update team-role, update template, update ssh-key, cancel maint, cleanup machine, delete machine, list machine, list machines, list volume, list volumes, unlist volume, remove defjob, set defjob, set min-bid, schedule maint, show machine, show machines, show maints, unlist machine, self-test machine)
+
+2025-09-06 03:33:17,116 [ERROR] Command failed with return code 2
+2025-09-06 03:33:17,116 [ERROR] STDOUT: 
+2025-09-06 03:33:17,116 [ERROR] STDERR: usage: vastai [-h] [--url URL] [--retry RETRY] [--raw] [--explain] [--curl] [--api-key API_KEY] [--version] command ...
+vastai: error: argument command: invalid choice: 'ssh' (choose from help, attach ssh, cancel copy, cancel sync, change bid, clone volume, copy, cloud copy, take snapshot, create api-key, create env-var, create ssh-key, create autogroup, create endpoint, create instance, create subaccount, create team, create team-role, create template, create volume, delete api-key, delete ssh-key, delete scheduled-job, delete autogroup, delete endpoint, delete env-var, delete template, delete volume, destroy instance, destroy instances, destroy team, detach ssh, execute, get endpt-logs, invite member, label instance, launch instance, logs, prepay instance, reboot instance, recycle instance, remove member, remove team-role, reports, reset api-key, start instance, start instances, stop instance, stop instances, search benchmarks, search invoices, search offers, search instances, search templates, search volumes, set api-key, set user, ssh-url, scp-url, show api-key, show api-keys, show audit-logs, show scheduled-jobs, show ssh-keys, show autogroups, show endpoints, show connections, show deposit, show earnings, show env-vars, show invoices, show instance, show instances, show ipaddrs, show user, show subaccounts, show members, show team-role, show team-roles, show volumes, transfer credit, update autogroup, update endpoint, update env-var, update instance, update team-role, update template, update ssh-key, cancel maint, cleanup machine, delete machine, list machine, list machines, list volume, list volumes, unlist volume, remove defjob, set defjob, set min-bid, schedule maint, show machine, show machines, show maints, unlist machine, self-test machine)
+
+2025-09-06 03:33:17,116 [INFO] Command 'systemctl enable docker' executed on instance 25610776
+2025-09-06 03:33:17,116 [INFO] Output: 
+2025-09-06 03:33:17,116 [INFO] Running command: vastai ssh instance 25654871 "echo '
+FROM python:3.9-slim
+WORKDIR /app
+RUN echo 'print("Hello from Docker!")' > hello.py
+RUN echo 'print("GPU Info:")' >> hello.py
+RUN echo 'import subprocess; subprocess.run(["nvidia-smi"])' >> hello.py
+CMD ["python", "hello.py"]
+' > /tmp/Dockerfile_1757109797"
+2025-09-06 03:33:17,455 [ERROR] Command error: usage: vastai [-h] [--url URL] [--retry RETRY] [--raw] [--explain] [--curl] [--api-key API_KEY] [--version] command ...
+vastai: error: argument command: invalid choice: 'ssh' (choose from help, attach ssh, cancel copy, cancel sync, change bid, clone volume, copy, cloud copy, take snapshot, create api-key, create env-var, create ssh-key, create autogroup, create endpoint, create instance, create subaccount, create team, create team-role, create template, create volume, delete api-key, delete ssh-key, delete scheduled-job, delete autogroup, delete endpoint, delete env-var, delete template, delete volume, destroy instance, destroy instances, destroy team, detach ssh, execute, get endpt-logs, invite member, label instance, launch instance, logs, prepay instance, reboot instance, recycle instance, remove member, remove team-role, reports, reset api-key, start instance, start instances, stop instance, stop instances, search benchmarks, search invoices, search offers, search instances, search templates, search volumes, set api-key, set user, ssh-url, scp-url, show api-key, show api-keys, show audit-logs, show scheduled-jobs, show ssh-keys, show autogroups, show endpoints, show connections, show deposit, show earnings, show env-vars, show invoices, show instance, show instances, show ipaddrs, show user, show subaccounts, show members, show team-role, show team-roles, show volumes, transfer credit, update autogroup, update endpoint, update env-var, update instance, update team-role, update template, update ssh-key, cancel maint, cleanup machine, delete machine, list machine, list machines, list volume, list volumes, unlist volume, remove defjob, set defjob, set min-bid, schedule maint, show machine, show machines, show maints, unlist machine, self-test machine)
+
+2025-09-06 03:33:17,455 [ERROR] Command failed with return code 2
+2025-09-06 03:33:17,455 [ERROR] STDOUT: 
+2025-09-06 03:33:17,455 [ERROR] STDERR: usage: vastai [-h] [--url URL] [--retry RETRY] [--raw] [--explain] [--curl] [--api-key API_KEY] [--version] command ...
+vastai: error: argument command: invalid choice: 'ssh' (choose from help, attach ssh, cancel copy, cancel sync, change bid, clone volume, copy, cloud copy, take snapshot, create api-key, create env-var, create ssh-key, create autogroup, create endpoint, create instance, create subaccount, create team, create team-role, create template, create volume, delete api-key, delete ssh-key, delete scheduled-job, delete autogroup, delete endpoint, delete env-var, delete template, delete volume, destroy instance, destroy instances, destroy team, detach ssh, execute, get endpt-logs, invite member, label instance, launch instance, logs, prepay instance, reboot instance, recycle instance, remove member, remove team-role, reports, reset api-key, start instance, start instances, stop instance, stop instances, search benchmarks, search invoices, search offers, search instances, search templates, search volumes, set api-key, set user, ssh-url, scp-url, show api-key, show api-keys, show audit-logs, show scheduled-jobs, show ssh-keys, show autogroups, show endpoints, show connections, show deposit, show earnings, show env-vars, show invoices, show instance, show instances, show ipaddrs, show user, show subaccounts, show members, show team-role, show team-roles, show volumes, transfer credit, update autogroup, update endpoint, update env-var, update instance, update team-role, update template, update ssh-key, cancel maint, cleanup machine, delete machine, list machine, list machines, list volume, list volumes, unlist volume, remove defjob, set defjob, set min-bid, schedule maint, show machine, show machines, show maints, unlist machine, self-test machine)
+
+2025-09-06 03:33:17,455 [INFO] Command 'echo '
+FROM python:3.9-slim
+WORKDIR /app
+RUN echo 'print("Hello from Docker!")' > hello.py
+RUN echo 'print("GPU Info:")' >> hello.py
+RUN echo 'import subprocess; subprocess.run(["nvidia-smi"])' >> hello.py
+CMD ["python", "hello.py"]
+' > /tmp/Dockerfile_1757109797' executed on instance 25610776
+2025-09-06 03:33:17,455 [INFO] Output: 
+2025-09-06 03:33:17,455 [INFO] Running command: vastai ssh instance 25654871 "cd /tmp && docker build -f /tmp/Dockerfile_1757109797 -t neuralperk_custom ."
+2025-09-06 03:33:17,786 [ERROR] Command error: usage: vastai [-h] [--url URL] [--retry RETRY] [--raw] [--explain] [--curl] [--api-key API_KEY] [--version] command ...
+vastai: error: argument command: invalid choice: 'ssh' (choose from help, attach ssh, cancel copy, cancel sync, change bid, clone volume, copy, cloud copy, take snapshot, create api-key, create env-var, create ssh-key, create autogroup, create endpoint, create instance, create subaccount, create team, create team-role, create template, create volume, delete api-key, delete ssh-key, delete scheduled-job, delete autogroup, delete endpoint, delete env-var, delete template, delete volume, destroy instance, destroy instances, destroy team, detach ssh, execute, get endpt-logs, invite member, label instance, launch instance, logs, prepay instance, reboot instance, recycle instance, remove member, remove team-role, reports, reset api-key, start instance, start instances, stop instance, stop instances, search benchmarks, search invoices, search offers, search instances, search templates, search volumes, set api-key, set user, ssh-url, scp-url, show api-key, show api-keys, show audit-logs, show scheduled-jobs, show ssh-keys, show autogroups, show endpoints, show connections, show deposit, show earnings, show env-vars, show invoices, show instance, show instances, show ipaddrs, show user, show subaccounts, show members, show team-role, show team-roles, show volumes, transfer credit, update autogroup, update endpoint, update env-var, update instance, update team-role, update template, update ssh-key, cancel maint, cleanup machine, delete machine, list machine, list machines, list volume, list volumes, unlist volume, remove defjob, set defjob, set min-bid, schedule maint, show machine, show machines, show maints, unlist machine, self-test machine)
+
+2025-09-06 03:33:17,786 [ERROR] Command failed with return code 2
+2025-09-06 03:33:17,786 [ERROR] STDOUT: 
+2025-09-06 03:33:17,787 [ERROR] STDERR: usage: vastai [-h] [--url URL] [--retry RETRY] [--raw] [--explain] [--curl] [--api-key API_KEY] [--version] command ...
+vastai: error: argument command: invalid choice: 'ssh' (choose from help, attach ssh, cancel copy, cancel sync, change bid, clone volume, copy, cloud copy, take snapshot, create api-key, create env-var, create ssh-key, create autogroup, create endpoint, create instance, create subaccount, create team, create team-role, create template, create volume, delete api-key, delete ssh-key, delete scheduled-job, delete autogroup, delete endpoint, delete env-var, delete template, delete volume, destroy instance, destroy instances, destroy team, detach ssh, execute, get endpt-logs, invite member, label instance, launch instance, logs, prepay instance, reboot instance, recycle instance, remove member, remove team-role, reports, reset api-key, start instance, start instances, stop instance, stop instances, search benchmarks, search invoices, search offers, search instances, search templates, search volumes, set api-key, set user, ssh-url, scp-url, show api-key, show api-keys, show audit-logs, show scheduled-jobs, show ssh-keys, show autogroups, show endpoints, show connections, show deposit, show earnings, show env-vars, show invoices, show instance, show instances, show ipaddrs, show user, show subaccounts, show members, show team-role, show team-roles, show volumes, transfer credit, update autogroup, update endpoint, update env-var, update instance, update team-role, update template, update ssh-key, cancel maint, cleanup machine, delete machine, list machine, list machines, list volume, list volumes, unlist volume, remove defjob, set defjob, set min-bid, schedule maint, show machine, show machines, show maints, unlist machine, self-test machine)
+
+2025-09-06 03:33:17,787 [INFO] Command 'cd /tmp && docker build -f /tmp/Dockerfile_1757109797 -t neuralperk_custom .' executed on instance 25610776
+2025-09-06 03:33:17,787 [INFO] Output: 
+2025-09-06 03:33:17,787 [INFO] Running command: vastai ssh instance 25654871 "docker run --rm neuralperk_custom"
+2025-09-06 03:33:18,127 [ERROR] Command error: usage: vastai [-h] [--url URL] [--retry RETRY] [--raw] [--explain] [--curl] [--api-key API_KEY] [--version] command ...
+vastai: error: argument command: invalid choice: 'ssh' (choose from help, attach ssh, cancel copy, cancel sync, change bid, clone volume, copy, cloud copy, take snapshot, create api-key, create env-var, create ssh-key, create autogroup, create endpoint, create instance, create subaccount, create team, create team-role, create template, create volume, delete api-key, delete ssh-key, delete scheduled-job, delete autogroup, delete endpoint, delete env-var, delete template, delete volume, destroy instance, destroy instances, destroy team, detach ssh, execute, get endpt-logs, invite member, label instance, launch instance, logs, prepay instance, reboot instance, recycle instance, remove member, remove team-role, reports, reset api-key, start instance, start instances, stop instance, stop instances, search benchmarks, search invoices, search offers, search instances, search templates, search volumes, set api-key, set user, ssh-url, scp-url, show api-key, show api-keys, show audit-logs, show scheduled-jobs, show ssh-keys, show autogroups, show endpoints, show connections, show deposit, show earnings, show env-vars, show invoices, show instance, show instances, show ipaddrs, show user, show subaccounts, show members, show team-role, show team-roles, show volumes, transfer credit, update autogroup, update endpoint, update env-var, update instance, update team-role, update template, update ssh-key, cancel maint, cleanup machine, delete machine, list machine, list machines, list volume, list volumes, unlist volume, remove defjob, set defjob, set min-bid, schedule maint, show machine, show machines, show maints, unlist machine, self-test machine)
+
+2025-09-06 03:33:18,127 [ERROR] Command failed with return code 2
+2025-09-06 03:33:18,127 [ERROR] STDOUT: 
+2025-09-06 03:33:18,127 [ERROR] STDERR: usage: vastai [-h] [--url URL] [--retry RETRY] [--raw] [--explain] [--curl] [--api-key API_KEY] [--version] command ...
+vastai: error: argument command: invalid choice: 'ssh' (choose from help, attach ssh, cancel copy, cancel sync, change bid, clone volume, copy, cloud copy, take snapshot, create api-key, create env-var, create ssh-key, create autogroup, create endpoint, create instance, create subaccount, create team, create team-role, create template, create volume, delete api-key, delete ssh-key, delete scheduled-job, delete autogroup, delete endpoint, delete env-var, delete template, delete volume, destroy instance, destroy instances, destroy team, detach ssh, execute, get endpt-logs, invite member, label instance, launch instance, logs, prepay instance, reboot instance, recycle instance, remove member, remove team-role, reports, reset api-key, start instance, start instances, stop instance, stop instances, search benchmarks, search invoices, search offers, search instances, search templates, search volumes, set api-key, set user, ssh-url, scp-url, show api-key, show api-keys, show audit-logs, show scheduled-jobs, show ssh-keys, show autogroups, show endpoints, show connections, show deposit, show earnings, show env-vars, show invoices, show instance, show instances, show ipaddrs, show user, show subaccounts, show members, show team-role, show team-roles, show volumes, transfer credit, update autogroup, update endpoint, update env-var, update instance, update team-role, update template, update ssh-key, cancel maint, cleanup machine, delete machine, list machine, list machines, list volume, list volumes, unlist volume, remove defjob, set defjob, set min-bid, schedule maint, show machine, show machines, show maints, unlist machine, self-test machine)
+
+2025-09-06 03:33:18,127 [INFO] Command 'docker run --rm neuralperk_custom' executed on instance 25610776
+2025-09-06 03:33:18,127 [INFO] Output: 
+2025-09-06 03:33:18,127 [INFO] Docker operations completed on instance 25610776
+2025-09-06 03:34:18,129 [INFO] Running command: vastai stop instance 25654871
+2025-09-06 03:34:20,257 [INFO] Instance 25610776 stopped. Duration=0.03h, ComputeCost=$0.0000, TotalCompute=$0.0000
+2025-09-06 03:34:20,258 [INFO] Running command: vastai destroy instances 25654871
+2025-09-06 03:34:22,140 [INFO] Instance 25610776 destroyed. StorageCost=$0.0000, TotalCompute=$0.0000, GrandTotal=$0.0000
+2025-09-06 03:48:52,281 [INFO] Running command: vastai search offers "num_gpus=1 gpu_ram>=0 rentable=true verified=true"
+2025-09-06 03:48:55,545 [INFO] Cheapest offer found: ID=25244167, GPU=RTX_3060, Price=$0.0414/hr
+2025-09-06 03:49:12,624 [INFO] Running command: vastai search offers "num_gpus=1 gpu_ram>=4 rentable=true verified=true"
+2025-09-06 03:49:15,520 [INFO] Cheapest offer found: ID=20122961, GPU=RTX_3060, Price=$0.0445/hr
+2025-09-06 03:49:15,521 [INFO] Running command: vastai create instance 20122961 --image nvidia/cuda:11.8-devel-ubuntu20.04 --disk 32 --raw
+2025-09-06 03:49:17,360 [INFO] Create instance raw output: {
+ "new_contract": 25655197,
+ "success": true
+}
+
+2025-09-06 03:49:17,360 [INFO] Instance created. Offer=20122961, Contract=25655197
+2025-09-06 03:49:17,360 [INFO] Running command: vastai start instance 25655197
+2025-09-06 03:49:19,159 [INFO] Instance 20122961 started. Contract=25655197
+2025-09-06 03:49:49,165 [INFO] Running command: vastai ssh instance 25655197 "apt-get update"
+2025-09-06 03:49:49,672 [ERROR] Command error: usage: vastai [-h] [--url URL] [--retry RETRY] [--raw] [--explain] [--curl] [--api-key API_KEY] [--version] command ...
+vastai: error: argument command: invalid choice: 'ssh' (choose from help, attach ssh, cancel copy, cancel sync, change bid, clone volume, copy, cloud copy, take snapshot, create api-key, create env-var, create ssh-key, create autogroup, create endpoint, create instance, create subaccount, create team, create team-role, create template, create volume, delete api-key, delete ssh-key, delete scheduled-job, delete autogroup, delete endpoint, delete env-var, delete template, delete volume, destroy instance, destroy instances, destroy team, detach ssh, execute, get endpt-logs, invite member, label instance, launch instance, logs, prepay instance, reboot instance, recycle instance, remove member, remove team-role, reports, reset api-key, start instance, start instances, stop instance, stop instances, search benchmarks, search invoices, search offers, search instances, search templates, search volumes, set api-key, set user, ssh-url, scp-url, show api-key, show api-keys, show audit-logs, show scheduled-jobs, show ssh-keys, show autogroups, show endpoints, show connections, show deposit, show earnings, show env-vars, show invoices, show instance, show instances, show ipaddrs, show user, show subaccounts, show members, show team-role, show team-roles, show volumes, transfer credit, update autogroup, update endpoint, update env-var, update instance, update team-role, update template, update ssh-key, cancel maint, cleanup machine, delete machine, list machine, list machines, list volume, list volumes, unlist volume, remove defjob, set defjob, set min-bid, schedule maint, show machine, show machines, show maints, unlist machine, self-test machine)
+
+2025-09-06 03:49:49,672 [ERROR] Command failed with return code 2
+2025-09-06 03:49:49,672 [ERROR] STDOUT: 
+2025-09-06 03:49:49,672 [ERROR] STDERR: usage: vastai [-h] [--url URL] [--retry RETRY] [--raw] [--explain] [--curl] [--api-key API_KEY] [--version] command ...
+vastai: error: argument command: invalid choice: 'ssh' (choose from help, attach ssh, cancel copy, cancel sync, change bid, clone volume, copy, cloud copy, take snapshot, create api-key, create env-var, create ssh-key, create autogroup, create endpoint, create instance, create subaccount, create team, create team-role, create template, create volume, delete api-key, delete ssh-key, delete scheduled-job, delete autogroup, delete endpoint, delete env-var, delete template, delete volume, destroy instance, destroy instances, destroy team, detach ssh, execute, get endpt-logs, invite member, label instance, launch instance, logs, prepay instance, reboot instance, recycle instance, remove member, remove team-role, reports, reset api-key, start instance, start instances, stop instance, stop instances, search benchmarks, search invoices, search offers, search instances, search templates, search volumes, set api-key, set user, ssh-url, scp-url, show api-key, show api-keys, show audit-logs, show scheduled-jobs, show ssh-keys, show autogroups, show endpoints, show connections, show deposit, show earnings, show env-vars, show invoices, show instance, show instances, show ipaddrs, show user, show subaccounts, show members, show team-role, show team-roles, show volumes, transfer credit, update autogroup, update endpoint, update env-var, update instance, update team-role, update template, update ssh-key, cancel maint, cleanup machine, delete machine, list machine, list machines, list volume, list volumes, unlist volume, remove defjob, set defjob, set min-bid, schedule maint, show machine, show machines, show maints, unlist machine, self-test machine)
+
+2025-09-06 03:49:49,672 [INFO] Command 'apt-get update' executed on instance 20122961
+2025-09-06 03:49:49,672 [INFO] Output: 
+2025-09-06 03:49:49,673 [INFO] Running command: vastai ssh instance 25655197 "apt-get install -y docker.io"
+2025-09-06 03:49:50,094 [ERROR] Command error: usage: vastai [-h] [--url URL] [--retry RETRY] [--raw] [--explain] [--curl] [--api-key API_KEY] [--version] command ...
+vastai: error: argument command: invalid choice: 'ssh' (choose from help, attach ssh, cancel copy, cancel sync, change bid, clone volume, copy, cloud copy, take snapshot, create api-key, create env-var, create ssh-key, create autogroup, create endpoint, create instance, create subaccount, create team, create team-role, create template, create volume, delete api-key, delete ssh-key, delete scheduled-job, delete autogroup, delete endpoint, delete env-var, delete template, delete volume, destroy instance, destroy instances, destroy team, detach ssh, execute, get endpt-logs, invite member, label instance, launch instance, logs, prepay instance, reboot instance, recycle instance, remove member, remove team-role, reports, reset api-key, start instance, start instances, stop instance, stop instances, search benchmarks, search invoices, search offers, search instances, search templates, search volumes, set api-key, set user, ssh-url, scp-url, show api-key, show api-keys, show audit-logs, show scheduled-jobs, show ssh-keys, show autogroups, show endpoints, show connections, show deposit, show earnings, show env-vars, show invoices, show instance, show instances, show ipaddrs, show user, show subaccounts, show members, show team-role, show team-roles, show volumes, transfer credit, update autogroup, update endpoint, update env-var, update instance, update team-role, update template, update ssh-key, cancel maint, cleanup machine, delete machine, list machine, list machines, list volume, list volumes, unlist volume, remove defjob, set defjob, set min-bid, schedule maint, show machine, show machines, show maints, unlist machine, self-test machine)
+
+2025-09-06 03:49:50,095 [ERROR] Command failed with return code 2
+2025-09-06 03:49:50,095 [ERROR] STDOUT: 
+2025-09-06 03:49:50,095 [ERROR] STDERR: usage: vastai [-h] [--url URL] [--retry RETRY] [--raw] [--explain] [--curl] [--api-key API_KEY] [--version] command ...
+vastai: error: argument command: invalid choice: 'ssh' (choose from help, attach ssh, cancel copy, cancel sync, change bid, clone volume, copy, cloud copy, take snapshot, create api-key, create env-var, create ssh-key, create autogroup, create endpoint, create instance, create subaccount, create team, create team-role, create template, create volume, delete api-key, delete ssh-key, delete scheduled-job, delete autogroup, delete endpoint, delete env-var, delete template, delete volume, destroy instance, destroy instances, destroy team, detach ssh, execute, get endpt-logs, invite member, label instance, launch instance, logs, prepay instance, reboot instance, recycle instance, remove member, remove team-role, reports, reset api-key, start instance, start instances, stop instance, stop instances, search benchmarks, search invoices, search offers, search instances, search templates, search volumes, set api-key, set user, ssh-url, scp-url, show api-key, show api-keys, show audit-logs, show scheduled-jobs, show ssh-keys, show autogroups, show endpoints, show connections, show deposit, show earnings, show env-vars, show invoices, show instance, show instances, show ipaddrs, show user, show subaccounts, show members, show team-role, show team-roles, show volumes, transfer credit, update autogroup, update endpoint, update env-var, update instance, update team-role, update template, update ssh-key, cancel maint, cleanup machine, delete machine, list machine, list machines, list volume, list volumes, unlist volume, remove defjob, set defjob, set min-bid, schedule maint, show machine, show machines, show maints, unlist machine, self-test machine)
+
+2025-09-06 03:49:50,095 [INFO] Command 'apt-get install -y docker.io' executed on instance 20122961
+2025-09-06 03:49:50,095 [INFO] Output: 
+2025-09-06 03:49:50,096 [INFO] Running command: vastai ssh instance 25655197 "systemctl start docker"
+2025-09-06 03:49:50,535 [ERROR] Command error: usage: vastai [-h] [--url URL] [--retry RETRY] [--raw] [--explain] [--curl] [--api-key API_KEY] [--version] command ...
+vastai: error: argument command: invalid choice: 'ssh' (choose from help, attach ssh, cancel copy, cancel sync, change bid, clone volume, copy, cloud copy, take snapshot, create api-key, create env-var, create ssh-key, create autogroup, create endpoint, create instance, create subaccount, create team, create team-role, create template, create volume, delete api-key, delete ssh-key, delete scheduled-job, delete autogroup, delete endpoint, delete env-var, delete template, delete volume, destroy instance, destroy instances, destroy team, detach ssh, execute, get endpt-logs, invite member, label instance, launch instance, logs, prepay instance, reboot instance, recycle instance, remove member, remove team-role, reports, reset api-key, start instance, start instances, stop instance, stop instances, search benchmarks, search invoices, search offers, search instances, search templates, search volumes, set api-key, set user, ssh-url, scp-url, show api-key, show api-keys, show audit-logs, show scheduled-jobs, show ssh-keys, show autogroups, show endpoints, show connections, show deposit, show earnings, show env-vars, show invoices, show instance, show instances, show ipaddrs, show user, show subaccounts, show members, show team-role, show team-roles, show volumes, transfer credit, update autogroup, update endpoint, update env-var, update instance, update team-role, update template, update ssh-key, cancel maint, cleanup machine, delete machine, list machine, list machines, list volume, list volumes, unlist volume, remove defjob, set defjob, set min-bid, schedule maint, show machine, show machines, show maints, unlist machine, self-test machine)
+
+2025-09-06 03:49:50,535 [ERROR] Command failed with return code 2
+2025-09-06 03:49:50,535 [ERROR] STDOUT: 
+2025-09-06 03:49:50,535 [ERROR] STDERR: usage: vastai [-h] [--url URL] [--retry RETRY] [--raw] [--explain] [--curl] [--api-key API_KEY] [--version] command ...
+vastai: error: argument command: invalid choice: 'ssh' (choose from help, attach ssh, cancel copy, cancel sync, change bid, clone volume, copy, cloud copy, take snapshot, create api-key, create env-var, create ssh-key, create autogroup, create endpoint, create instance, create subaccount, create team, create team-role, create template, create volume, delete api-key, delete ssh-key, delete scheduled-job, delete autogroup, delete endpoint, delete env-var, delete template, delete volume, destroy instance, destroy instances, destroy team, detach ssh, execute, get endpt-logs, invite member, label instance, launch instance, logs, prepay instance, reboot instance, recycle instance, remove member, remove team-role, reports, reset api-key, start instance, start instances, stop instance, stop instances, search benchmarks, search invoices, search offers, search instances, search templates, search volumes, set api-key, set user, ssh-url, scp-url, show api-key, show api-keys, show audit-logs, show scheduled-jobs, show ssh-keys, show autogroups, show endpoints, show connections, show deposit, show earnings, show env-vars, show invoices, show instance, show instances, show ipaddrs, show user, show subaccounts, show members, show team-role, show team-roles, show volumes, transfer credit, update autogroup, update endpoint, update env-var, update instance, update team-role, update template, update ssh-key, cancel maint, cleanup machine, delete machine, list machine, list machines, list volume, list volumes, unlist volume, remove defjob, set defjob, set min-bid, schedule maint, show machine, show machines, show maints, unlist machine, self-test machine)
+
+2025-09-06 03:49:50,535 [INFO] Command 'systemctl start docker' executed on instance 20122961
+2025-09-06 03:49:50,535 [INFO] Output: 
+2025-09-06 03:49:50,535 [INFO] Running command: vastai ssh instance 25655197 "systemctl enable docker"
+2025-09-06 03:49:50,888 [ERROR] Command error: usage: vastai [-h] [--url URL] [--retry RETRY] [--raw] [--explain] [--curl] [--api-key API_KEY] [--version] command ...
+vastai: error: argument command: invalid choice: 'ssh' (choose from help, attach ssh, cancel copy, cancel sync, change bid, clone volume, copy, cloud copy, take snapshot, create api-key, create env-var, create ssh-key, create autogroup, create endpoint, create instance, create subaccount, create team, create team-role, create template, create volume, delete api-key, delete ssh-key, delete scheduled-job, delete autogroup, delete endpoint, delete env-var, delete template, delete volume, destroy instance, destroy instances, destroy team, detach ssh, execute, get endpt-logs, invite member, label instance, launch instance, logs, prepay instance, reboot instance, recycle instance, remove member, remove team-role, reports, reset api-key, start instance, start instances, stop instance, stop instances, search benchmarks, search invoices, search offers, search instances, search templates, search volumes, set api-key, set user, ssh-url, scp-url, show api-key, show api-keys, show audit-logs, show scheduled-jobs, show ssh-keys, show autogroups, show endpoints, show connections, show deposit, show earnings, show env-vars, show invoices, show instance, show instances, show ipaddrs, show user, show subaccounts, show members, show team-role, show team-roles, show volumes, transfer credit, update autogroup, update endpoint, update env-var, update instance, update team-role, update template, update ssh-key, cancel maint, cleanup machine, delete machine, list machine, list machines, list volume, list volumes, unlist volume, remove defjob, set defjob, set min-bid, schedule maint, show machine, show machines, show maints, unlist machine, self-test machine)
+
+2025-09-06 03:49:50,888 [ERROR] Command failed with return code 2
+2025-09-06 03:49:50,888 [ERROR] STDOUT: 
+2025-09-06 03:49:50,889 [ERROR] STDERR: usage: vastai [-h] [--url URL] [--retry RETRY] [--raw] [--explain] [--curl] [--api-key API_KEY] [--version] command ...
+vastai: error: argument command: invalid choice: 'ssh' (choose from help, attach ssh, cancel copy, cancel sync, change bid, clone volume, copy, cloud copy, take snapshot, create api-key, create env-var, create ssh-key, create autogroup, create endpoint, create instance, create subaccount, create team, create team-role, create template, create volume, delete api-key, delete ssh-key, delete scheduled-job, delete autogroup, delete endpoint, delete env-var, delete template, delete volume, destroy instance, destroy instances, destroy team, detach ssh, execute, get endpt-logs, invite member, label instance, launch instance, logs, prepay instance, reboot instance, recycle instance, remove member, remove team-role, reports, reset api-key, start instance, start instances, stop instance, stop instances, search benchmarks, search invoices, search offers, search instances, search templates, search volumes, set api-key, set user, ssh-url, scp-url, show api-key, show api-keys, show audit-logs, show scheduled-jobs, show ssh-keys, show autogroups, show endpoints, show connections, show deposit, show earnings, show env-vars, show invoices, show instance, show instances, show ipaddrs, show user, show subaccounts, show members, show team-role, show team-roles, show volumes, transfer credit, update autogroup, update endpoint, update env-var, update instance, update team-role, update template, update ssh-key, cancel maint, cleanup machine, delete machine, list machine, list machines, list volume, list volumes, unlist volume, remove defjob, set defjob, set min-bid, schedule maint, show machine, show machines, show maints, unlist machine, self-test machine)
+
+2025-09-06 03:49:50,889 [INFO] Command 'systemctl enable docker' executed on instance 20122961
+2025-09-06 03:49:50,889 [INFO] Output: 
+2025-09-06 03:49:50,889 [INFO] Running command: vastai ssh instance 25655197 "echo '
+FROM python:3.9-slim
+WORKDIR /app
+RUN echo 'print("Hello from Docker!")' > hello.py
+RUN echo 'print("GPU Info:")' >> hello.py
+RUN echo 'import subprocess; subprocess.run(["nvidia-smi"])' >> hello.py
+CMD ["python", "hello.py"]
+' > /tmp/Dockerfile_1757110790"
+2025-09-06 03:49:51,253 [ERROR] Command error: usage: vastai [-h] [--url URL] [--retry RETRY] [--raw] [--explain] [--curl] [--api-key API_KEY] [--version] command ...
+vastai: error: argument command: invalid choice: 'ssh' (choose from help, attach ssh, cancel copy, cancel sync, change bid, clone volume, copy, cloud copy, take snapshot, create api-key, create env-var, create ssh-key, create autogroup, create endpoint, create instance, create subaccount, create team, create team-role, create template, create volume, delete api-key, delete ssh-key, delete scheduled-job, delete autogroup, delete endpoint, delete env-var, delete template, delete volume, destroy instance, destroy instances, destroy team, detach ssh, execute, get endpt-logs, invite member, label instance, launch instance, logs, prepay instance, reboot instance, recycle instance, remove member, remove team-role, reports, reset api-key, start instance, start instances, stop instance, stop instances, search benchmarks, search invoices, search offers, search instances, search templates, search volumes, set api-key, set user, ssh-url, scp-url, show api-key, show api-keys, show audit-logs, show scheduled-jobs, show ssh-keys, show autogroups, show endpoints, show connections, show deposit, show earnings, show env-vars, show invoices, show instance, show instances, show ipaddrs, show user, show subaccounts, show members, show team-role, show team-roles, show volumes, transfer credit, update autogroup, update endpoint, update env-var, update instance, update team-role, update template, update ssh-key, cancel maint, cleanup machine, delete machine, list machine, list machines, list volume, list volumes, unlist volume, remove defjob, set defjob, set min-bid, schedule maint, show machine, show machines, show maints, unlist machine, self-test machine)
+
+2025-09-06 03:49:51,253 [ERROR] Command failed with return code 2
+2025-09-06 03:49:51,253 [ERROR] STDOUT: 
+2025-09-06 03:49:51,253 [ERROR] STDERR: usage: vastai [-h] [--url URL] [--retry RETRY] [--raw] [--explain] [--curl] [--api-key API_KEY] [--version] command ...
+vastai: error: argument command: invalid choice: 'ssh' (choose from help, attach ssh, cancel copy, cancel sync, change bid, clone volume, copy, cloud copy, take snapshot, create api-key, create env-var, create ssh-key, create autogroup, create endpoint, create instance, create subaccount, create team, create team-role, create template, create volume, delete api-key, delete ssh-key, delete scheduled-job, delete autogroup, delete endpoint, delete env-var, delete template, delete volume, destroy instance, destroy instances, destroy team, detach ssh, execute, get endpt-logs, invite member, label instance, launch instance, logs, prepay instance, reboot instance, recycle instance, remove member, remove team-role, reports, reset api-key, start instance, start instances, stop instance, stop instances, search benchmarks, search invoices, search offers, search instances, search templates, search volumes, set api-key, set user, ssh-url, scp-url, show api-key, show api-keys, show audit-logs, show scheduled-jobs, show ssh-keys, show autogroups, show endpoints, show connections, show deposit, show earnings, show env-vars, show invoices, show instance, show instances, show ipaddrs, show user, show subaccounts, show members, show team-role, show team-roles, show volumes, transfer credit, update autogroup, update endpoint, update env-var, update instance, update team-role, update template, update ssh-key, cancel maint, cleanup machine, delete machine, list machine, list machines, list volume, list volumes, unlist volume, remove defjob, set defjob, set min-bid, schedule maint, show machine, show machines, show maints, unlist machine, self-test machine)
+
+2025-09-06 03:49:51,253 [INFO] Command 'echo '
+FROM python:3.9-slim
+WORKDIR /app
+RUN echo 'print("Hello from Docker!")' > hello.py
+RUN echo 'print("GPU Info:")' >> hello.py
+RUN echo 'import subprocess; subprocess.run(["nvidia-smi"])' >> hello.py
+CMD ["python", "hello.py"]
+' > /tmp/Dockerfile_1757110790' executed on instance 20122961
+2025-09-06 03:49:51,254 [INFO] Output: 
+2025-09-06 03:49:51,254 [INFO] Running command: vastai ssh instance 25655197 "cd /tmp && docker build -f /tmp/Dockerfile_1757110790 -t neuralperk_custom ."
+2025-09-06 03:49:51,589 [ERROR] Command error: usage: vastai [-h] [--url URL] [--retry RETRY] [--raw] [--explain] [--curl] [--api-key API_KEY] [--version] command ...
+vastai: error: argument command: invalid choice: 'ssh' (choose from help, attach ssh, cancel copy, cancel sync, change bid, clone volume, copy, cloud copy, take snapshot, create api-key, create env-var, create ssh-key, create autogroup, create endpoint, create instance, create subaccount, create team, create team-role, create template, create volume, delete api-key, delete ssh-key, delete scheduled-job, delete autogroup, delete endpoint, delete env-var, delete template, delete volume, destroy instance, destroy instances, destroy team, detach ssh, execute, get endpt-logs, invite member, label instance, launch instance, logs, prepay instance, reboot instance, recycle instance, remove member, remove team-role, reports, reset api-key, start instance, start instances, stop instance, stop instances, search benchmarks, search invoices, search offers, search instances, search templates, search volumes, set api-key, set user, ssh-url, scp-url, show api-key, show api-keys, show audit-logs, show scheduled-jobs, show ssh-keys, show autogroups, show endpoints, show connections, show deposit, show earnings, show env-vars, show invoices, show instance, show instances, show ipaddrs, show user, show subaccounts, show members, show team-role, show team-roles, show volumes, transfer credit, update autogroup, update endpoint, update env-var, update instance, update team-role, update template, update ssh-key, cancel maint, cleanup machine, delete machine, list machine, list machines, list volume, list volumes, unlist volume, remove defjob, set defjob, set min-bid, schedule maint, show machine, show machines, show maints, unlist machine, self-test machine)
+
+2025-09-06 03:49:51,589 [ERROR] Command failed with return code 2
+2025-09-06 03:49:51,589 [ERROR] STDOUT: 
+2025-09-06 03:49:51,589 [ERROR] STDERR: usage: vastai [-h] [--url URL] [--retry RETRY] [--raw] [--explain] [--curl] [--api-key API_KEY] [--version] command ...
+vastai: error: argument command: invalid choice: 'ssh' (choose from help, attach ssh, cancel copy, cancel sync, change bid, clone volume, copy, cloud copy, take snapshot, create api-key, create env-var, create ssh-key, create autogroup, create endpoint, create instance, create subaccount, create team, create team-role, create template, create volume, delete api-key, delete ssh-key, delete scheduled-job, delete autogroup, delete endpoint, delete env-var, delete template, delete volume, destroy instance, destroy instances, destroy team, detach ssh, execute, get endpt-logs, invite member, label instance, launch instance, logs, prepay instance, reboot instance, recycle instance, remove member, remove team-role, reports, reset api-key, start instance, start instances, stop instance, stop instances, search benchmarks, search invoices, search offers, search instances, search templates, search volumes, set api-key, set user, ssh-url, scp-url, show api-key, show api-keys, show audit-logs, show scheduled-jobs, show ssh-keys, show autogroups, show endpoints, show connections, show deposit, show earnings, show env-vars, show invoices, show instance, show instances, show ipaddrs, show user, show subaccounts, show members, show team-role, show team-roles, show volumes, transfer credit, update autogroup, update endpoint, update env-var, update instance, update team-role, update template, update ssh-key, cancel maint, cleanup machine, delete machine, list machine, list machines, list volume, list volumes, unlist volume, remove defjob, set defjob, set min-bid, schedule maint, show machine, show machines, show maints, unlist machine, self-test machine)
+
+2025-09-06 03:49:51,589 [INFO] Command 'cd /tmp && docker build -f /tmp/Dockerfile_1757110790 -t neuralperk_custom .' executed on instance 20122961
+2025-09-06 03:49:51,589 [INFO] Output: 
+2025-09-06 03:49:51,589 [INFO] Running command: vastai ssh instance 25655197 "docker run --rm neuralperk_custom"
+2025-09-06 03:49:51,928 [ERROR] Command error: usage: vastai [-h] [--url URL] [--retry RETRY] [--raw] [--explain] [--curl] [--api-key API_KEY] [--version] command ...
+vastai: error: argument command: invalid choice: 'ssh' (choose from help, attach ssh, cancel copy, cancel sync, change bid, clone volume, copy, cloud copy, take snapshot, create api-key, create env-var, create ssh-key, create autogroup, create endpoint, create instance, create subaccount, create team, create team-role, create template, create volume, delete api-key, delete ssh-key, delete scheduled-job, delete autogroup, delete endpoint, delete env-var, delete template, delete volume, destroy instance, destroy instances, destroy team, detach ssh, execute, get endpt-logs, invite member, label instance, launch instance, logs, prepay instance, reboot instance, recycle instance, remove member, remove team-role, reports, reset api-key, start instance, start instances, stop instance, stop instances, search benchmarks, search invoices, search offers, search instances, search templates, search volumes, set api-key, set user, ssh-url, scp-url, show api-key, show api-keys, show audit-logs, show scheduled-jobs, show ssh-keys, show autogroups, show endpoints, show connections, show deposit, show earnings, show env-vars, show invoices, show instance, show instances, show ipaddrs, show user, show subaccounts, show members, show team-role, show team-roles, show volumes, transfer credit, update autogroup, update endpoint, update env-var, update instance, update team-role, update template, update ssh-key, cancel maint, cleanup machine, delete machine, list machine, list machines, list volume, list volumes, unlist volume, remove defjob, set defjob, set min-bid, schedule maint, show machine, show machines, show maints, unlist machine, self-test machine)
+
+2025-09-06 03:49:51,928 [ERROR] Command failed with return code 2
+2025-09-06 03:49:51,928 [ERROR] STDOUT: 
+2025-09-06 03:49:51,928 [ERROR] STDERR: usage: vastai [-h] [--url URL] [--retry RETRY] [--raw] [--explain] [--curl] [--api-key API_KEY] [--version] command ...
+vastai: error: argument command: invalid choice: 'ssh' (choose from help, attach ssh, cancel copy, cancel sync, change bid, clone volume, copy, cloud copy, take snapshot, create api-key, create env-var, create ssh-key, create autogroup, create endpoint, create instance, create subaccount, create team, create team-role, create template, create volume, delete api-key, delete ssh-key, delete scheduled-job, delete autogroup, delete endpoint, delete env-var, delete template, delete volume, destroy instance, destroy instances, destroy team, detach ssh, execute, get endpt-logs, invite member, label instance, launch instance, logs, prepay instance, reboot instance, recycle instance, remove member, remove team-role, reports, reset api-key, start instance, start instances, stop instance, stop instances, search benchmarks, search invoices, search offers, search instances, search templates, search volumes, set api-key, set user, ssh-url, scp-url, show api-key, show api-keys, show audit-logs, show scheduled-jobs, show ssh-keys, show autogroups, show endpoints, show connections, show deposit, show earnings, show env-vars, show invoices, show instance, show instances, show ipaddrs, show user, show subaccounts, show members, show team-role, show team-roles, show volumes, transfer credit, update autogroup, update endpoint, update env-var, update instance, update team-role, update template, update ssh-key, cancel maint, cleanup machine, delete machine, list machine, list machines, list volume, list volumes, unlist volume, remove defjob, set defjob, set min-bid, schedule maint, show machine, show machines, show maints, unlist machine, self-test machine)
+
+2025-09-06 03:49:51,928 [INFO] Command 'docker run --rm neuralperk_custom' executed on instance 20122961
+2025-09-06 03:49:51,928 [INFO] Output: 
+2025-09-06 03:49:51,928 [INFO] Docker operations completed on instance 20122961
+2025-09-06 03:50:51,935 [INFO] Running command: vastai stop instance 25655197
+2025-09-06 03:50:54,078 [INFO] Instance 20122961 stopped. Duration=0.03h, ComputeCost=$0.0000, TotalCompute=$0.0000
+2025-09-06 03:50:54,078 [INFO] Running command: vastai destroy instances 25655197
+2025-09-06 03:50:56,014 [INFO] Instance 20122961 destroyed. StorageCost=$0.0000, TotalCompute=$0.0000, GrandTotal=$0.0000
+2025-09-06 03:53:43,188 [INFO] Running command: vastai search offers "num_gpus=1 gpu_ram>=0 rentable=true verified=true"
+2025-09-06 03:53:46,067 [INFO] Cheapest offer found: ID=20820596, GPU=RTX_3060, Price=$0.0414/hr
+2025-09-06 03:53:56,531 [INFO] Running command: vastai search offers "num_gpus=1 gpu_ram>=0 rentable=true verified=true"
+2025-09-06 03:53:59,341 [INFO] Cheapest offer found: ID=25514311, GPU=RTX_3060_laptop, Price=$0.0481/hr
+2025-09-06 03:53:59,398 [INFO] Running command: vastai search offers "num_gpus=1 gpu_ram>=4 rentable=true verified=true"
+2025-09-06 03:54:02,281 [INFO] Cheapest offer found: ID=20820598, GPU=RTX_3060, Price=$0.0414/hr
+2025-09-06 03:54:02,282 [INFO] Running command: vastai create instance 20820598 --image nvidia/cuda:11.8-devel-ubuntu20.04 --disk 32 --raw
+2025-09-06 03:54:06,878 [INFO] Create instance raw output: {
+ "new_contract": 25655260,
+ "success": true
+}
+
+2025-09-06 03:54:06,879 [INFO] Instance created. Offer=20820598, Contract=25655260
+2025-09-06 03:54:06,880 [INFO] Running command: vastai start instance 25655260
+2025-09-06 03:54:09,441 [INFO] Instance 20820598 started. Contract=25655260
+2025-09-06 03:54:39,448 [INFO] Running command: vastai execute 25655260 "apt-get update"
+2025-09-06 03:54:41,218 [INFO] Command 'apt-get update' executed on instance 20820598
+2025-09-06 03:54:41,218 [INFO] Output: failed with error 400: Invalid command given.
+
+2025-09-06 03:54:41,219 [INFO] Running command: vastai execute 25655260 "apt-get install -y docker.io"
+2025-09-06 03:54:42,887 [INFO] Command 'apt-get install -y docker.io' executed on instance 20820598
+2025-09-06 03:54:42,888 [INFO] Output: failed with error 400: Invalid command given.
+
+2025-09-06 03:54:42,888 [INFO] Running command: vastai execute 25655260 "systemctl start docker"
+2025-09-06 03:54:44,594 [INFO] Command 'systemctl start docker' executed on instance 20820598
+2025-09-06 03:54:44,595 [INFO] Output: failed with error 400: Invalid command given.
+
+2025-09-06 03:54:44,595 [INFO] Running command: vastai execute 25655260 "systemctl enable docker"
+2025-09-06 03:54:46,255 [INFO] Command 'systemctl enable docker' executed on instance 20820598
+2025-09-06 03:54:46,256 [INFO] Output: failed with error 400: Invalid command given.
+
+2025-09-06 03:54:46,256 [INFO] Running command: vastai execute 25655260 "echo '
+FROM python:3.9-slim
+WORKDIR /app
+RUN echo 'print("Hello from Docker!")' > hello.py
+RUN echo 'print("GPU Info:")' >> hello.py
+RUN echo 'import subprocess; subprocess.run(["nvidia-smi"])' >> hello.py
+CMD ["python", "hello.py"]
+' > /tmp/Dockerfile_1757111086"
+2025-09-06 03:54:46,569 [ERROR] Command error: usage: vastai [-h] [--url URL] [--retry RETRY] [--raw] [--explain] [--curl] [--api-key API_KEY] [--version] command ...
+vastai: error: unrecognized arguments: from Docker!)' > hello.py
+RUN echo 'print(GPU Info:)' >> hello.py
+RUN echo 'import subprocess; subprocess.run([nvidia-smi])' >> hello.py
+CMD [python, hello.py]
+' > /tmp/Dockerfile_1757111086
+
+2025-09-06 03:54:46,569 [ERROR] Command failed with return code 2
+2025-09-06 03:54:46,569 [ERROR] STDOUT: 
+2025-09-06 03:54:46,569 [ERROR] STDERR: usage: vastai [-h] [--url URL] [--retry RETRY] [--raw] [--explain] [--curl] [--api-key API_KEY] [--version] command ...
+vastai: error: unrecognized arguments: from Docker!)' > hello.py
+RUN echo 'print(GPU Info:)' >> hello.py
+RUN echo 'import subprocess; subprocess.run([nvidia-smi])' >> hello.py
+CMD [python, hello.py]
+' > /tmp/Dockerfile_1757111086
+
+2025-09-06 03:54:46,569 [INFO] Command 'echo '
+FROM python:3.9-slim
+WORKDIR /app
+RUN echo 'print("Hello from Docker!")' > hello.py
+RUN echo 'print("GPU Info:")' >> hello.py
+RUN echo 'import subprocess; subprocess.run(["nvidia-smi"])' >> hello.py
+CMD ["python", "hello.py"]
+' > /tmp/Dockerfile_1757111086' executed on instance 20820598
+2025-09-06 03:54:46,570 [INFO] Output: 
+2025-09-06 03:54:46,570 [INFO] Running command: vastai execute 25655260 "cd /tmp && docker build -f /tmp/Dockerfile_1757111086 -t neuralperk_custom ."
+2025-09-06 03:54:48,257 [INFO] Command 'cd /tmp && docker build -f /tmp/Dockerfile_1757111086 -t neuralperk_custom .' executed on instance 20820598
+2025-09-06 03:54:48,257 [INFO] Output: failed with error 400: Invalid command given.
+
+2025-09-06 03:54:48,257 [INFO] Running command: vastai execute 25655260 "docker run --rm neuralperk_custom"
+2025-09-06 03:54:49,933 [INFO] Command 'docker run --rm neuralperk_custom' executed on instance 20820598
+2025-09-06 03:54:49,934 [INFO] Output: failed with error 400: Invalid command given.
+
+2025-09-06 03:54:49,934 [INFO] Docker operations completed on instance 20820598
+2025-09-06 03:55:49,941 [INFO] Running command: vastai stop instance 25655260
+2025-09-06 03:55:52,213 [INFO] Instance 20820598 stopped. Duration=0.03h, ComputeCost=$0.0000, TotalCompute=$0.0000
+2025-09-06 03:55:52,214 [INFO] Running command: vastai destroy instances 25655260
+2025-09-06 03:55:54,278 [INFO] Instance 20820598 destroyed. StorageCost=$0.0000, TotalCompute=$0.0000, GrandTotal=$0.0000
+2025-09-06 04:00:18,855 [INFO] Running command: vastai search offers "num_gpus=1 gpu_ram>=4 rentable=true verified=true"
+2025-09-06 04:00:22,043 [INFO] Running command: vastai search offers "num_gpus=1 gpu_ram>=4 rentable=true verified=true"
+2025-09-06 04:00:24,867 [INFO] Cheapest offer found: ID=25244183, GPU=RTX_3060, Price=$0.0481/hr
+2025-09-06 04:00:24,868 [INFO] Running command: vastai create instance 25244183 --image nicky9319/neuralperk:latest --disk 32 --raw
+2025-09-06 04:00:26,672 [INFO] Create instance raw output: {
+ "new_contract": 25655337,
+ "success": true
+}
+
+2025-09-06 04:00:26,672 [INFO] Instance created. Offer=25244183, Contract=25655337
+2025-09-06 04:00:26,673 [WARNING] Instance 25655337 not found in records.
+2025-09-06 04:00:56,678 [ERROR] Instance 25655337 not found in records.
+2025-09-06 04:00:56,679 [ERROR] Instance 25655337 not found in records.
+2025-09-06 04:00:56,679 [ERROR] Instance 25655337 not found in records.
+2025-09-06 04:00:56,679 [ERROR] Instance 25655337 not found in records.
+2025-09-06 04:00:56,679 [ERROR] Instance 25655337 not found in records.
+2025-09-06 04:00:56,679 [WARNING] Instance 25655337 not running.
+2025-09-06 04:00:56,679 [WARNING] Instance 25655337 not found.
+2025-09-06 04:13:35,339 [INFO] Running command: vastai search offers "num_gpus=1 gpu_ram>=0 rentable=true verified=true"
+2025-09-06 04:13:38,441 [INFO] Cheapest offer found: ID=25610775, GPU=RTX_3060, Price=$0.0414/hr
+2025-09-06 04:14:35,794 [INFO] Running command: vastai search offers "num_gpus=1 gpu_ram>=4 rentable=true verified=true"
+2025-09-06 04:14:39,508 [INFO] Running command: vastai search offers "num_gpus=1 gpu_ram>=4 rentable=true verified=true"
+2025-09-06 04:14:42,316 [INFO] Cheapest offer found: ID=22630666, GPU=RTX_3060, Price=$0.0414/hr
+2025-09-06 04:14:42,317 [INFO] Running command: vastai create instance 22630666 --image nicky9319/neuralperk:latest --disk 32 --raw
+2025-09-06 04:14:44,139 [INFO] Create instance raw output: {
+ "new_contract": 25655493,
+ "success": true
+}
+
+2025-09-06 04:14:44,139 [INFO] Instance created. Offer=22630666, Contract=25655493
+2025-09-06 04:14:44,139 [INFO] Running command: vastai start instance 25655493
+2025-09-06 04:14:46,021 [INFO] Instance 22630666 started. Contract=25655493
+2025-09-06 04:15:16,023 [INFO] Running command: vastai execute 25655493 'which docker'
+2025-09-06 04:15:18,187 [INFO] Command 'which docker' executed on instance 22630666
+2025-09-06 04:15:18,188 [INFO] Output: failed with error 400: Invalid command given.
+
+2025-09-06 04:15:18,191 [INFO] Running command: vastai execute 25655493 'apt-get update'
+2025-09-06 04:15:20,099 [INFO] Command 'apt-get update' executed on instance 22630666
+2025-09-06 04:15:20,099 [INFO] Output: failed with error 400: Invalid command given.
+
+2025-09-06 04:15:20,099 [INFO] Running command: vastai execute 25655493 'apt-get install -y docker.io'
+2025-09-06 04:15:21,821 [INFO] Command 'apt-get install -y docker.io' executed on instance 22630666
+2025-09-06 04:15:21,822 [INFO] Output: failed with error 400: Invalid command given.
+
+2025-09-06 04:15:21,823 [INFO] Running command: vastai execute 25655493 'systemctl start docker'
+2025-09-06 04:15:23,545 [INFO] Command 'systemctl start docker' executed on instance 22630666
+2025-09-06 04:15:23,545 [INFO] Output: failed with error 400: Invalid command given.
+
+2025-09-06 04:15:23,545 [INFO] Running command: vastai execute 25655493 'systemctl enable docker'
+2025-09-06 04:15:25,180 [INFO] Command 'systemctl enable docker' executed on instance 22630666
+2025-09-06 04:15:25,181 [INFO] Output: failed with error 400: Invalid command given.
+
+2025-09-06 04:15:25,181 [INFO] Running command: vastai execute 25655493 'touch /tmp/Dockerfile_1757112325'
+2025-09-06 04:15:26,887 [INFO] Command 'touch /tmp/Dockerfile_1757112325' executed on instance 22630666
+2025-09-06 04:15:26,887 [INFO] Output: failed with error 400: Invalid command given.
+
+2025-09-06 04:15:26,887 [INFO] Running command: vastai execute 25655493 'printf '"'"'%s\n'"'"' '"'"'FROM python:3.9-slim'"'"' > /tmp/Dockerfile_1757112325'
+2025-09-06 04:15:28,594 [INFO] Command 'printf '%s\n' 'FROM python:3.9-slim' > /tmp/Dockerfile_1757112325' executed on instance 22630666
+2025-09-06 04:15:28,594 [INFO] Output: failed with error 400: Invalid command given.
+
+2025-09-06 04:15:28,595 [INFO] Running command: vastai execute 25655493 'printf '"'"'%s\n'"'"' '"'"'WORKDIR /app'"'"' >> /tmp/Dockerfile_1757112325'
+2025-09-06 04:15:30,343 [INFO] Command 'printf '%s\n' 'WORKDIR /app' >> /tmp/Dockerfile_1757112325' executed on instance 22630666
+2025-09-06 04:15:30,343 [INFO] Output: failed with error 400: Invalid command given.
+
+2025-09-06 04:15:30,343 [INFO] Running command: vastai execute 25655493 'printf '"'"'%s\n'"'"' '"'"'RUN echo '"'"'print("Hello from Docker!")'"'"' > hello.py'"'"' >> /tmp/Dockerfile_1757112325'
+2025-09-06 04:15:32,008 [INFO] Command 'printf '%s\n' 'RUN echo 'print("Hello from Docker!")' > hello.py' >> /tmp/Dockerfile_1757112325' executed on instance 22630666
+2025-09-06 04:15:32,008 [INFO] Output: failed with error 400: Invalid command given.
+
+2025-09-06 04:15:32,008 [INFO] Running command: vastai execute 25655493 'printf '"'"'%s\n'"'"' '"'"'RUN echo '"'"'print("GPU Info:")'"'"' >> hello.py'"'"' >> /tmp/Dockerfile_1757112325'
+2025-09-06 04:15:33,705 [INFO] Command 'printf '%s\n' 'RUN echo 'print("GPU Info:")' >> hello.py' >> /tmp/Dockerfile_1757112325' executed on instance 22630666
+2025-09-06 04:15:33,705 [INFO] Output: failed with error 400: Invalid command given.
+
+2025-09-06 04:15:33,705 [INFO] Running command: vastai execute 25655493 'printf '"'"'%s\n'"'"' '"'"'RUN echo '"'"'import subprocess; subprocess.run(["nvidia-smi"])'"'"' >> hello.py'"'"' >> /tmp/Dockerfile_1757112325'
+2025-09-06 04:15:35,377 [INFO] Command 'printf '%s\n' 'RUN echo 'import subprocess; subprocess.run(["nvidia-smi"])' >> hello.py' >> /tmp/Dockerfile_1757112325' executed on instance 22630666
+2025-09-06 04:15:35,378 [INFO] Output: failed with error 400: Invalid command given.
+
+2025-09-06 04:15:35,378 [INFO] Running command: vastai execute 25655493 'printf '"'"'%s\n'"'"' '"'"'CMD ["python", "hello.py"]'"'"' >> /tmp/Dockerfile_1757112325'
+2025-09-06 04:15:37,090 [INFO] Command 'printf '%s\n' 'CMD ["python", "hello.py"]' >> /tmp/Dockerfile_1757112325' executed on instance 22630666
+2025-09-06 04:15:37,091 [INFO] Output: failed with error 400: Invalid command given.
+
+2025-09-06 04:15:37,091 [INFO] Running command: vastai execute 25655493 'cd /tmp && docker build -f /tmp/Dockerfile_1757112325 -t neuralperk_custom .'
+2025-09-06 04:15:38,797 [INFO] Command 'cd /tmp && docker build -f /tmp/Dockerfile_1757112325 -t neuralperk_custom .' executed on instance 22630666
+2025-09-06 04:15:38,797 [INFO] Output: failed with error 400: Invalid command given.
+
+2025-09-06 04:15:38,797 [INFO] Running command: vastai execute 25655493 'docker run --rm neuralperk_custom'
+2025-09-06 04:15:40,532 [INFO] Command 'docker run --rm neuralperk_custom' executed on instance 22630666
+2025-09-06 04:15:40,533 [INFO] Output: failed with error 400: Invalid command given.
+
+2025-09-06 04:15:40,533 [INFO] Docker operations completed on instance 25655493
+2025-09-06 04:16:40,539 [INFO] Running command: vastai stop instance 25655493
+2025-09-06 04:16:42,564 [INFO] Instance 22630666 stopped. Duration=0.03h, ComputeCost=$0.0000, TotalCompute=$0.0000
+2025-09-06 04:16:42,565 [INFO] Running command: vastai destroy instances 25655493
+2025-09-06 04:16:44,405 [INFO] Instance 22630666 destroyed. StorageCost=$0.0000, TotalCompute=$0.0000, GrandTotal=$0.0000
+2025-09-06 04:23:58,378 [INFO] Running command: vastai search offers "num_gpus=1 gpu_ram>=4 rentable=true verified=true"
+2025-09-06 04:24:02,267 [INFO] Cheapest offer found: ID=20176855, GPU=RTX_3060, Price=$0.0476/hr
+2025-09-06 04:24:02,268 [INFO] Running command: vastai create instance 20176855 --image nicky9319/neuralperk:latest --disk 32 --raw
+2025-09-06 04:24:05,750 [INFO] Create instance raw output: {
+ "new_contract": 25655605,
+ "success": true
+}
+
+2025-09-06 04:24:05,750 [INFO] Instance created. Offer=20176855, Contract=25655605
+2025-09-06 04:24:05,751 [INFO] Running command: vastai start instance 25655605
+2025-09-06 04:24:07,542 [INFO] Instance 20176855 started. Contract=25655605
+2025-09-06 04:24:37,538 [INFO] Running command: vastai execute 25655605 'cat > /tmp/test_script.py << '"'"'SCRIPT_EOF'"'"'
+import platform
+import os
+import subprocess
+
+print("=== VastAI Instance Info ===")
+print(f"Platform: {platform.platform()}")
+print(f"Python version: {platform.python_version()}")
+print(f"User: {os.environ.get('"'"'USER'"'"', '"'"'unknown'"'"')}")
+print(f"Home: {os.environ.get('"'"'HOME'"'"', '"'"'unknown'"'"')}")
+print(f"Working directory: {os.getcwd()}")
+
+print("\n=== System Info ===")
+try:
+    result = subprocess.run(['"'"'uname'"'"', '"'"'-a'"'"'], capture_output=True, text=True)
+    print(f"System: {result.stdout.strip()}")
+except:
+    print("Could not get system info")
+
+print("\n=== GPU Check ===")    
+try:
+    result = subprocess.run(['"'"'nvidia-smi'"'"', '"'"'--query-gpu=name,memory.total'"'"', '"'"'--format=csv'"'"'], 
+                          capture_output=True, text=True)
+    if result.returncode == 0:
+        print("GPU Info:")
+        print(result.stdout)
+    else:
+        print("nvidia-smi failed or no GPU")
+except:
+    print("No nvidia-smi or GPU available")
+
+print("\n=== Test Complete ===")
+SCRIPT_EOF'
+2025-09-06 04:24:39,494 [INFO] Command 'cat > /tmp/test_script.py << 'SCRIPT_EOF'
+import platform
+import os
+import subprocess
+
+print("=== VastAI Instance Info ===")
+print(f"Platform: {platform.platform()}")
+print(f"Python version: {platform.python_version()}")
+print(f"User: {os.environ.get('USER', 'unknown')}")
+print(f"Home: {os.environ.get('HOME', 'unknown')}")
+print(f"Working directory: {os.getcwd()}")
+
+print("\n=== System Info ===")
+try:
+    result = subprocess.run(['uname', '-a'], capture_output=True, text=True)
+    print(f"System: {result.stdout.strip()}")
+except:
+    print("Could not get system info")
+
+print("\n=== GPU Check ===")    
+try:
+    result = subprocess.run(['nvidia-smi', '--query-gpu=name,memory.total', '--format=csv'], 
+                          capture_output=True, text=True)
+    if result.returncode == 0:
+        print("GPU Info:")
+        print(result.stdout)
+    else:
+        print("nvidia-smi failed or no GPU")
+except:
+    print("No nvidia-smi or GPU available")
+
+print("\n=== Test Complete ===")
+SCRIPT_EOF' executed on instance 20176855
+2025-09-06 04:24:39,494 [INFO] Output: failed with error 400: Invalid command given.
+
+2025-09-06 04:24:39,495 [INFO] Running command: vastai execute 25655605 'python3 /tmp/test_script.py'
+2025-09-06 04:24:41,214 [INFO] Command 'python3 /tmp/test_script.py' executed on instance 20176855
+2025-09-06 04:24:41,214 [INFO] Output: failed with error 400: Invalid command given.
+
+2025-09-06 04:24:41,214 [INFO] Running command: vastai stop instance 25655605
+2025-09-06 04:24:43,357 [INFO] Instance 20176855 stopped. Duration=0.01h, ComputeCost=$0.0000, TotalCompute=$0.0000
+2025-09-06 04:24:43,357 [INFO] Running command: vastai destroy instances 25655605
+2025-09-06 04:24:45,362 [INFO] Instance 20176855 destroyed. StorageCost=$0.0000, TotalCompute=$0.0000, GrandTotal=$0.0000
+2025-09-06 04:25:46,215 [INFO] Running command: vastai search offers "num_gpus=1 gpu_ram>=4 rentable=true verified=true"
+2025-09-06 04:25:49,248 [INFO] Cheapest offer found: ID=25610778, GPU=RTX_3060, Price=$0.0414/hr
+2025-09-06 04:25:49,249 [INFO] Running command: vastai create instance 25610778 --image nicky9319/neuralperk:latest --disk 32 --raw
+2025-09-06 04:25:51,169 [INFO] Create instance raw output: {
+ "new_contract": 25655625,
+ "success": true
+}
+
+2025-09-06 04:25:51,170 [INFO] Instance created. Offer=25610778, Contract=25655625
+2025-09-06 04:25:51,170 [INFO] Running command: vastai start instance 25655625
+2025-09-06 04:25:52,904 [INFO] Instance 25610778 started. Contract=25655625
+2025-09-06 04:26:22,909 [INFO] Running command: vastai execute 25655625 'pwd'
+2025-09-06 04:26:24,729 [INFO] Command 'pwd' executed on instance 25610778
+2025-09-06 04:26:24,729 [INFO] Output: failed with error 400: Invalid command given.
+
+2025-09-06 04:26:24,730 [INFO] Running command: vastai execute 25655625 'whoami'
+2025-09-06 04:26:26,493 [INFO] Command 'whoami' executed on instance 25610778
+2025-09-06 04:26:26,493 [INFO] Output: failed with error 400: Invalid command given.
+
+2025-09-06 04:26:26,494 [INFO] Running command: vastai execute 25655625 'ls'
+2025-09-06 04:26:28,363 [INFO] Command 'ls' executed on instance 25610778
+2025-09-06 04:26:28,363 [INFO] Output: failed with error 400: Execute command only avail on stopped instances. Use ssh to run commands on running instances.
+
+2025-09-06 04:26:28,364 [INFO] Running command: vastai execute 25655625 'echo hello'
+2025-09-06 04:26:30,284 [INFO] Command 'echo hello' executed on instance 25610778
+2025-09-06 04:26:30,284 [INFO] Output: failed with error 400: Invalid command given.
+
+2025-09-06 04:26:30,285 [INFO] Running command: vastai execute 25655625 'echo hello > /tmp/test.txt'
+2025-09-06 04:26:31,992 [INFO] Command 'echo hello > /tmp/test.txt' executed on instance 25610778
+2025-09-06 04:26:31,992 [INFO] Output: failed with error 400: Invalid command given.
+
+2025-09-06 04:26:31,993 [INFO] Running command: vastai execute 25655625 'cat /tmp/test.txt'
+2025-09-06 04:26:33,993 [INFO] Command 'cat /tmp/test.txt' executed on instance 25610778
+2025-09-06 04:26:33,994 [INFO] Output: failed with error 400: Execute command only avail on stopped instances. Use ssh to run commands on running instances.
+
+2025-09-06 04:26:33,994 [INFO] Running command: vastai stop instance 25655625
+2025-09-06 04:26:35,932 [INFO] Instance 25610778 stopped. Duration=0.01h, ComputeCost=$0.0000, TotalCompute=$0.0000
+2025-09-06 04:26:35,932 [INFO] Running command: vastai destroy instances 25655625
+2025-09-06 04:26:37,867 [INFO] Instance 25610778 destroyed. StorageCost=$0.0000, TotalCompute=$0.0000, GrandTotal=$0.0000
+2025-09-06 04:33:33,472 [INFO] Running command: vastai search offers "num_gpus=1 gpu_ram>=4 rentable=true verified=true"
+2025-09-06 04:33:36,601 [INFO] Cheapest offer found: ID=25244165, GPU=RTX_3060, Price=$0.0414/hr
+2025-09-06 04:33:36,602 [INFO] Running command: vastai create instance 25244165 --image nicky9319/neuralperk:latest --disk 32 --raw
+2025-09-06 04:33:38,431 [INFO] Create instance raw output: {
+ "new_contract": 25655838,
+ "success": true
+}
+
+2025-09-06 04:33:38,432 [INFO] Instance created. Offer=25244165, Contract=25655838
+2025-09-06 04:33:38,432 [INFO] Running command: vastai start instance 25655838
+2025-09-06 04:33:40,176 [INFO] Instance 25244165 started. Contract=25655838
+2025-09-06 04:34:10,179 [INFO] Running command: vastai execute 25655838 'pwd'
+2025-09-06 04:34:12,280 [INFO] Command 'pwd' executed on instance 25244165
+2025-09-06 04:34:12,280 [INFO] Output: failed with error 400: Invalid command given.
+
+2025-09-06 04:34:12,280 [INFO] Running command: vastai execute 25655838 'whoami'
+2025-09-06 04:34:14,228 [INFO] Command 'whoami' executed on instance 25244165
+2025-09-06 04:34:14,229 [INFO] Output: failed with error 400: Invalid command given.
+
+2025-09-06 04:34:14,229 [INFO] Running command: vastai execute 25655838 'ls'
+2025-09-06 04:34:15,936 [INFO] Command 'ls' executed on instance 25244165
+2025-09-06 04:34:15,937 [INFO] Output: failed with error 400: Execute command only avail on stopped instances. Use ssh to run commands on running instances.
+
+2025-09-06 04:34:15,937 [INFO] Running command: vastai execute 25655838 'echo hello'
+2025-09-06 04:34:17,689 [INFO] Command 'echo hello' executed on instance 25244165
+2025-09-06 04:34:17,689 [INFO] Output: failed with error 400: Invalid command given.
+
+2025-09-06 04:34:17,689 [INFO] Running command: vastai execute 25655838 'echo hello > /tmp/test.txt'
+2025-09-06 04:34:19,466 [INFO] Command 'echo hello > /tmp/test.txt' executed on instance 25244165
+2025-09-06 04:34:19,466 [INFO] Output: failed with error 400: Invalid command given.
+
+2025-09-06 04:34:19,466 [INFO] Running command: vastai execute 25655838 'cat /tmp/test.txt'
+2025-09-06 04:34:37,944 [INFO] Running command: vastai search offers "num_gpus=1 gpu_ram>=0 rentable=true verified=true"
+2025-09-06 04:34:40,816 [INFO] Cheapest offer found: ID=25084945, GPU=GTX_TITAN_X, Price=$0.0414/hr
+2025-09-06 04:34:53,430 [INFO] Running command: vastai search offers "cuda_vers >= 12.0 num_gpus=1 gpu_ram>=8"
+2025-09-06 04:34:56,313 [INFO] Cheapest offer found: ID=19297293, GPU=RTX_A2000, Price=$0.0516/hr
+2025-09-06 04:34:56,313 [INFO] Running command: vastai create instance 19297293 --image nicky9319/neuralperk:latest --disk 32 --raw
+2025-09-06 04:34:58,111 [INFO] Create instance raw output: {
+ "new_contract": 25655845,
+ "success": true
+}
+
+2025-09-06 04:34:58,112 [INFO] Instance created. Offer=19297293, Contract=25655845
+2025-09-06 04:34:58,112 [INFO] Running command: vastai start instance 25655845
+2025-09-06 04:34:59,909 [INFO] Instance 19297293 started. Contract=25655845
+2025-09-06 04:35:00,914 [INFO] Running command: vastai stop instance 25655845
+2025-09-06 04:35:02,736 [INFO] Instance 19297293 stopped. Duration=0.00h, ComputeCost=$0.0000, TotalCompute=$0.0000
+2025-09-06 04:35:25,278 [INFO] Running command: vastai search offers "cuda_vers >= 12.0 num_gpus=1 gpu_ram>=8"
+2025-09-06 04:35:28,333 [INFO] Cheapest offer found: ID=22758225, GPU=RTX_3060, Price=$0.0552/hr
+2025-09-06 04:35:28,333 [INFO] Running command: vastai create instance 22758225 --image nicky9319/neuralperk:latest --disk 32 --raw
+2025-09-06 04:35:30,135 [INFO] Create instance raw output: {
+ "new_contract": 25655852,
+ "success": true
+}
+
+2025-09-06 04:35:30,135 [INFO] Instance created. Offer=22758225, Contract=25655852
+2025-09-06 04:35:30,135 [INFO] Running command: vastai start instance 25655852
+2025-09-06 04:35:31,860 [INFO] Instance 22758225 started. Contract=25655852
+2025-09-06 04:35:32,863 [INFO] Running command: vastai stop instance 25655852
+2025-09-06 04:35:34,542 [INFO] Instance 22758225 stopped. Duration=0.00h, ComputeCost=$0.0000, TotalCompute=$0.0000
+2025-09-06 04:35:34,543 [INFO] Run summary: {'ContractID': 25655852, 'OfferID': '22758225', 'Status': 'stopped', 'ComputeCost': 0.0, 'StorageCost': 0.0, 'TotalCost': 0.0, 'CreatedAt': 'Sat Sep  6 04:35:30 2025', 'StartedAt': 'Sat Sep  6 04:35:31 2025', 'StoppedAt': 'Sat Sep  6 04:35:34 2025'}
+2025-09-06 04:35:34,543 [INFO] Running command: vastai destroy instances 25655852
+2025-09-06 04:35:38,054 [INFO] Instance 22758225 destroyed. StorageCost=$0.0000, TotalCompute=$0.0000, GrandTotal=$0.0000

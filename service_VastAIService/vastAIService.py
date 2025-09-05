@@ -7,6 +7,9 @@ import aio_pika
 import json
 import time
 
+# Import the VastAI manager
+from vastAIManager import VastAIManager
+
 # Embedded HTTPServer class
 class HTTPServer:
     def __init__(self, host="127.0.0.1", port=54545):
@@ -101,20 +104,119 @@ class VastAIService:
         self.data = data_class or VastAIData()
         self.messageQueue = MessageQueue(self.data.connection_url, self.data.exchange_name)
         self.httpServer = HTTPServer(self.data.http_host, self.data.http_port)
+        
+        # Initialize the VastAI manager
+        self.vast_manager = VastAIManager()
 
     async def handleQueueMessage1(self, message: aio_pika.IncomingMessage):
-        msg = message.body.decode()
-        print("VastAI Queue1 Message: ", msg)
+        """Handle VastAI instance creation requests"""
+        try:
+            msg_data = json.loads(message.body.decode())
+            print("VastAI Create Instance Request:", msg_data)
+            
+            # Extract parameters
+            offer_id = msg_data.get("offer_id")
+            disk = msg_data.get("disk", 32)
+            image = msg_data.get("image", "ubuntu:20.04")
+            
+            # Create instance using VastAI manager
+            contract_id = self.vast_manager.create_instance(offer_id, disk, image)
+            
+            # Send response back via message queue
+            response = {
+                "status": "success" if contract_id else "failed",
+                "contract_id": contract_id,
+                "offer_id": offer_id
+            }
+            
+            # You would publish this response back to the requesting service
+            print("Instance creation result:", response)
+            
+        except Exception as e:
+            print(f"Error handling create instance request: {e}")
     
     async def handleQueueMessage2(self, message: aio_pika.IncomingMessage):
-        msg = message.body.decode()
-        print("VastAI Queue2 Message: ", msg)
+        """Handle VastAI instance management requests (start/stop/destroy)"""
+        try:
+            msg_data = json.loads(message.body.decode())
+            print("VastAI Management Request:", msg_data)
+            
+            action = msg_data.get("action")
+            offer_id = msg_data.get("offer_id")
+            
+            if action == "start":
+                self.vast_manager.start_instance(offer_id)
+            elif action == "stop":
+                self.vast_manager.stop_instance(offer_id)
+            elif action == "destroy":
+                self.vast_manager.destroy_instance(offer_id)
+            elif action == "get_summary":
+                summary = self.vast_manager.get_instance_summary(offer_id)
+                print("Instance summary:", summary)
+            
+        except Exception as e:
+            print(f"Error handling management request: {e}")
 
     async def configureAPIRoutes(self):
         @self.httpServer.app.get("/")
         async def read_root():
             print("VastAI Service Running")
             return {"message": "VastAI Service is Active"}
+        
+        @self.httpServer.app.get("/api/vastai/offers")
+        async def list_offers(filters: str = None):
+            """Get available VastAI offers"""
+            try:
+                filter_list = filters.split(",") if filters else None
+                offers = self.vast_manager.list_offers(filter_list)
+                return {"offers": offers}
+            except Exception as e:
+                return {"error": str(e)}
+        
+        @self.httpServer.app.post("/api/vastai/create")
+        async def create_instance(request: Request):
+            """Create a new VastAI instance"""
+            try:
+                data = await request.json()
+                offer_id = data["offer_id"]
+                disk = data.get("disk", 32)
+                image = data.get("image", "ubuntu:20.04")
+                
+                contract_id = self.vast_manager.create_instance(offer_id, disk, image)
+                
+                return {
+                    "status": "success" if contract_id else "failed",
+                    "contract_id": contract_id,
+                    "offer_id": offer_id
+                }
+            except Exception as e:
+                return {"error": str(e)}
+        
+        @self.httpServer.app.post("/api/vastai/{action}/{offer_id}")
+        async def manage_instance(action: str, offer_id: str):
+            """Start, stop, or destroy an instance"""
+            try:
+                if action == "start":
+                    self.vast_manager.start_instance(offer_id)
+                elif action == "stop":
+                    self.vast_manager.stop_instance(offer_id)
+                elif action == "destroy":
+                    self.vast_manager.destroy_instance(offer_id)
+                else:
+                    return {"error": "Invalid action"}
+                
+                return {"status": "success", "action": action, "offer_id": offer_id}
+            except Exception as e:
+                return {"error": str(e)}
+        
+        @self.httpServer.app.get("/api/vastai/summary/{offer_id}")
+        async def get_summary(offer_id: str):
+            """Get instance summary and costs"""
+            try:
+                summary = self.vast_manager.get_instance_summary(offer_id)
+                return summary if summary else {"error": "Instance not found"}
+            except Exception as e:
+                return {"error": str(e)}
     
     async def startService(self):
         await self.messageQueue.InitializeConnection()
