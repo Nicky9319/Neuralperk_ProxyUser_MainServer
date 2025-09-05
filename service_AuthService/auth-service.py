@@ -73,22 +73,22 @@ class HTTP_SERVER():
         @self.app.post("/api/auth-service/register")
         async def register(request: Request):
             """Register a new user
-            Required fields: customerId, email, password
-            Returns: Success message with user details
+            Required fields: username, password
+            Returns: Success message with user details including auto-generated customerId
             """
             try:
                 body = await request.json()
                 
                 # Validate required fields
-                required_fields = ["customerId", "email", "password"]
+                required_fields = ["username", "password"]
                 for field in required_fields:
                     if field not in body:
                         raise HTTPException(status_code=400, detail=f"Missing required field: {field}")
                 
-                # Validate email format (basic validation)
-                email = body["email"]
-                if "@" not in email or "." not in email:
-                    raise HTTPException(status_code=400, detail="Invalid email format")
+                # Validate username format (basic validation)
+                username = body["username"]
+                if len(username) < 3:
+                    raise HTTPException(status_code=400, detail="Username must be at least 3 characters long")
                 
                 # Validate password strength (basic validation)
                 password = body["password"]
@@ -98,10 +98,9 @@ class HTTP_SERVER():
                 # Hash the password
                 hashed_password = self.hash_password(password)
                 
-                # Prepare user data for MongoDB service
+                # Prepare user data for MongoDB service (using username as email)
                 user_data = {
-                    "customerId": body["customerId"],
-                    "email": email,
+                    "email": username,  # Using username as email for MongoDB service
                     "password": hashed_password
                 }
                 
@@ -113,17 +112,20 @@ class HTTP_SERVER():
                     )
                     
                     if response.status_code == 201:
-                        # Registration successful
+                        # Registration successful - get the generated customer ID from response
+                        response_data = response.json()
+                        generated_customer_id = response_data.get("customerId")
+                        
                         return JSONResponse(
                             content={
                                 "message": "User registered successfully",
-                                "customerId": body["customerId"],
-                                "email": email
+                                "customerId": generated_customer_id,
+                                "username": username
                             },
                             status_code=201
                         )
                     elif response.status_code == 409:
-                        raise HTTPException(status_code=409, detail="User with this ID already exists")
+                        raise HTTPException(status_code=409, detail="User with this username already exists")
                     else:
                         # Forward the error from MongoDB service
                         error_detail = response.json().get("detail", "Registration failed")
@@ -200,26 +202,26 @@ class HTTP_SERVER():
 
         @self.app.post("/api/auth-service/login")
         async def login(request: Request):
-            """Login user with email and password
-            Required fields: email, password
+            """Login user with username and password
+            Required fields: username, password
             Returns: Access token and refresh token
             """
             try:
                 body = await request.json()
                 
                 # Validate required fields
-                required_fields = ["email", "password"]
+                required_fields = ["username", "password"]
                 for field in required_fields:
                     if field not in body:
                         raise HTTPException(status_code=400, detail=f"Missing required field: {field}")
                 
-                email = body["email"]
+                username = body["username"]
                 password = body["password"]
                 
-                # Find user by email using MongoDB service
+                # Find user by username (stored as email in MongoDB) using MongoDB service
                 try:
                     response = await self.http_client.get(
-                        f"{self.mongodb_service_url}/api/mongodb-service/customers/find-by-email/{email}"
+                        f"{self.mongodb_service_url}/api/mongodb-service/customers/find-by-email/{username}"
                     )
                     
                     if response.status_code == 200:
@@ -241,11 +243,11 @@ class HTTP_SERVER():
                                     status_code=200
                                 )
                             else:
-                                raise HTTPException(status_code=401, detail="Invalid email or password")
+                                raise HTTPException(status_code=401, detail="Invalid username or password")
                         else:
-                            raise HTTPException(status_code=401, detail="Invalid email or password")
+                            raise HTTPException(status_code=401, detail="Invalid username or password")
                     else:
-                        raise HTTPException(status_code=401, detail="Invalid email or password")
+                        raise HTTPException(status_code=401, detail="Invalid username or password")
                         
                 except httpx.RequestError as e:
                     raise HTTPException(status_code=503, detail=f"MongoDB service unavailable: {str(e)}")
