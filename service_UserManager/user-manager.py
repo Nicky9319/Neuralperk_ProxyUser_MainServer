@@ -143,6 +143,8 @@ class HTTP_SERVER():
 
 
         self.activeSessions = []
+        self.users = []
+        
         self.userToSupervisorIdMapping = {} # This is Mapping from the user id to the Session supervisor ID itself
         self.supervisorToRoutingKeyMapping = {} # This is Mapping from the session supervisor Id to the routing key itself
 

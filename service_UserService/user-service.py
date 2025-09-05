@@ -413,6 +413,14 @@ class Service:
         @self.sio.event
         async def connect(sid, environ):
             self.data_class.connected_users[sid] = environ
+            payload = {
+                "topic": "new-user",
+                "data":{
+                    "user_id": sid
+                }
+            }
+
+            self.data_class.mq_client.publish_message(self.user_manager_exchange_name, "USER_SERVICE", json.dumps(payload))
             print(f"🔌 Client connected: {sid}")
 
         @self.sio.event
