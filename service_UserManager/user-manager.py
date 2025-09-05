@@ -141,6 +141,9 @@ class HTTP_SERVER():
 
         self.mq_client = MessageQueue()
 
+        self.userToSupervisorIdMapping = {}
+        self.supervisorToRoutingKeyMapping = {}
+
 
     # Callback Function to Listen to events emitted by the User Service
     async def callbackUserServiceMessages(self, message):
@@ -169,8 +172,18 @@ class HTTP_SERVER():
 
             if topic == "user-frame-rendered":
                 print("user Frame Rendered Event Received")
+                user_id = data["user-id"]
+                supervisor_id = self.userToSupervisorIdMapping[user_id]
+                supervisor_routing_key = self.supervisorToRoutingKeyMapping[supervisor_id]
+
+                self.mq_client.publish_message("SESSION_SUPERVISOR_EXCHANGE", supervisor_routing_key, payload)
             elif topic == "user-rendering-completed":
                 print("user Rendering Completed Event Received")
+                user_id = data["user-id"]
+                supervisor_id = self.userToSupervisorIdMapping[user_id]
+                supervisor_routing_key = self.supervisorToRoutingKeyMapping[supervisor_id]
+
+                self.mq_client.publish_message("SESSION_SUPERVISOR_EXCHANGE", supervisor_routing_key, payload)
             else:
                 print("Unknown Event Type")
                 print("Received Event: ", payload)
