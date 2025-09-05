@@ -271,6 +271,8 @@ class HTTP_SERVER():
         await self.mq_client.bind_queue("SESSION_SUPERVISOR", "USER_MANAGER_EXCHANGE", routing_key="SESSION_SUPERVISOR")
         await self.mq_client.consume("SESSION_SUPERVISOR" , self.callbackSessionSupervisorMessages)
 
+        await self.mq_client.declare_exchange("SESSION_SUPERVISOR_EXCHANGE", exchange_type=ExchangeType.DIRECT)
+
 
     async def sendUserToSessionSupervisor(self, user_list, session_supervisor_id):
         payload = {
@@ -285,26 +287,49 @@ class HTTP_SERVER():
 
 
     async def distributeUsers(self):
-        if self.distributeUsers:
+        print("Distributing Users is being Called !!!")
+        
+        if getattr(self, "distributingUsers", False):
+            print("distributeUsers called while already distributing. Exiting early.")
             return
 
         if len(self.user_demand_queue) == 0 or len(self.idle_users) == 0:
+            print(f"No distribution needed: user_demand_queue={len(self.user_demand_queue)}, idle_users={len(self.idle_users)}")
             return
 
         self.distributingUsers = True
-        while len(self.user_demand_queue) > 0 and len(self.idle_users) > 0:
-            user_demand_record = self.user_demand_queue.pop(0)
-            user_count = user_demand_record["user_count"]
-            session_supervisor_id = user_demand_record["session_supervisor_id"]
+        try:
+            while len(self.user_demand_queue) > 0 and len(self.idle_users) > 0:
+                user_demand_record = self.user_demand_queue.pop(0)
+                user_count = user_demand_record["user_count"]
+                session_supervisor_id = user_demand_record["session_supervisor_id"]
 
-            if user_count <= len(self.user_demand_queue):
-                await self.sendUserToSessionSupervisor(self.idle_users[:user_count], session_supervisor_id)
-                self.idle_users = self.idle_users[user_count:]
-            else:
-                await self.sendUserToSessionSupervisor(self.idle_users, session_supervisor_id)
-                self.idle_users = []
-        
-        self.distributingUsers = False
+                print(f"Processing demand: session_supervisor_id={session_supervisor_id}, user_count={user_count}, idle_users_available={len(self.idle_users)}")
+
+                # The following line is the source of the error in your logs:
+                # Exception in distributeUsers: '07149475-6561-403d-9722-7f22141ae93d'
+                # This means that session_supervisor_id is not present in self.supervisorToRoutingKeyMapping
+                # So, when sendUserToSessionSupervisor is called, it tries to access a key that does not exist.
+                # This can happen if the session supervisor has not registered or the mapping was not set up.
+
+                if session_supervisor_id not in self.supervisorToRoutingKeyMapping:
+                    print(f"Error: session_supervisor_id={session_supervisor_id} not found in supervisorToRoutingKeyMapping. Skipping this demand.")
+                    continue
+
+                if user_count <= len(self.idle_users):
+                    users_to_send = self.idle_users[:user_count]
+                    print(f"Assigning users {users_to_send} to session_supervisor_id={session_supervisor_id}")
+                    await self.sendUserToSessionSupervisor(users_to_send, session_supervisor_id)
+                    self.idle_users = self.idle_users[user_count:]
+                else:
+                    print(f"Not enough idle users. Assigning all idle users {self.idle_users} to session_supervisor_id={session_supervisor_id}")
+                    await self.sendUserToSessionSupervisor(self.idle_users, session_supervisor_id)
+                    self.idle_users = []
+        except Exception as e:
+            print(f"Exception in distributeUsers: {e}")
+        finally:
+            self.distributingUsers = False
+            print("Finished distributing users.")
                 
 
 

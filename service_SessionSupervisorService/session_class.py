@@ -8,6 +8,8 @@ import sys
 
 import pickle
 
+import httpx
+
 from typing import Literal
 
 import aio_pika
@@ -35,6 +37,15 @@ class sessionClass:
 
         self.session_supervisor_instance = sessionSupervisorClass(customer_id=self.customer_id, object_id=self.object_id, session_id=self.session_id)
 
+
+        self.http_client = httpx.AsyncClient(timeout=30.0)
+
+        self.user_manager_service_url = os.getenv("USER_MANAGER_SERVICE", "").strip()
+        if not self.user_manager_service_url or not (self.user_manager_service_url.startswith("http://") or self.user_manager_service_url.startswith("https://")):
+            self.user_manager_service_url = "http://127.0.0.1:7000"
+        else:
+            self.user_manager_service_url = self.user_manager_service_url
+
     # -------------------------
     # Workload Management Section
     # -------------------------
@@ -43,6 +54,22 @@ class sessionClass:
             return JSONResponse(content={"message": "Customer ID or Object ID is missing"}, status_code=400)
         
         self.session_status = "running"
+
+  
+        # Register this session supervisor with the user manager
+        user_manager_new_session_url = f"{self.user_manager_service_url}/api/user-manager/session-supervisor/new-session"
+        # For now, request 1 user (can be parameterized)
+        user_count = 1
+        response = await self.http_client.post(
+            user_manager_new_session_url,
+            data={
+                "user_count": user_count,
+                "session_supervisor_id": self.session_id
+            }
+        )
+
+        print("Response from user manager after registering session supervisor:")
+        print(response.content)
 
         await self.session_supervisor_instance.initialization()
         await self.session_supervisor_instance.start_workload()
