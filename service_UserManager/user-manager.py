@@ -151,6 +151,8 @@ class HTTP_SERVER():
         self.userToSupervisorIdMapping = {} # This is Mapping from the user id to the Session supervisor ID itself
         self.supervisorToRoutingKeyMapping = {} # This is Mapping from the session supervisor Id to the routing key itself
 
+        self.distributingUsers = False
+
 
     # Callback Function to Listen to events emitted by the User Service
     async def callbackUserServiceMessages(self, message):
@@ -197,6 +199,7 @@ class HTTP_SERVER():
                 user_id = data["user_id"]
                 self.users.append(user_id)
                 self.idle_users.append(user_id)
+                await self.distributeUsers()
             else:
                 print("Unknown Event Type")
                 print("Received Event: ", payload)
@@ -234,8 +237,19 @@ class HTTP_SERVER():
 
             if payload["topic"] == "more-users":
                 print("More Users Event Received")
+                user_count = data["user_count"]
+                if supervisor_id not in [ele["session_supervisor_id"] for ele in self.user_demand_queue]:
+                    self.user_demand_queue.append({
+                        "user_count": user_count,
+                        "session_supervisor_id": supervisor_id
+                    })
+                await self.distributeUsers()
             elif payload["topic"] == "users-released":
                 print("Users Released Event Received")
+                user_list = data["user_list"]
+                for user_id in user_list:
+                    self.idle_users.append(user_id)
+                await self.distributeUsers()
             else:
                 print("Unknown Event Type")
                 print("Received Event: ", payload)
@@ -271,7 +285,14 @@ class HTTP_SERVER():
 
 
     async def distributeUsers(self):
-        while len(self.user_demand_queue) > 0:
+        if self.distributeUsers:
+            return
+
+        if len(self.user_demand_queue) == 0 or len(self.idle_users) == 0:
+            return
+
+        self.distributingUsers = True
+        while len(self.user_demand_queue) > 0 and len(self.idle_users) > 0:
             user_demand_record = self.user_demand_queue.pop(0)
             user_count = user_demand_record["user_count"]
             session_supervisor_id = user_demand_record["session_supervisor_id"]
@@ -281,10 +302,9 @@ class HTTP_SERVER():
                 self.idle_users = self.idle_users[user_count:]
             else:
                 await self.sendUserToSessionSupervisor(self.idle_users, session_supervisor_id)
-                self.user_demand_queue.append({
-                    "user_count": user_count - len(self.idle_users),
-                    "session_supervisor_id": session_supervisor_id
-                })
+                self.idle_users = []
+        
+        self.distributingUsers = False
                 
 
 
