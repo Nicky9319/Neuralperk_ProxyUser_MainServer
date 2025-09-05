@@ -162,6 +162,7 @@ class HTTP_SERVER():
             data = payload.get("data", None)
 
             if topic is None or data is None:
+                print(payload)
                 print("Invalid Payload")
                 print("Payload Need to contain the topic and data fields. It is mandatory")
                 return
@@ -181,7 +182,6 @@ class HTTP_SERVER():
         await handleUserServiceEvent(json_message)
         return
         
-
     async def callbackSessionSupervisorMessages(self, message):
         """
             Callback Function to Listen to events emitted by the Session Supervisor

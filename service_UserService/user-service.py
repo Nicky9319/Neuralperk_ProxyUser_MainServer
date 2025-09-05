@@ -351,7 +351,7 @@ class Service:
 
                 new_payload = {
                     "topic": "user-frame-rendered",
-                    "payload": {
+                    "data": {
                         "user-id": userId,
                         "frame-number": frameNumber,
                         "image-extension": imageExtension,
@@ -384,7 +384,7 @@ class Service:
             try:
                 new_payload = {
                     "topic": "user-rendering-completed",
-                    "payload": {
+                    "data": {
                         "user-id": userId
                     }
                 }

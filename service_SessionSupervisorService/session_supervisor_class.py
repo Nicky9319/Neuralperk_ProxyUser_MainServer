@@ -193,7 +193,7 @@ class sessionSupervisorClass:
                 self.sessionRoutingKey = f"SESSION_SUPERVISOR_{self.session_id}"
             elif payload["topic"] == "user-frame-rendered":
                 # Handle frame rendered event from user service
-                frame_data = payload["payload"]
+                frame_data = payload["data"]
                 user_id = frame_data["user-id"]
                 frame_number = int(frame_data["frame-number"])
                 image_extension = frame_data["image-extension"]
