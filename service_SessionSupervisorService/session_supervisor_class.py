@@ -195,6 +195,7 @@ class sessionSupervisorClass:
             if payload["topic"] == "new-session":
                 self.session_id = payload["session-id"]
                 self.sessionRoutingKey = f"SESSION_SUPERVISOR_{self.session_id}"
+                
             elif payload["topic"] == "user-frame-rendered":
                 # Handle frame rendered event from user service
                 frame_data = payload["data"]
@@ -627,7 +628,33 @@ class sessionSupervisorClass:
                 
                 print(f"Successfully stored frame {frame_number} at {final_image_path}")
                 
-                # Step 5: Check if all frames are completed
+                # Step 5: Store frame information in MongoDB
+                print(f"Storing frame {frame_number} information in MongoDB")
+                
+                mongo_payload = {
+                    "objectId": self.object_id,
+                    "customerId": self.customer_id,
+                    "frameNumber": frame_number,
+                    "imageFilePath": final_image_path
+                }
+
+                print("Mongo Payload:")
+                print(mongo_payload)
+                
+                mongo_response = await client.post(
+                    f"{self.mongodb_service_url}/api/mongodb-service/blender-objects/add-rendered-image",
+                    json=mongo_payload
+                )
+
+                print("Mongo Response:")
+                print(mongo_response.status_code)
+                
+                if mongo_response.status_code != 200:
+                    print(f"Warning: Failed to store frame {frame_number} in MongoDB. Status: {mongo_response.status_code}, Response: {mongo_response.text}")
+                else:
+                    print(f"Successfully stored frame {frame_number} information in MongoDB")
+                
+                # Step 6: Check if all frames are completed
                 remaining_frames = len(self.frameNumberMappedToUser)
                 total_original_frames = len(self.remaining_frame_list) if self.remaining_frame_list else 0
                 completed_frames = total_original_frames - remaining_frames
