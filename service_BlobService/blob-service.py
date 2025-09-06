@@ -11,10 +11,14 @@ import boto3
 from botocore.client import Config
 
 # Fix for Python 3.10+ compatibility with collections.Callable
-try:
-    from collections.abc import Callable
-except ImportError:
-    from collections import Callable
+import collections
+import collections.abc
+collections.Callable = collections.abc.Callable
+
+# Print status of monkey patch
+print("collections.Callable patched:",
+      hasattr(collections, "Callable"),
+      collections.Callable is collections.abc.Callable)
 
 
 class HTTP_SERVER():
