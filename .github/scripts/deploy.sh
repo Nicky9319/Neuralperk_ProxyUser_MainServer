@@ -49,3 +49,4 @@ echo '226044' | sudo -S docker-compose down --volumes --remove-orphans || echo "
 echo '226044' | sudo -S docker-compose up -d 
 
 echo "✅ Deployment complete."
+
