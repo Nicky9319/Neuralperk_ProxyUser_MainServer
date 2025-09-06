@@ -270,7 +270,8 @@ class HTTP_SERVER():
                     "blendFilePath": body.get("blendFilePath", None),
                     "blendFileHash": blend_file_hash,
                     "renderedVideoPath": body.get("renderedVideoPath", None),
-                    "customerId": body["customerId"]
+                    "customerId": body["customerId"],
+                    "isPaid": body.get("isPaid", False)
                 }
                 
                 result = self.blender_objects_collection.insert_one(object_doc)
@@ -795,6 +796,38 @@ class HTTP_SERVER():
                         "blendFileName": blender_object.get("blendFileName"),
                         "blendFilePath": blender_object.get("blendFilePath"),
                         "message": "Blend file found successfully by hash"
+                    },
+                    status_code=200
+                )
+                    
+            except HTTPException:
+                raise
+            except Exception as e:
+                raise HTTPException(status_code=500, detail=f"Internal server error: {str(e)}")
+        
+        @self.app.get("/api/mongodb-service/blender-objects/check-plan/{object_id}")
+        async def check_plan(object_id: str):
+            """Check the payment plan status for a blender object
+            Parameters: object_id (path parameter)
+            Returns: Payment status (paid/unpaid) based on isPaid field
+            """
+            try:
+                # Find blender object by objectId
+                blender_object = self.blender_objects_collection.find_one({"objectId": object_id})
+                
+                if not blender_object:
+                    raise HTTPException(status_code=404, detail="Blender object not found")
+                
+                # Check isPaid field and return appropriate status
+                is_paid = blender_object.get("isPaid", False)
+                payment_status = "paid" if is_paid else "unpaid"
+                
+                return JSONResponse(
+                    content={
+                        "objectId": object_id,
+                        "paymentStatus": payment_status,
+                        "isPaid": is_paid,
+                        "message": f"Payment status: {payment_status}"
                     },
                     status_code=200
                 )

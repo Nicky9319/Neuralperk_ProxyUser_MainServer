@@ -33,7 +33,7 @@
         "$jsonSchema": {
           "bsonType": "object",
           "title": "blenderObjects",
-          "required": ["objectId", "customerId"],
+          "required": ["objectId", "customerId", "isPaid"],
           "properties": {
             "objectId": {
               "bsonType": "string",
@@ -76,6 +76,10 @@
             "customerId": {
               "bsonType": "string",
               "description": "reference to customerId in customers collection, must be a string and is required"
+            },
+            "isPaid": {
+              "bsonType": "bool",
+              "description": "indicates if the blender object is paid for, must be a boolean and is required"
             }
           }
         }

@@ -142,7 +142,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n  \"customerId\": \"cust_001\",\n  \"blendFileName\": \"chair_model.blend\",\n  \"blendFilePath\": \"/path/to/model.blend\",\n  \"renderedVideoPath\": \"/path/to/video.mp4\"\n}"
+							"raw": "{\n  \"customerId\": \"cust_001\",\n  \"blendFileName\": \"chair_model.blend\",\n  \"blendFilePath\": \"/path/to/model.blend\",\n  \"renderedVideoPath\": \"/path/to/video.mp4\",\n  \"isPaid\": true\n}"
 						},
 						"url": {
 							"raw": "{{base_url}}/api/mongodb-service/blender-objects/add",
@@ -165,7 +165,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n  \"customerId\": \"cust_001\"\n}"
+							"raw": "{\n  \"customerId\": \"cust_001\",\n  \"isPaid\": false\n}"
 						},
 						"url": {
 							"raw": "{{base_url}}/api/mongodb-service/blender-objects/add",
@@ -211,7 +211,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n  \"customerId\": \"cust_001\",\n  \"blendFileName\": \"table_model.blend\"\n}"
+							"raw": "{\n  \"customerId\": \"cust_001\",\n  \"blendFileName\": \"table_model.blend\",\n  \"isPaid\": true\n}"
 						},
 						"url": {
 							"raw": "{{base_url}}/api/mongodb-service/blender-objects/add",
@@ -618,6 +618,67 @@
 							"path": ["api", "mongodb-service", "blender-objects", "get-blend-file-from-path"]
 						},
 						"description": "Test without file_path query parameter (should fail)"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Payment Plan Management",
+			"item": [
+				{
+					"name": "Check Plan - Paid Object",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/mongodb-service/blender-objects/check-plan/obj_001",
+							"host": ["{{base_url}}"],
+							"path": ["api", "mongodb-service", "blender-objects", "check-plan", "obj_001"]
+						},
+						"description": "Check payment plan status for a paid blender object using hardcoded objectId"
+					},
+					"response": []
+				},
+				{
+					"name": "Check Plan - Unpaid Object",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/mongodb-service/blender-objects/check-plan/obj_002",
+							"host": ["{{base_url}}"],
+							"path": ["api", "mongodb-service", "blender-objects", "check-plan", "obj_002"]
+						},
+						"description": "Check payment plan status for an unpaid blender object using hardcoded objectId"
+					},
+					"response": []
+				},
+				{
+					"name": "Check Plan - Object Not Found",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/mongodb-service/blender-objects/check-plan/nonexistent_object",
+							"host": ["{{base_url}}"],
+							"path": ["api", "mongodb-service", "blender-objects", "check-plan", "nonexistent_object"]
+						},
+						"description": "Test checking plan for non-existent blender object (should return 404)"
+					},
+					"response": []
+				},
+				{
+					"name": "Check Plan - Another Paid Object",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/mongodb-service/blender-objects/check-plan/obj_003",
+							"host": ["{{base_url}}"],
+							"path": ["api", "mongodb-service", "blender-objects", "check-plan", "obj_003"]
+						},
+						"description": "Check payment plan status for another paid blender object using hardcoded objectId"
 					},
 					"response": []
 				}

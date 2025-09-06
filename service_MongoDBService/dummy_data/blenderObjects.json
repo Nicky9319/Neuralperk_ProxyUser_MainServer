@@ -18,7 +18,8 @@
         "imageFilePath": "/renders/cust_001/chair/frame_003.png"
       }
     ],
-    "customerId": "cust_001"
+    "customerId": "cust_001",
+    "isPaid": true
   },
   {
     "objectId": "obj_002",
@@ -35,7 +36,8 @@
         "imageFilePath": "/renders/cust_002/table/frame_002.png"
       }
     ],
-    "customerId": "cust_002"
+    "customerId": "cust_002",
+    "isPaid": false
   },
   {
     "objectId": "obj_003",
@@ -43,6 +45,7 @@
     "blendFilePath": "/projects/cust_003/lamp.blend",
     "renderedVideoPath": null,
     "renderedImages": [],
-    "customerId": "cust_003"
+    "customerId": "cust_003",
+    "isPaid": true
   }
 ]
