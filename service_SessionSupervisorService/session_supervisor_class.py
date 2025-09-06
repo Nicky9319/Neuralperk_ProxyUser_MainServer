@@ -165,6 +165,8 @@ class sessionSupervisorClass:
         self.first_frame = None
         self.last_frame = None
 
+        self.completed = False
+
 
     async def initialization(self):
         await self.mq_client.connect()
@@ -384,7 +386,10 @@ class sessionSupervisorClass:
             # Step 2: Get frame range from the temporary blend file
             print("Getting frame range from blend file...")
             first_frame, last_frame = await self.getFrameRangeFromBlendFile(temp_blend_path)
-            
+
+            # For testing purposes, set the last frame to 3
+            # last_frame = 3
+
             # Step 3: Store the frame range in instance variables
             self.first_frame = first_frame
             self.last_frame = last_frame
@@ -448,6 +453,7 @@ class sessionSupervisorClass:
     # -------------------------
 
     async def releaseUsers(self, user_id):
+        print("Releasing Users from Session Supervisor : ", self.session_id)
         self.user_list.remove(user_id)
         self.number_of_users -= 1
 
@@ -490,6 +496,7 @@ class sessionSupervisorClass:
             }
         }
 
+        print("Demanding users from Session Supervisor : ", self.session_id)
         await self.mq_client.publish_message("USER_MANAGER_EXCHANGE", "SESSION_SUPERVISOR", json.dumps(payload))
 
     # -------------------------
@@ -497,6 +504,8 @@ class sessionSupervisorClass:
     # -------------------------
 
     async def workload_completed(self):
+        self.completed = True
+        self.workload_status = "completed"
         await self.remove_users(self.user_list)
         print("Workload Completed")
 
@@ -626,7 +635,7 @@ class sessionSupervisorClass:
                 
                 if remaining_frames == 0:
                     print("🎉 All frames have been rendered!")
-                    await self.handle_all_frames_completed()
+                    await self.workload_completed()
                 
                 return {
                     "status": "success",
@@ -648,8 +657,8 @@ class sessionSupervisorClass:
         """
         Handle when a user completes all their assigned frames.
         1. Check if all frames are completed
-        2. If all frames are completed, invoke workload_completed method
-        3. If not all frames are completed, redistribute remaining frames between available users
+        2. If not all frames are completed, redistribute remaining frames between available users
+        Note: Workflow completion is handled in user_frame_rendered method, not here
         """
         try:
             print(f"User {user_id} completed all assigned frames")
@@ -662,10 +671,9 @@ class sessionSupervisorClass:
             print(f"Progress check: {completed_frames}/{total_original_frames} frames completed")
             print(f"Remaining frames: {remaining_frames}")
             
-            # Step 2: If all frames are completed, invoke workload_completed method
+            # Step 2: If all frames are completed, return success (workflow completion handled elsewhere)
             if remaining_frames == 0:
                 print("🎉 All frames have been rendered!")
-                await self.workload_completed()
                 return {
                     "status": "all_completed",
                     "message": "All frames completed, workload finished",
@@ -737,23 +745,7 @@ class sessionSupervisorClass:
                 "user_id": user_id
             }
    
-    async def handle_all_frames_completed(self):
-        """
-        Handle when all frames have been rendered.
-        This method can be extended to trigger video compilation, notifications, etc.
-        """
-        print("🎬 All frames completed! Starting post-processing...")
-        
-        # Update workload status
-        self.workload_status = "completed"
-        
-        # Here you could:
-        # 1. Trigger video compilation from frames
-        # 2. Send completion notification to customer
-        # 3. Clean up resources
-        # 4. Update database with completion status
-        
-        # Example: Send completion message to user manager
+
         
     async def get_rendering_progress(self):
         """
@@ -785,6 +777,9 @@ class sessionSupervisorClass:
                 break
 
     async def start_workload(self):
+        if self.completed:
+            return
+        
         self.workload_status = "running"
         await self.getAndAssignFrameRange()
         background_task = asyncio.create_task(self.check_and_demand_users())
