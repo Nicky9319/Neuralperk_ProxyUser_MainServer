@@ -185,7 +185,7 @@ class HTTP_SERVER():
                 supervisor_id = self.userToSupervisorIdMapping[user_id]
                 supervisor_routing_key = self.supervisorToRoutingKeyMapping[supervisor_id]
 
-                self.mq_client.publish_message("SESSION_SUPERVISOR_EXCHANGE", supervisor_routing_key, payload)
+                await self.mq_client.publish_message("SESSION_SUPERVISOR_EXCHANGE", supervisor_routing_key, json.dumps(payload))
             elif topic == "user-rendering-completed":
                 print("user Rendering Completed Event Received")
                 user_id = data["user-id"]
@@ -206,6 +206,9 @@ class HTTP_SERVER():
                 self.users.remove(user_id)
                 if user_id in self.idle_users:
                     self.idle_users.remove(user_id)
+                # Remove user from supervisor mapping when disconnected
+                if user_id in self.userToSupervisorIdMapping:
+                    del self.userToSupervisorIdMapping[user_id]
                 await self.distributeUsers()
             else:
                 print("Unknown Event Type")
@@ -257,6 +260,9 @@ class HTTP_SERVER():
                 user_list = data["user_list"]
                 for user_id in user_list:
                     self.idle_users.append(user_id)
+                    # Remove user from supervisor mapping when released
+                    if user_id in self.userToSupervisorIdMapping:
+                        del self.userToSupervisorIdMapping[user_id]
                 await self.distributeUsers()
             else:
                 print("Unknown Event Type")
@@ -344,12 +350,22 @@ class HTTP_SERVER():
                 if user_count <= len(self.idle_users):
                     users_to_send = self.idle_users[:user_count]
                     print(f"Assigning users {users_to_send} to session_supervisor_id={session_supervisor_id}")
+                    
+                    # Update userToSupervisorIdMapping for all users being sent
+                    for user_id in users_to_send:
+                        self.userToSupervisorIdMapping[user_id] = session_supervisor_id
+                    
                     await self.sendUserToSessionSupervisor(users_to_send, session_supervisor_id)
                     # print(f"Idle users after sending users to session supervisor: {self.idle_users}")
                     self.idle_users = self.idle_users[user_count:]
                     # print(f"Idle users after sending users to session supervisor: {self.idle_users}")
                 else:
                     print(f"Not enough idle users. Assigning all idle users {self.idle_users} to session_supervisor_id={session_supervisor_id}")
+                    
+                    # Update userToSupervisorIdMapping for all remaining idle users
+                    for user_id in self.idle_users:
+                        self.userToSupervisorIdMapping[user_id] = session_supervisor_id
+                    
                     await self.sendUserToSessionSupervisor(self.idle_users, session_supervisor_id)
                     self.idle_users = []
         except Exception as e:
