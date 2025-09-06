@@ -346,16 +346,20 @@ class HTTP_SERVER():
         
     async def retrieveBlendFileFromBlobStorage(self, bucket: str, key: str):
         try:
+            print(f"[INFO] Attempting to retrieve blend file from bucket: {bucket}, key: {key}")
             # Ensure bucket exists before retrieving
             bucket_created = await self.ensure_bucket_exists(bucket)
             if not bucket_created:
+                print(f"[ERROR] Failed to create or access bucket: {bucket}")
                 return {"error": f"Failed to create bucket '{bucket}'"}
             
+            print(f"[INFO] Bucket '{bucket}' exists. Proceeding to get object with key '{key}'")
             response = self.client.get_object(Bucket=bucket, Key=key)
             data = response['Body'].read()
-            print(type(data))
+            print(f"[INFO] Successfully retrieved blend file. Data type: {type(data)}")
             return data
         except Exception as e:
+            print(f"[ERROR] Exception occurred while retrieving blend file from bucket '{bucket}', key '{key}': {str(e)}")
             return {"error": str(e)}
 
     # Temp bucket helper methods
