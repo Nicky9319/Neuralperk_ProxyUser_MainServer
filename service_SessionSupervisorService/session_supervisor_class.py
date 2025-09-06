@@ -400,6 +400,7 @@ class sessionSupervisorClass:
             print(f"Frame range determined: {first_frame} to {last_frame}")
             print(f"Total frames to render: {len(self.remaining_frame_list)}")
             
+            
             return {
                 "first_frame": first_frame,
                 "last_frame": last_frame,
