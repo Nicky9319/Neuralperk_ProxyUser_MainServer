@@ -175,12 +175,14 @@ class Service:
 
         self.user_manager_exchange_name = "USER_MANAGER_EXCHANGE"
 
+        print("Service Initialized")
+
 
         
 
     # -------- Utility Functions -------- #
     async def send_message_to_user(self, sid, topic, message):
-        self.sio.emit(topic, message, to=sid)
+        await self.sio.emit(topic, message, to=sid)
 
     # -------- Configure Routes -------- #
     async def configure_http_routes(self):
@@ -188,7 +190,7 @@ class Service:
         async def root():
             return {"message": "Donna Agent is running"}
 
-        @self.app.post("/api/user-service/user-manager/send-msg-to-user")
+        @self.app.post("/api/user-service/user/send-msg-to-user")
         async def send_msg_to_user(request: Request):
             data = await request.json()
             user_id = data["user_id"]
@@ -426,6 +428,14 @@ class Service:
         @self.sio.event
         async def disconnect(sid):
             self.data_class.connected_users.pop(sid, None)
+            payload = {
+                "topic": "user-disconnected",
+                "data":{
+                    "user_id": sid
+                }
+            }
+
+            await self.data_class.mq_client.publish_message(self.user_manager_exchange_name, "USER_SERVICE" , json.dumps(payload))
             print(f"❌ Client disconnected: {sid}")
 
         @self.sio.on("get-sid")

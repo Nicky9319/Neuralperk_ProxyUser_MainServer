@@ -4,7 +4,6 @@ from typing import Any, Dict
 
 import aio_pika
 from aio_pika import ExchangeType, Message
-from click.core import F
 from dotenv import load_dotenv
 from fastapi import FastAPI
 from fastapi import Request
@@ -56,7 +55,7 @@ class MessageQueue:
         Declare a queue. If not durable, it will vanish when broker restarts.
         """
         if name not in self.queues:
-            queue = await self.channel.declare_queue(name, durable=True, **kwargs)
+            queue = await self.channel.declare_queue(name, **kwargs)
             self.queues[name] = queue
         return self.queues[name]
 
@@ -146,6 +145,7 @@ class HTTP_SERVER():
 
         self.activeSessions = []
         self.users = []
+        print("All Users : ", self.users)
         self.idle_users = []
 
         self.userToSupervisorIdMapping = {} # This is Mapping from the user id to the Session supervisor ID itself
@@ -195,9 +195,17 @@ class HTTP_SERVER():
                 self.mq_client.publish_message("SESSION_SUPERVISOR_EXCHANGE", supervisor_routing_key, payload)
             elif topic == "new-user":
                 print("New User Event Received")
+                print("Current Connected Users: ", self.users)
                 user_id = data["user_id"]
                 self.users.append(user_id)
                 self.idle_users.append(user_id)
+                await self.distributeUsers()
+            elif topic == "user-disconnected":
+                print("User Disconnected Event Received")
+                user_id = data["user_id"]
+                self.users.remove(user_id)
+                if user_id in self.idle_users:
+                    self.idle_users.remove(user_id)
                 await self.distributeUsers()
             else:
                 print("Unknown Event Type")
@@ -262,12 +270,12 @@ class HTTP_SERVER():
 
         await self.mq_client.declare_exchange("USER_MANAGER_EXCHANGE", exchange_type=ExchangeType.DIRECT)
 
-        await self.mq_client.declare_queue("USER_SERVICE")
+        await self.mq_client.declare_queue("USER_SERVICE", auto_delete=True)
         await self.mq_client.bind_queue("USER_SERVICE", "USER_MANAGER_EXCHANGE", routing_key="USER_SERVICE")
         await self.mq_client.consume("USER_SERVICE" , self.callbackUserServiceMessages)
 
 
-        await self.mq_client.declare_queue("SESSION_SUPERVISOR")
+        await self.mq_client.declare_queue("SESSION_SUPERVISOR", auto_delete=True)
         await self.mq_client.bind_queue("SESSION_SUPERVISOR", "USER_MANAGER_EXCHANGE", routing_key="SESSION_SUPERVISOR")
         await self.mq_client.consume("SESSION_SUPERVISOR" , self.callbackSessionSupervisorMessages)
 
@@ -275,19 +283,36 @@ class HTTP_SERVER():
 
 
     async def sendUserToSessionSupervisor(self, user_list, session_supervisor_id):
-        payload = {
-            "topic": "new-users",
-            "data": {
-                "user_list": user_list,
-                "session_supervisor_id": session_supervisor_id
-            }
-        }
+        try:
+            if session_supervisor_id not in self.supervisorToRoutingKeyMapping:
+                print(f"Error: session_supervisor_id={session_supervisor_id} not found in supervisorToRoutingKeyMapping. Cannot send users.")
+                return
 
-        await self.mq_client.publish_message("SESSION_SUPERVISOR_EXCHANGE", self.supervisorToRoutingKeyMapping[session_supervisor_id], payload)
+            print(f"Sending users {user_list} to session supervisor {session_supervisor_id}")
+
+            payload = {
+                "topic": "new-users",
+                "data": {
+                    "user_list": user_list,
+                    "session_supervisor_id": session_supervisor_id
+                }
+            }
+
+
+
+            await self.mq_client.publish_message(
+                "SESSION_SUPERVISOR_EXCHANGE",
+                self.supervisorToRoutingKeyMapping[session_supervisor_id],
+                json.dumps(payload)
+            )
+        except Exception as e:
+            print(f"Exception in sendUserToSessionSupervisor: {e}")
 
 
     async def distributeUsers(self):
         print("Distributing Users is being Called !!!")
+
+        print(self.users)
         
         if getattr(self, "distributingUsers", False):
             print("distributeUsers called while already distributing. Exiting early.")
@@ -320,7 +345,9 @@ class HTTP_SERVER():
                     users_to_send = self.idle_users[:user_count]
                     print(f"Assigning users {users_to_send} to session_supervisor_id={session_supervisor_id}")
                     await self.sendUserToSessionSupervisor(users_to_send, session_supervisor_id)
+                    # print(f"Idle users after sending users to session supervisor: {self.idle_users}")
                     self.idle_users = self.idle_users[user_count:]
+                    # print(f"Idle users after sending users to session supervisor: {self.idle_users}")
                 else:
                     print(f"Not enough idle users. Assigning all idle users {self.idle_users} to session_supervisor_id={session_supervisor_id}")
                     await self.sendUserToSessionSupervisor(self.idle_users, session_supervisor_id)

@@ -59,7 +59,7 @@ class MessageQueue:
         Declare a queue. If not durable, it will vanish when broker restarts.
         """
         if name not in self.queues:
-            queue = await self.channel.declare_queue(name, durable=True, **kwargs)
+            queue = await self.channel.declare_queue(name, **kwargs)
             self.queues[name] = queue
         return self.queues[name]
 
@@ -171,7 +171,7 @@ class sessionSupervisorClass:
 
         await self.mq_client.declare_exchange("SESSION_SUPERVISOR_EXCHANGE", exchange_type=ExchangeType.DIRECT)
 
-        await self.mq_client.declare_queue(f"SESSION_SUPERVISOR_{self.session_id}")
+        await self.mq_client.declare_queue(f"SESSION_SUPERVISOR_{self.session_id}", auto_delete = True)
         await self.mq_client.bind_queue(f"SESSION_SUPERVISOR_{self.session_id}", "SESSION_SUPERVISOR_EXCHANGE", routing_key=f"SESSION_SUPERVISOR_{self.session_id}")
         await self.mq_client.consume(f"SESSION_SUPERVISOR_{self.session_id}", self.callbackUserManagerMessages)
 
@@ -232,9 +232,10 @@ class sessionSupervisorClass:
                 
             elif payload["topic"] == "new-users":
                 # Handle more users event
-                user_count = payload["data"]["user_count"]
+
+                print(f"New users event received: {payload}")
+
                 user_list = payload["data"]["user_list"]
-                print(f"More users event received: {user_count}")
                 
                 await self.users_added(user_list)
 
@@ -416,18 +417,16 @@ class sessionSupervisorClass:
     # -------------------------
 
 
-    async def sendMessageToUser(self, user_id, payload):
-        await self.http_client.post(f"{self.user_service_url}/api/user-service/user/send-msg-to-user", json={"user_id": user_id, "data": payload})
+    async def sendMessageToUser(self, user_id, topic, payload):
+        await self.http_client.post(f"{self.user_service_url}/api/user-service/user/send-msg-to-user", json={"user_id": user_id, "data": payload, "topic": topic})
+        print(f"Message sent to user {user_id}: {payload}")
 
     async def sendUserStopWork(self, user_list):
         for user_id in user_list:
+            topic = "stop-work"
             payload = {
-                "user_id": user_id,
-                "topic": "stop-work",
-                "data": {
-                }
             }
-            await self.sendMessageToUser(user_id, payload)
+            await self.sendMessageToUser(user_id,topic, payload)
 
     async def sendUserStartRendering(self, user_id, frame_list):
         """
@@ -435,16 +434,13 @@ class sessionSupervisorClass:
         If blend_file_path is None, uses the blob storage path from self.blendFilePath.
         """
             
+        topic = "start-rendering"
         payload = {
-            "user_id" : user_id,
-            "topic": "start-rendering",
-            "data" : {
-                "blend_file_hash": self.blendFileHash,
-                "frame_list": frame_list,
-            }
+            "blend_file_hash": self.blendFileHash,
+            "frame_list": frame_list,
         }
 
-        await self.sendMessageToUser(user_id, payload)
+        await self.sendMessageToUser(user_id, topic, payload)
 
 
     # -------------------------
@@ -510,6 +506,9 @@ class sessionSupervisorClass:
         This method should be called after getAndAssignFrameRange() to distribute frames.
         frameNumberMappedToUser maps frame_number -> user_id (not user_id -> frame_list)
         """
+
+        print(self.user_list)
+
         if not self.remaining_frame_list or not self.user_list:
             print("No frames to distribute or no users available")
             return
@@ -542,10 +541,10 @@ class sessionSupervisorClass:
             # Send frames to user
             await self.sendUserStartRendering(user_id, user_frames)
             
-            print(f"Assigned {len(user_frames)} frames to user {user_id}: {user_frames}")
+            print(f"Assigned {len(user_frames)} frames to user {user_id}:")
         
         print("Workload distribution completed")
-        print(f"Frame mapping: {self.frameNumberMappedToUser}")
+        # print(f"Frame mapping: {self.frameNumberMappedToUser}")
 
     async def user_frame_rendered(self, user_id: str, frame_number: int, image_binary_path: str, image_extension: str):
         """
@@ -786,6 +785,8 @@ class sessionSupervisorClass:
                 break
 
     async def start_workload(self):
+        self.workload_status = "running"
+        await self.getAndAssignFrameRange()
         background_task = asyncio.create_task(self.check_and_demand_users())
 
     def __del__(self):
@@ -839,18 +840,18 @@ class sessionSupervisorClass:
 
 
 
-async def main():
-    session_supervisor = sessionSupervisorClass(
-        customer_id="336f66fb-3831-43ec-b20f-c0cb477c835a", 
-        object_id="3200243b-4e5a-419a-8bcf-2f589c69ae07", 
-        session_id="789"
-    )
-    # await session_supervisor.getAndAssignFrameRange()
+# async def main():
+#     session_supervisor = sessionSupervisorClass(
+#         customer_id="336f66fb-3831-43ec-b20f-c0cb477c835a", 
+#         object_id="3200243b-4e5a-419a-8bcf-2f589c69ae07", 
+#         session_id="789"
+#     )
+#     # await session_supervisor.getAndAssignFrameRange()
 
-    # print(session_supervisor.remaining_frame_list)
+#     # print(session_supervisor.remaining_frame_list)
 
-    # await session_supervisor.user_frame_rendered(user_id="123", frame_number=1, 
-    # image_binary_path="2e4110a3-1003-4153-934a-4cc39c98d858/001_ccd26e11-5113-4f2a-a8a7-ba600f3e9ab8.png", image_extension="png")
+#     # await session_supervisor.user_frame_rendered(user_id="123", frame_number=1, 
+#     # image_binary_path="2e4110a3-1003-4153-934a-4cc39c98d858/001_ccd26e11-5113-4f2a-a8a7-ba600f3e9ab8.png", image_extension="png")
 
-if __name__ == "__main__":  
-    asyncio.run(main())
+# if __name__ == "__main__":  
+    # asyncio.run(main())
