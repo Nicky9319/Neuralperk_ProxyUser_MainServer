@@ -168,21 +168,32 @@ class HTTP_SERVER():
             bucket: str,
             key: str
         ):
-            print(f"Retrieving blend file from bucket: {bucket}")
-            print(f"Key: {key}")
-            
-            # Add .blend extension if not present in key
-            if not key.endswith(".blend"):
-                key = f"{key}.blend"
-            
-            # Retrieve from blob storage
-            data = await self.retrieveBlendFileFromBlobStorage(bucket, key)
-            
-            if isinstance(data, dict) and "error" in data:
-                return JSONResponse(content={"error": data["error"]}, status_code=404)
-            
-            # Return blend file with appropriate media type
-            return Response(content=data, media_type="application/octet-stream")
+            try:
+                print(f"[INFO] Retrieving blend file from bucket: {bucket}")
+                print(f"[INFO] Key: {key}")
+                
+                # Add .blend extension if not present in key
+                if not key.endswith(".blend"):
+                    key = f"{key}.blend"
+                    print(f"[DEBUG] Appended .blend extension to key. New key: {key}")
+                
+                # Retrieve from blob storage
+                data = await self.retrieveBlendFileFromBlobStorage(bucket, key)
+                
+                if isinstance(data, dict) and "error" in data:
+                    print(f"[ERROR] Error retrieving blend file: {data['error']}")
+                    return JSONResponse(content={"error": data["error"]}, status_code=404)
+                
+                # Return blend file with appropriate media type
+                print(f"[INFO] Successfully retrieved blend file: {key} from bucket: {bucket}")
+                return Response(content=data, media_type="application/octet-stream")
+            except Exception as e:
+                import traceback
+                print(f"[ERROR] Exception occurred while retrieving blend file: {traceback.format_exc()}")
+                return JSONResponse(
+                    content={"error": f"Failed to retrieve blend file: {str(e)}"},
+                    status_code=500
+                )
         
         # 5. List buckets
         @self.app.get("/api/blob-service/list-buckets")
