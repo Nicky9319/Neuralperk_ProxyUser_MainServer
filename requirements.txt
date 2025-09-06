@@ -15,7 +15,7 @@ pymongo
 httpx
 
 dotenv
-boto3
+boto3>=1.26.0
 
 python-multipart
 

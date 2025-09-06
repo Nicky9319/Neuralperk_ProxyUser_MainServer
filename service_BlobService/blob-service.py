@@ -10,6 +10,12 @@ import os
 import boto3
 from botocore.client import Config
 
+# Fix for Python 3.10+ compatibility with collections.Callable
+try:
+    from collections.abc import Callable
+except ImportError:
+    from collections import Callable
+
 
 class HTTP_SERVER():
     def __init__(self, httpServerHost, httpServerPort, httpServerPrivilegedIpAddress=["127.0.0.1"], data_class_instance=None):
