@@ -676,3 +676,654 @@ SCRIPT_EOF' executed on instance 20176855
 2025-09-06 04:35:34,543 [INFO] Run summary: {'ContractID': 25655852, 'OfferID': '22758225', 'Status': 'stopped', 'ComputeCost': 0.0, 'StorageCost': 0.0, 'TotalCost': 0.0, 'CreatedAt': 'Sat Sep  6 04:35:30 2025', 'StartedAt': 'Sat Sep  6 04:35:31 2025', 'StoppedAt': 'Sat Sep  6 04:35:34 2025'}
 2025-09-06 04:35:34,543 [INFO] Running command: vastai destroy instances 25655852
 2025-09-06 04:35:38,054 [INFO] Instance 22758225 destroyed. StorageCost=$0.0000, TotalCompute=$0.0000, GrandTotal=$0.0000
+2025-09-06 04:49:53,838 [INFO] VastAIManager initialized
+2025-09-06 04:49:53,840 [INFO] Running: vastai search offers num_gpus=1 gpu_ram>=0 rentable=true verified=true --raw
+2025-09-06 04:49:56,920 [INFO] Cheapest offer: id=23913687, price=None
+2025-09-06 04:50:10,236 [INFO] VastAIManager initialized
+2025-09-06 04:50:10,236 [INFO] Running: vastai search offers num_gpus=1 gpu_ram>=0 rentable=true verified=true --raw
+2025-09-06 04:50:15,782 [INFO] Cheapest offer: id=22768733, price=None
+2025-09-06 04:50:30,813 [INFO] VastAIManager initialized
+2025-09-06 04:50:30,813 [INFO] Running: vastai search offers cuda_vers >= 12.0 num_gpus=1 gpu_ram>=8 --raw
+2025-09-06 04:50:34,678 [INFO] Cheapest offer: id=23913692, price=None
+2025-09-06 04:53:02,324 [INFO] VastAIManager initialized
+2025-09-06 04:53:02,325 [INFO] Running: vastai search offers num_gpus=1 gpu_ram>=0 rentable=true verified=true --raw
+2025-09-06 04:53:05,339 [INFO] Cheapest offer: id=22768733, price=None
+2025-09-06 04:53:08,429 [INFO] VastAIManager initialized
+2025-09-06 04:53:08,430 [INFO] Running: vastai search offers cuda_vers >= 12.0 num_gpus=1 gpu_ram>=8 --raw
+2025-09-06 04:53:11,670 [INFO] Cheapest offer: id=23913692, price=None
+2025-09-06 04:53:47,605 [INFO] VastAIManager initialized
+2025-09-06 04:53:47,605 [INFO] Running: vastai search offers cuda_vers >= 12.0 num_gpus=1 gpu_ram>=8 --raw
+2025-09-06 04:53:50,927 [INFO] Cheapest offer: id=22768737, price=None
+2025-09-06 04:56:19,297 [INFO] VastAIManager initialized
+2025-09-06 04:56:19,298 [INFO] Running: vastai search offers cuda_vers >= 12.0 num_gpus=1 gpu_ram>=8 --raw
+2025-09-06 04:56:22,454 [INFO] Cheapest offer: id=22768733, price=None
+2025-09-06 04:56:25,930 [INFO] Running: vastai search offers num_gpus=1 gpu_ram>=0 rentable=true verified=true
+2025-09-06 04:56:46,958 [INFO] VastAIManager initialized
+2025-09-06 04:56:46,958 [INFO] Running: vastai search offers num_gpus=1 gpu_ram>=0 rentable=true verified=true --raw
+2025-09-06 04:56:49,741 [INFO] Cheapest offer: id=22768737, price=None
+2025-09-06 04:56:52,062 [INFO] VastAIManager initialized
+2025-09-06 04:56:52,062 [INFO] Running: vastai search offers cuda_vers >= 12.0 num_gpus=1 gpu_ram>=8 --raw
+2025-09-06 04:56:54,727 [INFO] Cheapest offer: id=23913692, price=None
+2025-09-06 04:57:27,554 [INFO] VastAIManager initialized
+2025-09-06 04:57:27,555 [INFO] Running: vastai search offers cuda_vers >= 12.0 num_gpus=1 gpu_ram>=8 --raw
+2025-09-06 04:57:31,212 [INFO] Cheapest offer: id=23913692, price=None
+2025-09-06 04:57:31,213 [INFO] Running: vastai create instance 23913692 --image nicky9319/neuralperk:latest --disk 32 --raw
+2025-09-06 04:57:33,099 [INFO] Running: vastai show instance 25656233 --raw
+2025-09-06 04:57:34,814 [INFO] Instance created: contract=25656233, ssh=ssh8.vast.ai:16232
+2025-09-06 04:57:34,814 [INFO] Running: vastai start instance 25656233
+2025-09-06 04:57:36,521 [INFO] Instance started: contract=25656233
+2025-09-06 04:57:37,524 [INFO] Running: vastai stop instance 25656233
+2025-09-06 04:57:39,253 [INFO] Instance stopped: 25656233, duration=0.00h, compute_cost=$0.0018
+2025-09-06 04:57:39,254 [INFO] Run summary: {'ContractID': 25656233, 'OfferID': 23913692, 'Status': 'stopped', 'ComputeCost': 0.0018, 'StorageCost': 0.0, 'TotalCost': 0.0018, 'CreatedAt': 'Sat Sep  6 04:57:34 2025', 'StartedAt': 'Sat Sep  6 04:57:36 2025', 'StoppedAt': 'Sat Sep  6 04:57:39 2025', 'SSHHost': 'ssh8.vast.ai', 'SSHPport': 16232}
+2025-09-06 04:57:39,254 [INFO] Running: vastai destroy instances 25656233
+2025-09-06 04:57:41,328 [INFO] Instance destroyed: 25656233, storage_cost=$0.0003, total_compute=$0.0018, grand_total=$0.0021
+2025-09-06 04:58:42,129 [INFO] Running: vastai search offers num_gpus=1 gpu_ram>=4 rentable=true verified=true --raw
+2025-09-06 04:58:45,559 [INFO] Running: vastai search offers num_gpus=1 gpu_ram>=4 rentable=true verified=true --raw
+2025-09-06 04:58:48,299 [INFO] Cheapest offer: id=22768737, price=None
+2025-09-06 05:00:18,031 [INFO] VastAIManager initialized
+2025-09-06 05:00:25,223 [INFO] VastAIManager initialized
+2025-09-06 05:00:25,224 [INFO] Running: vastai search offers num_gpus=1 gpu_ram>=4 rentable=true verified=true --raw
+2025-09-06 05:00:28,638 [INFO] Running: vastai search offers num_gpus=1 gpu_ram>=4 rentable=true verified=true --raw
+2025-09-06 05:00:31,388 [INFO] Cheapest offer: id=23913678, price=None
+2025-09-06 05:00:31,389 [INFO] Running: vastai create instance 23913678 --image nicky9319/neuralperk:latest --disk 32 --raw
+2025-09-06 05:00:33,261 [INFO] Running: vastai show instance 25656320 --raw
+2025-09-06 05:00:35,008 [INFO] Instance created: contract=25656320, ssh=ssh1.vast.ai:16320
+2025-09-06 05:00:35,009 [INFO] Running: vastai start instance 25656320
+2025-09-06 05:00:36,851 [INFO] Instance started: contract=25656320
+2025-09-06 05:01:06,857 [INFO] Running: vastai execute 25656320 --raw which docker
+2025-09-06 05:01:08,633 [ERROR] Failed to parse execute JSON: 'failed with error 400: Invalid command given.\n'
+2025-09-06 05:01:08,633 [INFO] Running: vastai execute 25656320 --raw apt-get update
+2025-09-06 05:01:10,320 [ERROR] Failed to parse execute JSON: 'failed with error 400: Invalid command given.\n'
+2025-09-06 05:01:10,322 [INFO] Running: vastai execute 25656320 --raw apt-get install -y docker.io
+2025-09-06 05:01:12,073 [ERROR] Failed to parse execute JSON: 'failed with error 400: Invalid command given.\n'
+2025-09-06 05:01:12,073 [INFO] Running: vastai execute 25656320 --raw systemctl start docker
+2025-09-06 05:01:13,762 [ERROR] Failed to parse execute JSON: 'failed with error 400: Invalid command given.\n'
+2025-09-06 05:01:13,763 [INFO] Running: vastai execute 25656320 --raw systemctl enable docker
+2025-09-06 05:01:15,513 [ERROR] Failed to parse execute JSON: 'failed with error 400: Invalid command given.\n'
+2025-09-06 05:01:15,513 [INFO] Running: vastai execute 25656320 --raw docker run --rm None
+2025-09-06 05:01:17,214 [ERROR] Failed to parse execute JSON: 'failed with error 400: Invalid command given.\n'
+2025-09-06 05:02:17,221 [INFO] Running: vastai stop instance 25656320
+2025-09-06 05:02:19,642 [INFO] Instance stopped: 25656320, duration=0.03h, compute_cost=$0.0674
+2025-09-06 05:02:19,645 [INFO] Running: vastai destroy instances 25656320
+2025-09-06 05:02:22,094 [INFO] Instance destroyed: 25656320, storage_cost=$0.0052, total_compute=$0.0674, grand_total=$0.0727
+2025-09-06 05:07:02,908 [INFO] VastAIManager initialized
+2025-09-06 05:07:52,347 [INFO] VastAIManager initialized
+2025-09-06 05:07:52,347 [INFO] Running: vastai search offers num_gpus=1 gpu_ram>=4 rentable=true verified=true --raw
+2025-09-06 05:07:55,637 [INFO] Running: vastai search offers num_gpus=1 gpu_ram>=4 rentable=true verified=true --raw
+2025-09-06 05:07:58,424 [INFO] Cheapest offer: id=22768737, price=None
+2025-09-06 05:07:58,426 [INFO] Running: vastai create instance 22768737 --image pytorch/pytorch:2.3.0-cuda12.1-cudnn8-runtime --disk 32 --raw
+2025-09-06 05:08:00,428 [INFO] Running: vastai show instance 25656384 --raw
+2025-09-06 05:08:02,213 [INFO] Instance created: contract=25656384, ssh=ssh4.vast.ai:16384
+2025-09-06 05:08:02,214 [INFO] Running: vastai start instance 25656384
+2025-09-06 05:08:04,110 [INFO] Instance started: contract=25656384
+2025-09-06 05:08:34,115 [INFO] Running: vastai execute 25656384 --raw python3 -c 'print("Hello from Vast.ai!")'
+2025-09-06 05:08:36,085 [ERROR] Failed to parse execute JSON: 'failed with error 400: Invalid command given.\n'
+2025-09-06 05:09:36,077 [INFO] Running: vastai stop instance 25656384
+2025-09-06 05:09:38,041 [INFO] Instance stopped: 25656384, duration=0.03h, compute_cost=$0.0560
+2025-09-06 05:09:38,042 [INFO] Running: vastai destroy instances 25656384
+2025-09-06 05:09:39,979 [INFO] Instance destroyed: 25656384, storage_cost=$0.0087, total_compute=$0.0560, grand_total=$0.0647
+2025-09-06 05:15:46,859 [INFO] VastAIManager initialized
+2025-09-06 05:15:46,860 [INFO] Running: vastai search offers num_gpus=1 gpu_ram>=4 rentable=true verified=true --raw
+2025-09-06 05:15:50,026 [INFO] Running: vastai search offers num_gpus=1 gpu_ram>=4 rentable=true verified=true --raw
+2025-09-06 05:15:52,948 [INFO] Cheapest offer: id=22768737, price=None
+2025-09-06 05:15:52,948 [INFO] Running: vastai create instance 22768737 --image pytorch/pytorch:2.3.0-cuda12.1-cudnn8-runtime --disk 32 --raw
+2025-09-06 05:15:54,831 [INFO] Running: vastai show instance 25656484 --raw
+2025-09-06 05:15:56,668 [INFO] Instance created: contract=25656484, ssh=ssh6.vast.ai:16484
+2025-09-06 05:15:56,669 [INFO] Running: vastai start instance 25656484
+2025-09-06 05:15:58,533 [INFO] Instance started: contract=25656484
+2025-09-06 05:17:36,379 [INFO] Running: vastai stop instance 25656484
+2025-09-06 05:17:38,302 [INFO] Instance stopped: 25656484, duration=0.03h, compute_cost=$0.0595
+2025-09-06 05:17:38,303 [INFO] Running: vastai destroy instances 25656484
+2025-09-06 05:17:40,364 [INFO] Instance destroyed: 25656484, storage_cost=$0.0092, total_compute=$0.0595, grand_total=$0.0687
+2025-09-06 05:28:30,631 [INFO] VastAIManager initialized
+2025-09-06 05:28:30,633 [INFO] Running: vastai search offers num_gpus=1 gpu_ram>=4 rentable=true verified=true --raw
+2025-09-06 05:28:33,714 [INFO] Running: vastai search offers num_gpus=1 gpu_ram>=4 rentable=true verified=true --raw
+2025-09-06 05:28:36,339 [INFO] Cheapest offer: id=21829061, price=None
+2025-09-06 05:28:36,340 [INFO] Running: vastai create instance 21829061 --image pytorch/pytorch:2.3.0-cuda12.1-cudnn8-runtime --disk 32 --raw
+2025-09-06 05:28:38,276 [INFO] Running: vastai show instance 25656578 --raw
+2025-09-06 05:28:39,995 [INFO] Instance created: contract=25656578, ssh=ssh5.vast.ai:16578
+2025-09-06 05:28:39,996 [INFO] Running: vastai start instance 25656578
+2025-09-06 05:28:41,760 [INFO] Instance started: contract=25656578
+2025-09-06 05:30:14,722 [INFO] Running: vastai stop instance 25656578
+2025-09-06 05:30:16,696 [INFO] Instance stopped: 25656578, duration=0.03h, compute_cost=$0.0640
+2025-09-06 05:30:16,697 [INFO] Running: vastai destroy instances 25656578
+2025-09-06 05:30:19,473 [INFO] Instance destroyed: 25656578, storage_cost=$0.0088, total_compute=$0.0640, grand_total=$0.0729
+2025-09-06 05:30:58,303 [INFO] VastAIManager initialized
+2025-09-06 05:30:58,305 [INFO] Running: vastai search offers num_gpus=1 gpu_ram>=4 rentable=true verified=true --raw
+2025-09-06 05:31:01,368 [INFO] Running: vastai search offers num_gpus=1 gpu_ram>=4 rentable=true verified=true --raw
+2025-09-06 05:31:04,168 [INFO] Cheapest offer: id=25116084, price=None
+2025-09-06 05:31:04,170 [INFO] Running: vastai create instance 25116084 --image pytorch/pytorch:2.3.0-cuda12.1-cudnn8-runtime --disk 32 --raw
+2025-09-06 05:31:05,989 [INFO] Running: vastai show instance 25656645 --raw
+2025-09-06 05:31:07,694 [INFO] Instance created: contract=25656645, ssh=ssh6.vast.ai:16644
+2025-09-06 05:31:07,696 [INFO] Running: vastai start instance 25656645
+2025-09-06 05:31:09,467 [INFO] Instance started: contract=25656645
+2025-09-06 05:32:43,059 [INFO] Running: vastai stop instance 25656645
+2025-09-06 05:32:45,116 [INFO] Instance stopped: 25656645, duration=0.03h, compute_cost=$0.0480
+2025-09-06 05:32:45,118 [INFO] Running: vastai destroy instances 25656645
+2025-09-06 05:32:47,221 [INFO] Instance destroyed: 25656645, storage_cost=$0.0037, total_compute=$0.0480, grand_total=$0.0517
+2025-09-06 05:35:57,106 [INFO] VastAIManager initialized
+2025-09-06 05:35:57,109 [INFO] Running: vastai search offers num_gpus=1 gpu_ram>=4 rentable=true verified=true --raw
+2025-09-06 05:36:00,299 [INFO] Running: vastai search offers num_gpus=1 gpu_ram>=4 rentable=true verified=true --raw
+2025-09-06 05:36:03,584 [INFO] Cheapest offer: id=21317455, price=None
+2025-09-06 05:36:03,585 [INFO] Running: vastai create instance 21317455 --image pytorch/pytorch:2.3.0-cuda12.1-cudnn8-runtime --disk 32 --raw
+2025-09-06 05:36:06,231 [INFO] Running: vastai show instance 25656683 --raw
+2025-09-06 05:36:08,261 [INFO] Instance created: contract=25656683, ssh=ssh4.vast.ai:16682
+2025-09-06 05:36:08,261 [INFO] Running: vastai start instance 25656683
+2025-09-06 05:36:10,030 [INFO] Instance started: contract=25656683
+2025-09-06 05:36:40,035 [INFO] Running: vastai execute 25656683 --raw python3 --version
+2025-09-06 05:36:42,206 [ERROR] Failed to parse execute JSON: 'failed with error 400: Invalid command given.\n'
+2025-09-06 05:36:42,208 [INFO] Running: vastai execute 25656683 --raw python3 -c 'import torch; print(torch.__version__)'
+2025-09-06 05:36:44,784 [ERROR] Failed to parse execute JSON: 'failed with error 400: Invalid command given.\n'
+2025-09-06 05:37:44,884 [INFO] Running: vastai stop instance 25656683
+2025-09-06 05:37:47,220 [INFO] Instance stopped: 25656683, duration=0.03h, compute_cost=$0.0669
+2025-09-06 05:37:47,221 [INFO] Running: vastai destroy instances 25656683
+2025-09-06 05:37:49,318 [INFO] Instance destroyed: 25656683, storage_cost=$0.0040, total_compute=$0.0669, grand_total=$0.0708
+2025-09-06 05:39:41,313 [INFO] VastAIManager initialized
+2025-09-06 05:39:41,314 [INFO] Running: vastai search offers num_gpus=1 gpu_ram>=4 rentable=true verified=true --raw
+2025-09-06 05:39:44,677 [INFO] Cheapest offer: id=22768733, price=None
+2025-09-06 05:39:44,679 [INFO] Running: vastai create instance 22768733 --image pytorch/pytorch:2.3.0-cuda12.1-cudnn8-runtime --disk 32 --raw
+2025-09-06 05:39:46,671 [INFO] Running: vastai show instance 25656719 --raw
+2025-09-06 05:39:48,509 [INFO] Instance created: contract=25656719, ssh=ssh7.vast.ai:16718
+2025-09-06 05:39:48,511 [INFO] Running: vastai start instance 25656719
+2025-09-06 05:39:50,530 [INFO] Instance started: contract=25656719
+2025-09-06 05:40:21,272 [INFO] Running: vastai stop instance 25656719
+2025-09-06 05:40:23,907 [INFO] Instance stopped: 25656719, duration=0.01h, compute_cost=$0.0199
+2025-09-06 05:40:23,908 [INFO] Running: vastai destroy instances 25656719
+2025-09-06 05:40:25,871 [INFO] Instance destroyed: 25656719, storage_cost=$0.0033, total_compute=$0.0199, grand_total=$0.0232
+2025-09-06 05:42:27,040 [INFO] VastAIManager initialized
+2025-09-06 05:42:27,041 [INFO] Running: vastai search offers num_gpus=1 gpu_ram>=4 rentable=true verified=true --raw
+2025-09-06 05:42:31,128 [INFO] Cheapest offer: id=23913678, price=None
+2025-09-06 05:42:31,129 [INFO] Running: vastai create instance 23913678 --image pytorch/pytorch:2.3.0-cuda12.1-cudnn8-runtime --disk 32 --raw
+2025-09-06 05:42:33,814 [INFO] Running: vastai show instance 25656813 --raw
+2025-09-06 05:42:35,668 [INFO] Instance created: contract=25656813, ssh=ssh5.vast.ai:16812
+2025-09-06 05:42:35,669 [INFO] Running: vastai start instance 25656813
+2025-09-06 05:42:37,390 [INFO] Instance started: contract=25656813
+2025-09-06 05:44:11,873 [INFO] Running: vastai stop instance 25656813
+2025-09-06 05:44:13,891 [INFO] Instance stopped: 25656813, duration=0.03h, compute_cost=$0.0633
+2025-09-06 05:44:13,893 [INFO] Running: vastai destroy instances 25656813
+2025-09-06 05:44:16,178 [INFO] Instance destroyed: 25656813, storage_cost=$0.0049, total_compute=$0.0633, grand_total=$0.0682
+2025-09-06 05:48:06,235 [INFO] VastAIManager initialized
+2025-09-06 05:48:06,237 [INFO] Running: vastai search offers num_gpus=1 gpu_ram>=4 rentable=true verified=true --raw
+2025-09-06 05:48:13,168 [INFO] Cheapest offer: id=23913692, price=None
+2025-09-06 05:48:13,169 [INFO] Running: vastai create instance 23913692 --image pytorch/pytorch:2.3.0-cuda12.1-cudnn8-runtime --disk 32 --raw
+2025-09-06 05:48:15,113 [INFO] Running: vastai show instance 25656926 --raw
+2025-09-06 05:48:16,943 [INFO] Instance created: contract=25656926, ssh=ssh1.vast.ai:16926
+2025-09-06 05:48:16,944 [INFO] Running: vastai start instance 25656926
+2025-09-06 05:48:18,753 [INFO] Instance started: contract=25656926
+2025-09-06 05:48:49,556 [INFO] Running: vastai stop instance 25656926
+2025-09-06 05:48:51,483 [INFO] Instance stopped: 25656926, duration=0.01h, compute_cost=$0.0215
+2025-09-06 05:48:51,484 [INFO] Running: vastai destroy instances 25656926
+2025-09-06 05:48:53,524 [INFO] Instance destroyed: 25656926, storage_cost=$0.0018, total_compute=$0.0215, grand_total=$0.0233
+2025-09-06 05:49:35,626 [INFO] VastAIManager initialized
+2025-09-06 05:49:35,626 [INFO] Running: vastai search offers num_gpus=1 gpu_ram>=4 rentable=true verified=true --raw
+2025-09-06 05:49:38,667 [INFO] Cheapest offer: id=23913692, price=None
+2025-09-06 05:49:38,668 [INFO] Running: vastai create instance 23913692 --image pytorch/pytorch:2.3.0-cuda12.1-cudnn8-runtime --disk 32 --raw
+2025-09-06 05:49:40,546 [INFO] Running: vastai show instance 25656952 --raw
+2025-09-06 05:49:42,440 [INFO] Instance created: contract=25656952, ssh=ssh4.vast.ai:16952
+2025-09-06 05:49:42,441 [INFO] Running: vastai start instance 25656952
+2025-09-06 05:49:44,570 [INFO] Instance started: contract=25656952
+2025-09-06 05:50:15,268 [INFO] Running: vastai stop instance 25656952
+2025-09-06 05:50:17,006 [INFO] Instance stopped: 25656952, duration=0.01h, compute_cost=$0.0213
+2025-09-06 05:50:17,006 [INFO] Running: vastai destroy instances 25656952
+2025-09-06 05:50:18,924 [INFO] Instance destroyed: 25656952, storage_cost=$0.0018, total_compute=$0.0213, grand_total=$0.0231
+2025-09-06 05:51:29,144 [INFO] VastAIManager initialized
+2025-09-06 05:51:29,146 [INFO] Running: vastai search offers num_gpus=1 gpu_ram>=4 rentable=true verified=true --raw
+2025-09-06 05:51:32,505 [INFO] Cheapest offer: id=22810709, price=None
+2025-09-06 05:51:32,507 [INFO] Running: vastai create instance 22810709 --image pytorch/pytorch:2.3.0-cuda12.1-cudnn8-runtime --disk 32 --raw
+2025-09-06 05:51:34,331 [INFO] Running: vastai show instance 25656998 --raw
+2025-09-06 05:51:36,052 [INFO] Instance created: contract=25656998, ssh=ssh2.vast.ai:16998
+2025-09-06 05:51:36,053 [INFO] Running: vastai start instance 25656998
+2025-09-06 05:51:38,004 [INFO] Instance started: contract=25656998
+2025-09-06 05:52:08,425 [INFO] Running: vastai stop instance 25656998
+2025-09-06 05:52:10,491 [INFO] Instance stopped: 25656998, duration=0.01h, compute_cost=$0.0013
+2025-09-06 05:52:10,492 [INFO] Running: vastai destroy instances 25656998
+2025-09-06 05:52:12,770 [INFO] Instance destroyed: 25656998, storage_cost=$0.0010, total_compute=$0.0013, grand_total=$0.0023
+2025-09-06 05:54:39,744 [INFO] VastAIManager initialized
+2025-09-06 05:54:39,746 [INFO] Running: vastai search offers num_gpus=1 gpu_ram>=4 rentable=true verified=true --raw
+2025-09-06 05:54:45,997 [INFO] Cheapest offer: id=21317463, price=None
+2025-09-06 05:54:45,998 [INFO] Running: vastai create instance 21317463 --image pytorch/pytorch:2.3.0-cuda12.1-cudnn8-runtime --disk 32 --raw
+2025-09-06 05:54:47,954 [INFO] Running: vastai show instance 25657054 --raw
+2025-09-06 05:54:49,760 [INFO] Instance created: contract=25657054, ssh=ssh2.vast.ai:17054
+2025-09-06 05:54:49,761 [INFO] Running: vastai start instance 25657054
+2025-09-06 05:54:51,491 [INFO] Instance started: contract=25657054
+2025-09-06 05:55:21,495 [INFO] Running: vastai execute 25657054 --raw python3 --version
+2025-09-06 05:55:23,433 [ERROR] Failed to parse execute JSON: 'failed with error 400: Invalid command given.\n'
+2025-09-06 05:55:23,434 [INFO] Running: vastai execute 25657054 --raw python3 -c 'import torch; print(torch.__version__)'
+2025-09-06 05:55:25,247 [ERROR] Failed to parse execute JSON: 'failed with error 400: Invalid command given.\n'
+2025-09-06 05:55:25,248 [INFO] Running: vastai execute 25657054 --raw nvidia-smi --query-gpu=name,memory.total --format=csv
+2025-09-06 05:55:27,491 [ERROR] Failed to parse execute JSON: 'failed with error 400: Invalid command given.\n'
+2025-09-06 05:56:27,501 [INFO] Running: vastai stop instance 25657054
+2025-09-06 05:56:29,379 [INFO] Instance stopped: 25657054, duration=0.03h, compute_cost=$0.0673
+2025-09-06 05:56:29,380 [INFO] Running: vastai destroy instances 25657054
+2025-09-06 05:56:31,290 [INFO] Instance destroyed: 25657054, storage_cost=$0.0040, total_compute=$0.0673, grand_total=$0.0713
+2025-09-06 05:56:31,302 [INFO] VastAIManager initialized
+2025-09-06 05:56:31,303 [INFO] Running: vastai search offers num_gpus=1 gpu_ram>=0 rentable=true verified=true --raw
+2025-09-06 05:56:34,037 [INFO] Cheapest offer: id=22768733, price=None
+2025-09-06 05:58:56,022 [INFO] VastAIManager initialized
+2025-09-06 05:58:56,024 [INFO] Running: vastai search offers num_gpus=1 gpu_ram>=4 rentable=true verified=true --raw
+2025-09-06 05:58:59,305 [INFO] Cheapest offer: id=23913680, price=None
+2025-09-06 05:58:59,307 [INFO] Running: vastai create instance 23913680 --image pytorch/pytorch:2.3.0-cuda12.1-cudnn8-runtime --disk 32 --raw
+2025-09-06 05:59:01,212 [INFO] Running: vastai show instance 25657100 --raw
+2025-09-06 05:59:02,924 [INFO] Instance created: contract=25657100, ssh=ssh9.vast.ai:17100
+2025-09-06 05:59:02,925 [INFO] Running: vastai start instance 25657100
+2025-09-06 05:59:04,630 [INFO] Instance started: contract=25657100
+2025-09-06 05:59:34,636 [INFO] Running: vastai execute 25657100 --raw python3 --version
+2025-09-06 05:59:36,345 [ERROR] Failed to parse execute JSON: 'failed with error 400: Invalid command given.\n'
+2025-09-06 05:59:36,346 [INFO] Running: vastai execute 25657100 --raw python3 -c 'import torch; print(torch.__version__)'
+2025-09-06 05:59:38,034 [ERROR] Failed to parse execute JSON: 'failed with error 400: Invalid command given.\n'
+2025-09-06 05:59:38,035 [INFO] Running: vastai execute 25657100 --raw nvidia-smi --query-gpu=name,memory.total --format=csv
+2025-09-06 05:59:39,729 [ERROR] Failed to parse execute JSON: 'failed with error 400: Invalid command given.\n'
+2025-09-06 06:00:39,734 [INFO] Running: vastai stop instance 25657100
+2025-09-06 06:00:41,616 [INFO] Instance stopped: 25657100, duration=0.03h, compute_cost=$0.0636
+2025-09-06 06:00:41,617 [INFO] Running: vastai destroy instances 25657100
+2025-09-06 06:00:43,696 [INFO] Instance destroyed: 25657100, storage_cost=$0.0049, total_compute=$0.0636, grand_total=$0.0685
+2025-09-06 06:01:49,670 [INFO] Running: vastai search offers num_gpus=1 gpu_ram>=4 rentable=true verified=true --raw
+2025-09-06 06:01:52,808 [INFO] Cheapest offer: id=22768733, price=None
+2025-09-06 06:01:52,809 [INFO] Running: vastai create instance 22768733 --image nicky9319/neuralperk:latest --disk 32 --raw
+2025-09-06 06:01:55,129 [INFO] Running: vastai show instance 25657192 --raw
+2025-09-06 06:01:56,854 [INFO] Instance created: contract=25657192, ssh=ssh5.vast.ai:17192
+2025-09-06 06:01:56,855 [INFO] Running: vastai start instance 25657192
+2025-09-06 06:01:58,634 [INFO] Instance started: contract=25657192
+2025-09-06 06:02:28,636 [INFO] Running: vastai execute 25657192 --raw echo 'Hello VastAI!'
+2025-09-06 06:02:30,247 [ERROR] Failed to parse execute JSON: 'failed with error 400: Invalid command given.\n'
+2025-09-06 06:02:30,248 [INFO] Running: vastai execute 25657192 --raw python3 --version
+2025-09-06 06:02:31,929 [ERROR] Failed to parse execute JSON: 'failed with error 400: Invalid command given.\n'
+2025-09-06 06:02:31,930 [INFO] Running: vastai stop instance 25657192
+2025-09-06 06:02:33,734 [INFO] Instance stopped: 25657192, duration=0.01h, compute_cost=$0.0209
+2025-09-06 06:02:33,735 [INFO] Running: vastai destroy instances 25657192
+2025-09-06 06:02:35,767 [INFO] Instance destroyed: 25657192, storage_cost=$0.0035, total_compute=$0.0209, grand_total=$0.0244
+2025-09-06 06:29:37,228 [INFO] VastAIManager initialized
+2025-09-06 06:29:37,233 [INFO] Running: vastai search offers num_gpus=1 gpu_ram>=4 rentable=true verified=true --raw
+2025-09-06 06:29:41,549 [INFO] Cheapest offer: id=25116088, price=None
+2025-09-06 06:29:41,550 [INFO] Running: vastai create instance 25116088 --image kushgarg22/lodalasan:latest --disk 32 --raw
+2025-09-06 06:29:44,010 [INFO] Running: vastai show instance 25657506 --raw
+2025-09-06 06:29:45,745 [INFO] Instance created: contract=25657506, ssh=ssh6.vast.ai:17506
+2025-09-06 06:29:45,746 [INFO] Running: vastai start instance 25657506
+2025-09-06 06:29:47,585 [INFO] Instance started: contract=25657506
+2025-09-06 06:30:17,592 [INFO] Running: vastai stop instance 25657506
+2025-09-06 06:30:19,683 [INFO] Instance stopped: 25657506, duration=0.01h, compute_cost=$0.0161
+2025-09-06 06:30:19,684 [INFO] Running: vastai destroy instances 25657506
+2025-09-06 06:30:21,702 [INFO] Instance destroyed: 25657506, storage_cost=$0.0013, total_compute=$0.0161, grand_total=$0.0174
+2025-09-06 06:31:56,864 [INFO] VastAIManager initialized
+2025-09-06 06:31:56,873 [INFO] Running: vastai search offers num_gpus=1 gpu_ram>=4 rentable=true verified=true --raw
+2025-09-06 06:32:00,277 [INFO] Cheapest offer: id=25116084, price=None
+2025-09-06 06:32:00,278 [INFO] Running: vastai create instance 25116084 --image kushgarg22/lodalasan:latest --disk 32 --raw
+2025-09-06 06:32:02,516 [INFO] Running: vastai show instance 25657567 --raw
+2025-09-06 06:32:04,359 [INFO] Instance created: contract=25657567, ssh=ssh7.vast.ai:17566
+2025-09-06 06:32:04,360 [INFO] Running: vastai start instance 25657567
+2025-09-06 06:32:06,273 [INFO] Instance started: contract=25657567
+2025-09-06 06:34:06,296 [INFO] Running: vastai stop instance 25657567
+2025-09-06 06:34:08,218 [INFO] Instance stopped: 25657567, duration=0.03h, compute_cost=$0.0612
+2025-09-06 06:34:08,222 [INFO] Running: vastai destroy instances 25657567
+2025-09-06 06:34:10,197 [INFO] Instance destroyed: 25657567, storage_cost=$0.0047, total_compute=$0.0612, grand_total=$0.0658
+2025-09-06 06:37:01,184 [INFO] VastAIManager initialized
+2025-09-06 06:37:01,184 [INFO] Running: vastai search offers num_gpus=1 gpu_ram>=0 rentable=true verified=true --raw
+2025-09-06 06:37:04,661 [INFO] Cheapest offer: id=19854428, price=None
+2025-09-06 06:37:05,906 [INFO] VastAIManager initialized
+2025-09-06 06:37:05,907 [INFO] Running: vastai search offers cuda_vers >= 12.0 num_gpus=1 gpu_ram>=8 --raw
+2025-09-06 06:37:09,212 [INFO] Cheapest offer: id=22768733, price=None
+2025-09-06 06:37:09,213 [INFO] Running: vastai create instance 22768733 --image nicky9319/neuralperk:latest --disk 32 --raw
+2025-09-06 06:37:11,559 [INFO] Running: vastai show instance 25657614 --raw
+2025-09-06 06:37:13,613 [INFO] Instance created: contract=25657614, ssh=ssh8.vast.ai:17614
+2025-09-06 06:37:13,614 [INFO] Running: vastai start instance 25657614
+2025-09-06 06:37:15,468 [INFO] Instance started: contract=25657614
+2025-09-06 06:37:16,470 [INFO] Running: vastai stop instance 25657614
+2025-09-06 06:37:18,321 [INFO] Instance stopped: 25657614, duration=0.00h, compute_cost=$0.0017
+2025-09-06 06:37:18,321 [INFO] Run summary: {'ContractID': 25657614, 'OfferID': 22768733, 'Status': 'stopped', 'ComputeCost': 0.0017, 'StorageCost': 0.0, 'TotalCost': 0.0017, 'CreatedAt': 'Sat Sep  6 06:37:13 2025', 'StartedAt': 'Sat Sep  6 06:37:15 2025', 'StoppedAt': 'Sat Sep  6 06:37:18 2025', 'SSHHost': 'ssh8.vast.ai', 'SSHPport': 17614}
+2025-09-06 06:37:18,322 [INFO] Running: vastai destroy instances 25657614
+2025-09-06 06:37:21,840 [INFO] Instance destroyed: 25657614, storage_cost=$0.0007, total_compute=$0.0017, grand_total=$0.0024
+2025-09-06 06:37:34,002 [INFO] VastAIManager initialized
+2025-09-06 06:37:34,003 [INFO] Running: vastai search offers num_gpus=1 gpu_ram>=4 rentable=true verified=true --raw
+2025-09-06 06:37:37,164 [INFO] Cheapest offer: id=19854428, price=None
+2025-09-06 06:37:37,165 [INFO] Running: vastai create instance 19854428 --image kushgarg22/lodalasan:latest --disk 32 --raw
+2025-09-06 06:37:38,867 [INFO] Running: vastai show instance 25657617 --raw
+2025-09-06 06:37:40,566 [INFO] Instance created: contract=25657617, ssh=ssh1.vast.ai:17616
+2025-09-06 06:37:40,567 [INFO] Running: vastai start instance 25657617
+2025-09-06 06:37:42,280 [INFO] Instance started: contract=25657617
+2025-09-06 06:39:42,290 [INFO] Running: vastai logs 25657617 --tail 200
+2025-09-06 06:39:45,481 [INFO] Running: vastai stop instance 25657617
+2025-09-06 06:39:47,127 [INFO] Instance stopped: 25657617, duration=0.03h, compute_cost=$0.0041
+2025-09-06 06:39:47,129 [INFO] Running: vastai destroy instances 25657617
+2025-09-06 06:39:48,945 [INFO] Instance destroyed: 25657617, storage_cost=$0.0048, total_compute=$0.0041, grand_total=$0.0089
+2025-09-06 06:43:39,826 [INFO] VastAIManager initialized
+2025-09-06 06:43:39,827 [INFO] Running: vastai search offers num_gpus=1 gpu_ram>=4 rentable=true verified=true --raw
+2025-09-06 06:43:42,766 [INFO] Cheapest offer: id=22810785, price=None
+2025-09-06 06:43:42,766 [INFO] Running: vastai create instance 22810785 --image kushgarg22/lodalasan:latest --disk 32 --raw
+2025-09-06 06:43:44,682 [INFO] Running: vastai show instance 25657721 --raw
+2025-09-06 06:43:46,318 [INFO] Instance created: contract=25657721, ssh=ssh1.vast.ai:17720
+2025-09-06 06:43:46,319 [INFO] Running: vastai start instance 25657721
+2025-09-06 06:43:48,006 [INFO] Instance started: contract=25657721
+2025-09-06 06:46:15,405 [INFO] VastAIManager initialized
+2025-09-06 06:46:15,417 [INFO] Running: vastai search offers num_gpus=1 gpu_ram<=10 rentable=true verified=true --raw
+2025-09-06 06:46:18,676 [INFO] Cheapest offer: id=18162679, price=None
+2025-09-06 06:46:27,142 [INFO] VastAIManager initialized
+2025-09-06 06:46:27,143 [INFO] Running: vastai search offers num_gpus=1 gpu_ram>=4 rentable=true verified=true --raw
+2025-09-06 06:46:29,836 [INFO] Cheapest offer: id=25282905, price=None
+2025-09-06 06:46:29,837 [INFO] Running: vastai create instance 25282905 --image kushgarg22/lodalasan:latest --disk 32 --raw
+2025-09-06 06:46:31,604 [INFO] Running: vastai show instance 25657785 --raw
+2025-09-06 06:46:33,258 [INFO] Instance created: contract=25657785, ssh=ssh7.vast.ai:17784
+2025-09-06 06:46:33,259 [INFO] Running: vastai start instance 25657785
+2025-09-06 06:46:34,914 [INFO] Instance started: contract=25657785
+2025-09-06 06:48:34,926 [INFO] Running: vastai execute 25657785 --raw docker ps --format '{{.ID}} {{.Names}}'
+2025-09-06 06:48:37,432 [ERROR] Failed to parse execute JSON: 'failed with error 400: Invalid command given.\n'
+2025-09-06 06:48:37,434 [INFO] Running: vastai stop instance 25657785
+2025-09-06 06:48:39,143 [INFO] Instance stopped: 25657785, duration=0.03h, compute_cost=$0.0834
+2025-09-06 06:48:39,145 [INFO] Running: vastai destroy instances 25657785
+2025-09-06 06:48:41,072 [INFO] Instance destroyed: 25657785, storage_cost=$0.0042, total_compute=$0.0834, grand_total=$0.0876
+2025-09-06 06:51:24,388 [INFO] VastAIManager initialized
+2025-09-06 06:51:24,390 [INFO] Running: vastai search offers num_gpus=1 gpu_ram>=4 rentable=true verified=true --raw
+2025-09-06 06:51:27,264 [INFO] Cheapest offer: id=22768736, price=None
+2025-09-06 06:51:27,264 [INFO] Running: vastai create instance 22768736 --image kushgarg22/lodalasan:latest --disk 32 --raw
+2025-09-06 06:51:29,083 [INFO] Running: vastai show instance 25657820 --raw
+2025-09-06 06:51:30,767 [INFO] Instance created: contract=25657820, ssh=ssh3.vast.ai:17820
+2025-09-06 06:51:30,768 [ERROR] deploy_image: contract 25657820 not running or not found.
+2025-09-06 06:51:30,769 [INFO] Running: vastai start instance 25657820
+2025-09-06 06:51:32,442 [INFO] Instance started: contract=25657820
+2025-09-06 06:53:32,449 [INFO] Running: vastai execute 25657820 --raw docker ps --format '{{.ID}} {{.Names}}'
+2025-09-06 06:53:34,318 [ERROR] Failed to parse execute JSON: 'failed with error 400: Invalid command given.\n'
+2025-09-06 06:53:34,323 [INFO] Running: vastai logs 25657820 --tail 200
+2025-09-06 06:53:37,458 [INFO] Running: vastai stop instance 25657820
+2025-09-06 06:53:39,123 [INFO] Instance stopped: 25657820, duration=0.04h, compute_cost=$0.0756
+2025-09-06 06:53:39,147 [INFO] Running: vastai destroy instances 25657820
+2025-09-06 06:53:41,130 [INFO] Instance destroyed: 25657820, storage_cost=$0.0116, total_compute=$0.0756, grand_total=$0.0872
+2025-09-06 06:59:20,889 [INFO] VastAIManager initialized
+2025-09-06 06:59:20,890 [INFO] Running: vastai search offers num_gpus=1 gpu_ram>=4 rentable=true verified=true --raw
+2025-09-06 06:59:23,760 [INFO] Cheapest offer: id=22768736, price=None
+2025-09-06 06:59:23,761 [INFO] Running: vastai create instance 22768736 --image kushgarg22/lodalasan:latest --disk 32 --raw
+2025-09-06 06:59:25,577 [INFO] Running: vastai show instance 25658005 --raw
+2025-09-06 06:59:27,185 [INFO] Instance created: contract=25658005, ssh=ssh9.vast.ai:18004
+2025-09-06 06:59:27,186 [INFO] Running: vastai start instance 25658005
+2025-09-06 06:59:28,847 [INFO] Instance started: contract=25658005
+2025-09-06 07:01:28,854 [INFO] Running: vastai execute 25658005 --raw docker run -d --name test_container kushgarg22/lodalasan:latest
+2025-09-06 07:01:30,748 [ERROR] Failed to parse execute JSON: 'failed with error 400: Invalid command given.\n'
+2025-09-06 07:02:30,751 [INFO] Running: vastai execute 25658005 --raw docker ps --format '{{.ID}} {{.Names}}'
+2025-09-06 07:02:32,571 [ERROR] Failed to parse execute JSON: 'failed with error 400: Invalid command given.\n'
+2025-09-06 07:02:32,572 [INFO] Running: vastai stop instance 25658005
+2025-09-06 07:02:34,243 [INFO] Instance stopped: 25658005, duration=0.05h, compute_cost=$0.1106
+2025-09-06 07:02:34,243 [INFO] Running: vastai destroy instances 25658005
+2025-09-06 07:02:36,501 [INFO] Instance destroyed: 25658005, storage_cost=$0.0168, total_compute=$0.1106, grand_total=$0.1274
+2025-09-06 07:08:19,898 [INFO] VastAIManager initialized
+2025-09-06 07:08:19,899 [INFO] Running: vastai search offers num_gpus=1 gpu_ram<=10 rentable=true verified=true --raw
+2025-09-06 07:08:22,935 [INFO] Cheapest offer: id=18162679, price=None
+2025-09-06 07:08:31,475 [INFO] VastAIManager initialized
+2025-09-06 07:08:31,475 [INFO] Running: vastai search offers num_gpus=1 gpu_ram<=10 rentable=true verified=true --raw
+2025-09-06 07:08:34,136 [INFO] Cheapest offer: id=18162679, price=None
+2025-09-06 07:08:34,137 [INFO] Running: vastai create instance 18162679 --image kushgarg22/lodalasan:latest --disk 32 --raw
+2025-09-06 07:08:35,884 [INFO] Running: vastai show instance 25658119 --raw
+2025-09-06 07:08:37,639 [INFO] Instance created: contract=25658119, ssh=ssh8.vast.ai:18118
+2025-09-06 07:08:37,639 [INFO] Running: vastai start instance 25658119
+2025-09-06 07:08:39,339 [INFO] Instance started: contract=25658119
+2025-09-06 07:10:39,574 [INFO] Running: vastai execute 25658119 -- docker run -d --name test_container kushgarg22/lodalasan:latest
+2025-09-06 07:10:41,126 [ERROR] Command failed (rc=2): usage: vastai [-h] [--url URL] [--retry RETRY] [--raw] [--explain] [--curl] [--api-key API_KEY] [--version] command ...
+vastai: error: unrecognized arguments: run -d --name test_container kushgarg22/lodalasan:latest
+2025-09-06 07:12:09,625 [INFO] VastAIManager initialized
+2025-09-06 07:12:09,626 [INFO] Running: vastai search offers num_gpus=1 gpu_ram<=10 rentable=true verified=true --raw
+2025-09-06 07:12:13,010 [INFO] Cheapest offer: id=22703967, price=None
+2025-09-06 07:12:17,142 [INFO] VastAIManager initialized
+2025-09-06 07:12:17,142 [INFO] Running: vastai search offers num_gpus=1 gpu_ram<=10 rentable=true verified=true --raw
+2025-09-06 07:12:19,742 [INFO] Cheapest offer: id=22703967, price=None
+2025-09-06 07:12:19,743 [INFO] Running: vastai create instance 22703967 --image kushgarg22/lodalasan:latest --disk 32 --raw
+2025-09-06 07:12:21,748 [INFO] Running: vastai show instance 25658155 --raw
+2025-09-06 07:12:23,605 [INFO] Instance created: contract=25658155, ssh=ssh5.vast.ai:18154
+2025-09-06 07:12:23,607 [INFO] Running: vastai start instance 25658155
+2025-09-06 07:12:25,493 [INFO] Instance started: contract=25658155
+2025-09-06 07:14:25,505 [INFO] Running: vastai instance execute 25658155 -- docker run -d --name test_container kushgarg22/lodalasan:latest
+2025-09-06 07:14:25,954 [ERROR] Command failed (rc=2): usage: vastai [-h] [--url URL] [--retry RETRY] [--raw] [--explain] [--curl] [--api-key API_KEY] [--version] command ...
+vastai: error: argument command: invalid choice: 'instance' (choose from help, attach ssh, cancel copy, cancel sync, change bid, clone volume, copy, cloud copy, take snapshot, create api-key, create env-var, create ssh-key, create autogroup, create endpoint, create instance, create subaccount, create team, create team-role, create template, create volume, delete api-key, delete ssh-key, delete scheduled-job, delete autogroup, delete endpoint, delete env-var, delete template, delete volume, destroy instance, destroy instances, destroy team, detach ssh, execute, get endpt-logs, invite member, label instance, launch instance, logs, prepay instance, reboot instance, recycle instance, remove member, remove team-role, reports, reset api-key, start instance, start instances, stop instance, stop instances, search benchmarks, search invoices, search offers, search instances, search templates, search volumes, set api-key, set user, ssh-url, scp-url, show api-key, show api-keys, show audit-logs, show scheduled-jobs, show ssh-keys, show autogroups, show endpoints, show connections, show deposit, show earnings, show env-vars, show invoices, show instance, show instances, show ipaddrs, show user, show subaccounts, show members, show team-role, show team-roles, show volumes, transfer credit, update autogroup, update endpoint, update env-var, update instance, update team-role, update template, update ssh-key, cancel maint, cleanup machine, delete machine, list machine, list machines, list volume, list volumes, unlist volume, remove defjob, set defjob, set min-bid, schedule maint, show machine, show machines, show maints, unlist machine, self-test machine)
+2025-09-06 07:22:14,878 [INFO] VastAIManager initialized
+2025-09-06 07:22:14,879 [INFO] Running: vastai search offers num_gpus=1 gpu_ram<=10 rentable=true verified=true --raw
+2025-09-06 07:22:17,727 [INFO] Cheapest offer: id=17691129, price=None
+2025-09-06 07:22:29,473 [INFO] VastAIManager initialized
+2025-09-06 07:22:29,473 [INFO] Running: vastai search offers num_gpus=1 gpu_ram<=10 rentable=true verified=true --raw
+2025-09-06 07:22:32,182 [INFO] Cheapest offer: id=17691129, price=None
+2025-09-06 07:22:32,183 [INFO] Running: vastai create instance 17691129 --image kushgarg22/lodalasan:latest --disk 32 --raw --onstart-cmd python /app/app.py
+2025-09-07 03:37:35,468 [INFO] VastAIManager initialized
+2025-09-07 03:37:35,472 [INFO] Running: vastai search offers num_gpus=1 gpu_ram<=10 rentable=true verified=true --raw
+2025-09-07 03:37:41,524 [INFO] Cheapest offer: id=17691129, price=None
+2025-09-07 03:38:01,905 [INFO] VastAIManager initialized
+2025-09-07 03:38:01,907 [INFO] Running: vastai search offers cuda_vers >= 12.0 num_gpus=1 gpu_ram>=8 --raw
+2025-09-07 03:38:05,431 [INFO] Cheapest offer: id=23515769, price=None
+2025-09-07 03:38:05,432 [INFO] Running: vastai create instance 23515769 --image nicky9319/neuralperk:latest --disk 32 --raw
+2025-09-07 03:38:07,213 [INFO] Running: vastai show instance 25678850 --raw
+2025-09-07 03:38:09,056 [INFO] Instance created: contract=25678850, ssh=ssh3.vast.ai:38850
+2025-09-07 03:38:09,057 [INFO] Running: vastai start instance 25678850
+2025-09-07 03:38:10,892 [INFO] Instance started: contract=25678850
+2025-09-07 03:38:11,894 [INFO] Running: vastai stop instance 25678850
+2025-09-07 03:38:13,727 [INFO] Instance stopped: 25678850, duration=0.00h, compute_cost=$0.0014
+2025-09-07 03:38:13,728 [INFO] Run summary: {'ContractID': 25678850, 'OfferID': 23515769, 'Status': 'stopped', 'ComputeCost': 0.0014, 'StorageCost': 0.0, 'TotalCost': 0.0014, 'CreatedAt': 'Sun Sep  7 03:38:09 2025', 'StartedAt': 'Sun Sep  7 03:38:10 2025', 'StoppedAt': 'Sun Sep  7 03:38:13 2025', 'SSHHost': 'ssh3.vast.ai', 'SSHPport': 38850}
+2025-09-07 03:38:13,728 [INFO] Running: vastai destroy instances 25678850
+2025-09-07 03:38:15,777 [INFO] Instance destroyed: 25678850, storage_cost=$0.0006, total_compute=$0.0014, grand_total=$0.0020
+2025-09-07 03:41:40,786 [INFO] VastAIManager initialized
+2025-09-07 03:41:40,794 [INFO] Running: vastai search offers num_gpus=1 gpu_ram<=10 rentable=true verified=true --raw
+2025-09-07 03:41:44,231 [INFO] Cheapest offer: id=25585050, price=None
+2025-09-07 03:41:44,234 [INFO] Running: vastai create instance 25585050 --image kushgarg22/lodalasan:latest --disk 32 --raw
+2025-09-07 03:41:46,419 [INFO] Running: vastai show instance 25678926 --raw
+2025-09-07 03:41:48,375 [INFO] Instance created: contract=25678926, ssh=ssh1.vast.ai:38926
+2025-09-07 03:41:48,376 [INFO] Running: vastai start instance 25678926
+2025-09-07 03:41:50,119 [INFO] Instance started: contract=25678926
+2025-09-07 03:44:50,132 [INFO] Running: vastai stop instance 25678926
+2025-09-07 03:44:52,536 [INFO] Instance stopped: 25678926, duration=0.05h, compute_cost=$0.0039
+2025-09-07 03:44:52,538 [INFO] Running: vastai destroy instances 25678926
+2025-09-07 03:44:54,809 [INFO] Instance destroyed: 25678926, storage_cost=$0.0100, total_compute=$0.0039, grand_total=$0.0140
+2025-09-07 03:49:54,254 [INFO] VastAIManager initialized
+2025-09-07 03:49:54,256 [INFO] Running: vastai search offers num_gpus=1 gpu_ram<=10 rentable=true verified=true --raw
+2025-09-07 03:49:57,431 [INFO] Cheapest offer: id=18162680, price=None
+2025-09-07 03:49:57,433 [INFO] Running: vastai create instance 18162680 --image kushgarg22/lodalasan:latest --disk 32 --raw
+2025-09-07 03:49:59,719 [INFO] Running: vastai show instance 25679053 --raw
+2025-09-07 03:50:01,786 [INFO] Instance created: contract=25679053, ssh=ssh1.vast.ai:39052
+2025-09-07 03:50:01,787 [INFO] Running: vastai start instance 25679053
+2025-09-07 03:50:03,798 [INFO] Instance started: contract=25679053
+2025-09-07 03:52:03,807 [INFO] Running: vastai logs 25679053 --tail 100
+2025-09-07 03:53:09,103 [INFO] Running: vastai stop instance 25679053
+2025-09-07 03:53:11,596 [INFO] Instance stopped: 25679053, duration=0.05h, compute_cost=$0.0036
+2025-09-07 03:53:11,600 [INFO] Running: vastai destroy instances 25679053
+2025-09-07 03:53:13,839 [INFO] Instance destroyed: 25679053, storage_cost=$0.0107, total_compute=$0.0036, grand_total=$0.0143
+2025-09-07 04:24:09,968 [INFO] VastAIManager initialized
+2025-09-07 04:24:09,969 [INFO] Running: vastai search offers num_gpus=1 gpu_ram>=4 rentable=true verified=true --raw
+2025-09-07 04:24:13,859 [INFO] Cheapest offer: id=25515631, price=None
+2025-09-07 04:24:13,860 [INFO] Running: vastai create instance 25515631 --image kushgarg22/lodalasan:latest --disk 32 --raw --args -e SERVER_IP=167.99.110.126 -p 8500:8500
+2025-09-07 04:24:15,763 [INFO] Running: vastai show instance 25679622 --raw
+2025-09-07 04:24:17,499 [INFO] Instance created: contract=25679622, ssh=None:None
+2025-09-07 04:24:17,499 [INFO] Lodalasan instance created with server IP: 167.99.110.126
+2025-09-07 04:24:17,499 [INFO] Running: vastai start instance 25679622
+2025-09-07 04:24:19,283 [INFO] Instance started: contract=25679622
+2025-09-07 04:26:07,678 [INFO] VastAIManager initialized
+2025-09-07 04:26:07,678 [INFO] Running: vastai search offers num_gpus=1 gpu_ram<=10 rentable=true verified=true --raw
+2025-09-07 04:26:10,684 [INFO] Cheapest offer: id=17691129, price=None
+2025-09-07 04:26:10,685 [INFO] Running: vastai create instance 17691129 --image kushgarg22/lodalasan:latest --disk 32 --raw --args -e SERVER_IP=167.99.110.126 -p 8500:8500
+2025-09-07 04:26:12,495 [INFO] Running: vastai show instance 25679659 --raw
+2025-09-07 04:26:14,245 [INFO] Instance created: contract=25679659, ssh=None:None
+2025-09-07 04:26:14,245 [INFO] Lodalasan instance created with server IP: 167.99.110.126
+2025-09-07 04:26:14,245 [INFO] Running: vastai start instance 25679659
+2025-09-07 04:26:15,945 [INFO] Instance started: contract=25679659
+2025-09-07 04:27:15,949 [INFO] Running: vastai logs 25679659 --tail 100
+2025-09-07 04:27:20,868 [INFO] Running: vastai stop instance 25679659
+2025-09-07 04:27:22,613 [INFO] Instance stopped: 25679659, duration=0.02h, compute_cost=$0.0015
+2025-09-07 04:27:22,613 [INFO] Running: vastai destroy instances 25679659
+2025-09-07 04:27:24,538 [INFO] Instance destroyed: 25679659, storage_cost=$0.0052, total_compute=$0.0015, grand_total=$0.0067
+2025-09-07 04:33:50,778 [INFO] VastAIManager initialized
+2025-09-07 04:33:50,783 [INFO] Running: vastai search offers num_gpus=1 gpu_ram<=10 rentable=true verified=true --raw
+2025-09-07 04:33:53,876 [INFO] Cheapest offer: id=17691129, price=None
+2025-09-07 04:33:53,877 [INFO] Running: vastai create instance 17691129 --image kushgarg22/lodalasan:latest --disk 32 --raw --args -e SERVER_IP=167.99.110.126 -p 8500:8500
+2025-09-07 04:33:55,916 [INFO] Running: vastai show instance 25679845 --raw
+2025-09-07 04:34:00,110 [INFO] Instance created: contract=25679845, ssh=None:None
+2025-09-07 04:34:00,111 [INFO] Lodalasan instance created with server IP: 167.99.110.126
+2025-09-07 04:34:00,111 [INFO] Running: vastai start instance 25679845
+2025-09-07 04:34:01,968 [INFO] Instance started: contract=25679845
+2025-09-07 04:34:31,974 [INFO] Running: vastai show instance 25679845 --raw
+2025-09-07 04:34:34,066 [INFO] Running: vastai logs 25679845 --tail 20
+2025-09-07 04:34:39,773 [INFO] Running: vastai execute 25679845 --raw ps aux | grep python
+2025-09-07 04:34:41,543 [ERROR] Failed to parse execute JSON: 'failed with error 400: Invalid command given.\n'
+2025-09-07 04:35:11,546 [INFO] Running: vastai show instance 25679845 --raw
+2025-09-07 04:35:14,061 [INFO] Running: vastai logs 25679845 --tail 20
+2025-09-07 04:35:19,058 [INFO] Running: vastai execute 25679845 --raw ps aux | grep python
+2025-09-07 04:35:20,820 [ERROR] Failed to parse execute JSON: 'failed with error 400: Invalid command given.\n'
+2025-09-07 04:35:20,820 [INFO] Running: vastai show instance 25679845 --raw
+2025-09-07 04:35:22,620 [INFO] Running: vastai logs 25679845 --tail 20
+2025-09-07 04:35:27,139 [INFO] Running: vastai execute 25679845 --raw ps aux | grep python
+2025-09-07 04:35:29,060 [ERROR] Failed to parse execute JSON: 'failed with error 400: Invalid command given.\n'
+2025-09-07 04:42:51,665 [INFO] VastAIManager initialized
+2025-09-07 04:42:51,667 [INFO] Running: vastai search offers num_gpus=1 gpu_ram<=10 rentable=true verified=true --raw
+2025-09-07 04:42:54,777 [INFO] Cheapest offer: id=18162680, price=None
+2025-09-07 04:42:54,777 [INFO] Running: vastai create instance 18162680 --image ubuntu:20.04 --disk 32 --raw
+2025-09-07 04:42:56,997 [INFO] Running: vastai show instance 25679937 --raw
+2025-09-07 04:42:59,199 [INFO] Instance created: contract=25679937, ssh=ssh6.vast.ai:39936
+2025-09-07 04:42:59,199 [INFO] Running: vastai start instance 25679937
+2025-09-07 04:43:01,045 [INFO] Instance started: contract=25679937
+2025-09-07 04:44:31,051 [INFO] Running: vastai execute 25679937 --raw echo 'Hello World'
+2025-09-07 04:44:33,107 [ERROR] Failed to parse execute JSON: 'failed with error 400: Invalid command given.\n'
+2025-09-07 04:44:33,109 [INFO] Running: vastai execute 25679937 --raw ls /
+2025-09-07 04:44:34,855 [ERROR] Failed to parse execute JSON: 'failed with error 400: Execute command only avail on stopped instances. Use ssh to run commands on running instances.\n'
+2025-09-07 04:44:34,857 [INFO] Running: vastai execute 25679937 --raw cat /etc/os-release
+2025-09-07 04:44:36,588 [ERROR] Failed to parse execute JSON: 'failed with error 400: Execute command only avail on stopped instances. Use ssh to run commands on running instances.\n'
+2025-09-07 04:44:36,589 [INFO] Running: vastai logs 25679937 --tail 100
+2025-09-07 04:44:41,541 [INFO] Running: vastai stop instance 25679937
+2025-09-07 04:44:43,601 [INFO] Instance stopped: 25679937, duration=0.03h, compute_cost=$0.0020
+2025-09-07 04:44:43,601 [INFO] Running: vastai destroy instances 25679937
+2025-09-07 04:44:45,563 [INFO] Instance destroyed: 25679937, storage_cost=$0.0059, total_compute=$0.0020, grand_total=$0.0079
+2025-09-07 04:45:47,231 [INFO] VastAIManager initialized
+2025-09-07 04:45:47,232 [INFO] Running: vastai search offers num_gpus=1 gpu_ram<=10 rentable=true verified=true --raw
+2025-09-07 04:45:50,343 [INFO] Cheapest offer: id=18162680, price=None
+2025-09-07 04:45:50,344 [INFO] Running: vastai create instance 18162680 --image kushgarg22/lodalasan:latest --disk 32 --raw --args -e SERVER_IP=167.99.110.126 -p 8500:8500
+2025-09-07 04:45:52,255 [INFO] Running: vastai show instance 25680014 --raw
+2025-09-07 04:45:54,247 [INFO] Instance created: contract=25680014, ssh=None:None
+2025-09-07 04:45:54,247 [INFO] Lodalasan instance created with server IP: 167.99.110.126
+2025-09-07 04:45:54,248 [INFO] Running: vastai start instance 25680014
+2025-09-07 04:45:55,973 [INFO] Instance started: contract=25680014
+2025-09-07 04:46:25,979 [INFO] Running: vastai show instance 25680014 --raw
+2025-09-07 04:46:58,068 [INFO] Running: vastai show instance 25680014 --raw
+2025-09-07 04:47:29,907 [INFO] Running: vastai show instance 25680014 --raw
+2025-09-07 04:48:01,811 [INFO] Running: vastai show instance 25680014 --raw
+2025-09-07 04:48:35,458 [INFO] Running: vastai show instance 25680014 --raw
+2025-09-07 04:49:07,347 [INFO] Running: vastai show instance 25680014 --raw
+2025-09-07 04:49:39,168 [INFO] Running: vastai show instance 25680014 --raw
+2025-09-07 04:50:10,819 [INFO] Running: vastai show instance 25680014 --raw
+2025-09-07 04:50:42,594 [INFO] Running: vastai show instance 25680014 --raw
+2025-09-07 04:51:14,561 [INFO] Running: vastai show instance 25680014 --raw
+2025-09-07 04:51:46,527 [INFO] Running: vastai show instance 25680014 --raw
+2025-09-07 04:52:18,355 [INFO] Running: vastai show instance 25680014 --raw
+2025-09-07 04:52:20,368 [INFO] Running: vastai logs 25680014 --tail 20
+2025-09-07 04:52:55,280 [INFO] Running: vastai stop instance 25680014
+2025-09-07 04:52:56,980 [INFO] Instance stopped: 25680014, duration=0.12h, compute_cost=$0.0081
+2025-09-07 04:53:01,984 [INFO] Running: vastai destroy instances 25680014
+2025-09-07 04:53:03,857 [INFO] Instance destroyed: 25680014, storage_cost=$0.0239, total_compute=$0.0081, grand_total=$0.0319
+2025-09-07 05:00:15,894 [INFO] VastAIManager initialized
+2025-09-07 05:00:15,895 [INFO] Running: vastai search offers num_gpus=1 gpu_ram<=10 rentable=true verified=true --raw
+2025-09-07 05:00:18,863 [INFO] Cheapest offer: id=22703962, price=None
+2025-09-07 05:00:18,864 [INFO] Running: vastai create instance 22703962 --image kushgarg22/lodalasan:fixed --disk 32 --raw --args -e SERVER_IP=167.99.110.126 -p 8500:8500
+2025-09-07 05:00:20,766 [INFO] Running: vastai show instance 25680208 --raw
+2025-09-07 05:00:22,478 [INFO] Instance created: contract=25680208, ssh=None:None
+2025-09-07 05:00:22,479 [INFO] Lodalasan instance created with server IP: 167.99.110.126
+2025-09-07 05:00:22,479 [INFO] Running: vastai start instance 25680208
+2025-09-07 05:00:24,319 [INFO] Instance started: contract=25680208
+2025-09-07 05:00:54,324 [INFO] Running: vastai show instance 25680208 --raw
+2025-09-07 05:01:26,582 [INFO] Running: vastai show instance 25680208 --raw
+2025-09-07 05:01:58,486 [INFO] Running: vastai show instance 25680208 --raw
+2025-09-07 05:02:30,269 [INFO] Running: vastai show instance 25680208 --raw
+2025-09-07 05:03:02,115 [INFO] Running: vastai show instance 25680208 --raw
+2025-09-07 05:03:34,222 [INFO] Running: vastai show instance 25680208 --raw
+2025-09-07 05:04:11,811 [INFO] VastAIManager initialized
+2025-09-07 05:04:11,811 [INFO] Running: vastai search offers num_gpus=1 gpu_ram<=10 rentable=true verified=true --raw
+2025-09-07 05:04:14,695 [INFO] Cheapest offer: id=22703962, price=None
+2025-09-07 05:04:14,696 [INFO] Running: vastai create instance 22703962 --image python:3.11-slim --disk 32 --raw --onstart python -c import time; [print(fHello {i}) or time.sleep(10) for i in range(30)]
+2025-09-07 05:04:15,039 [ERROR] Command failed (rc=2): usage: vastai [-h] [--url URL] [--retry RETRY] [--raw] [--explain] [--curl] [--api-key API_KEY] [--version] command ...
+vastai: error: unrecognized arguments: time; [print(fHello {i}) or time.sleep(10) for i in range(30)]
+2025-09-07 05:05:32,960 [INFO] VastAIManager initialized
+2025-09-07 05:05:32,961 [INFO] Running: vastai search offers num_gpus=1 gpu_ram<=10 rentable=true verified=true --raw
+2025-09-07 05:05:35,804 [INFO] Cheapest offer: id=18162680, price=None
+2025-09-07 05:05:35,804 [INFO] Running: vastai create instance 18162680 --image ubuntu:20.04 --disk 32 --raw
+2025-09-07 05:05:37,556 [INFO] Running: vastai show instance 25680245 --raw
+2025-09-07 05:05:39,270 [INFO] Instance created: contract=25680245, ssh=ssh2.vast.ai:10244
+2025-09-07 05:05:39,271 [INFO] Running: vastai start instance 25680245
+2025-09-07 05:05:41,035 [INFO] Instance started: contract=25680245
+2025-09-07 05:06:11,038 [INFO] Running: vastai show instance 25680245 --raw
+2025-09-07 05:06:13,039 [INFO] Running: vastai logs 25680245 --tail 10
+2025-09-07 05:06:17,897 [INFO] Running: vastai stop instance 25680245
+2025-09-07 05:06:19,687 [INFO] Instance stopped: 25680245, duration=0.01h, compute_cost=$0.0007
+2025-09-07 05:06:19,688 [INFO] Running: vastai destroy instances 25680245
+2025-09-07 05:06:21,598 [INFO] Instance destroyed: 25680245, storage_cost=$0.0024, total_compute=$0.0007, grand_total=$0.0031
+2025-09-07 05:06:21,599 [INFO] Running: vastai create instance 18162680 --image kushgarg22/lodalasan:fixed --disk 32 --raw --args -p 8500:8500
+2025-09-07 05:06:23,498 [INFO] Running: vastai show instance 25680247 --raw
+2025-09-07 05:06:25,191 [INFO] Instance created: contract=25680247, ssh=None:None
+2025-09-07 05:06:25,192 [INFO] Running: vastai start instance 25680247
+2025-09-07 05:06:26,933 [INFO] Instance started: contract=25680247
+2025-09-07 05:06:56,939 [INFO] Running: vastai show instance 25680247 --raw
+2025-09-07 05:07:28,769 [INFO] Running: vastai show instance 25680247 --raw
+2025-09-07 05:08:00,639 [INFO] Running: vastai show instance 25680247 --raw
+2025-09-07 05:08:32,491 [INFO] Running: vastai show instance 25680247 --raw
+2025-09-07 05:10:19,133 [INFO] VastAIManager initialized
+2025-09-07 05:10:19,134 [INFO] Running: vastai search offers num_gpus=1 gpu_ram<=10 rentable=true verified=true --raw
+2025-09-07 05:10:22,078 [INFO] Cheapest offer: id=17691129, price=None
+2025-09-07 05:10:22,078 [INFO] Running: vastai create instance 17691129 --image kushgarg22/lodalasan:fixed --disk 32 --raw --env SERVER_IP=167.99.110.126
+2025-09-07 05:10:24,205 [INFO] Running: vastai show instance 25680286 --raw
+2025-09-07 05:10:25,932 [INFO] Instance created: contract=25680286, ssh=ssh5.vast.ai:10286
+2025-09-07 05:10:25,933 [INFO] Lodalasan instance created with server IP: 167.99.110.126
+2025-09-07 05:10:25,933 [INFO] Running: vastai start instance 25680286
+2025-09-07 05:10:27,884 [INFO] Instance started: contract=25680286
+2025-09-07 05:10:57,884 [INFO] Running: vastai show instance 25680286 --raw
+2025-09-07 05:10:59,725 [INFO] Running: vastai logs 25680286 --tail 10
+2025-09-07 05:11:34,474 [INFO] Running: vastai show instance 25680286 --raw
+2025-09-07 05:11:36,555 [INFO] Running: vastai logs 25680286 --tail 10
+2025-09-07 05:11:40,047 [INFO] Running: vastai ssh-url 25680286
+2025-09-07 05:11:55,391 [INFO] Running: vastai stop instance 25680286
+2025-09-07 05:11:57,368 [INFO] Instance stopped: 25680286, duration=0.02h, compute_cost=$0.0020
+2025-09-07 05:12:02,370 [INFO] Running: vastai destroy instances 25680286
+2025-09-07 05:12:06,520 [INFO] Instance destroyed: 25680286, storage_cost=$0.0075, total_compute=$0.0020, grand_total=$0.0095
+2025-09-07 05:15:34,508 [INFO] VastAIManager initialized
+2025-09-07 05:15:34,509 [INFO] Running: vastai search offers num_gpus=1 gpu_ram<=10 rentable=true verified=true --raw
+2025-09-07 05:15:37,896 [INFO] Cheapest offer: id=17691129, price=None
+2025-09-07 05:15:37,897 [INFO] Running: vastai create instance 17691129 --image kushgarg22/lodalasan:fixed --disk 32 --raw --env SERVER_IP=167.99.110.126
+2025-09-07 05:15:39,706 [INFO] Running: vastai show instance 25680383 --raw
+2025-09-07 05:15:41,460 [INFO] Instance created: contract=25680383, ssh=ssh1.vast.ai:10382
+2025-09-07 05:15:41,460 [INFO] Lodalasan instance created with server IP: 167.99.110.126
+2025-09-07 05:15:41,460 [INFO] Running: vastai start instance 25680383
+2025-09-07 05:15:43,643 [INFO] Instance started: contract=25680383
+2025-09-07 05:16:13,652 [INFO] Running: vastai show instance 25680383 --raw
+2025-09-07 05:16:15,754 [INFO] Running: vastai ssh-url 25680383
+2025-09-07 05:16:18,085 [INFO] Running: vastai logs 25680383 --tail 20
+2025-09-07 05:26:25,053 [INFO] VastAIManager initialized
+2025-09-07 05:26:25,054 [INFO] Running: vastai search offers num_gpus=1 gpu_ram<=10 rentable=true verified=true --raw
+2025-09-07 05:26:28,272 [INFO] Cheapest offer: id=18162679, price=None
+2025-09-07 05:26:28,272 [INFO] Running: vastai create instance 18162679 --image kushgarg22/lodalasan:fixed --disk 32 --raw --env SERVER_IP=167.99.110.126
+2025-09-07 05:26:30,362 [INFO] Running: vastai show instance 25680454 --raw
+2025-09-07 05:26:32,183 [INFO] Instance created: contract=25680454, ssh=ssh4.vast.ai:10454
+2025-09-07 05:26:32,184 [INFO] Lodalasan instance created with server IP: 167.99.110.126
+2025-09-07 05:26:32,184 [INFO] Running: vastai start instance 25680454
+2025-09-07 05:26:33,899 [INFO] Instance started: contract=25680454
+2025-09-07 05:27:03,901 [INFO] Running: vastai show instance 25680454 --raw
+2025-09-07 05:27:35,773 [INFO] Running: vastai show instance 25680454 --raw
+2025-09-07 05:27:38,648 [INFO] Running: vastai ssh-url 25680454
+2025-09-07 05:27:40,954 [INFO] Running: vastai logs 25680454 --tail 20
+2025-09-07 05:29:29,836 [INFO] VastAIManager initialized
+2025-09-07 05:29:29,837 [INFO] Running: vastai search offers num_gpus=1 gpu_ram<=10 rentable=true verified=true --raw
+2025-09-07 05:29:32,684 [INFO] Cheapest offer: id=10932416, price=None
+2025-09-07 05:29:32,684 [INFO] Running: vastai create instance 10932416 --image kushgarg22/lodalasan:fixed --disk 32 --raw --env SERVER_IP=167.99.110.126
+2025-09-07 05:29:34,600 [INFO] Running: vastai show instance 25680475 --raw
+2025-09-07 05:29:36,381 [INFO] Instance created: contract=25680475, ssh=ssh5.vast.ai:10474
+2025-09-07 05:29:36,381 [INFO] Lodalasan instance created with server IP: 167.99.110.126
+2025-09-07 05:29:36,381 [INFO] Running: vastai start instance 25680475
+2025-09-07 05:29:38,063 [INFO] Instance started: contract=25680475
+2025-09-07 05:30:08,069 [INFO] Running: vastai show instance 25680475 --raw
+2025-09-07 05:30:40,316 [INFO] Running: vastai show instance 25680475 --raw
+2025-09-07 05:30:42,679 [INFO] Running: vastai ssh-url 25680475
+2025-09-07 05:30:44,893 [INFO] Running: vastai logs 25680475 --tail 20
+2025-09-07 05:32:48,185 [INFO] Running: vastai stop instance 25680475
+2025-09-07 05:32:50,184 [INFO] Instance stopped: 25680475, duration=0.05h, compute_cost=$0.0032
+2025-09-07 05:32:55,189 [INFO] Running: vastai destroy instances 25680475
+2025-09-07 05:32:57,098 [INFO] Instance destroyed: 25680475, storage_cost=$0.0112, total_compute=$0.0032, grand_total=$0.0143
+2025-09-07 05:38:17,086 [INFO] VastAIManager initialized
+2025-09-07 05:38:17,087 [INFO] Running: vastai search offers num_gpus=1 gpu_ram<=10 rentable=true verified=true --raw
+2025-09-07 05:38:20,051 [INFO] Cheapest offer: id=22703967, price=None
+2025-09-07 05:38:20,051 [INFO] Running: vastai create instance 22703967 --image kushgarg22/lodalasan:fixed --disk 32 --raw --env SERVER_IP=167.99.110.126
+2025-09-07 05:38:22,071 [INFO] Running: vastai show instance 25680680 --raw
+2025-09-07 05:38:24,201 [INFO] Instance created: contract=25680680, ssh=ssh9.vast.ai:10680
+2025-09-07 05:38:24,203 [INFO] Lodalasan instance created with server IP: 167.99.110.126
+2025-09-07 05:38:24,203 [INFO] Running: vastai start instance 25680680
+2025-09-07 05:38:26,200 [INFO] Instance started: contract=25680680
+2025-09-07 05:38:56,204 [INFO] Running: vastai show instance 25680680 --raw
+2025-09-07 05:39:29,557 [INFO] Running: vastai show instance 25680680 --raw
+2025-09-07 05:40:01,910 [INFO] Running: vastai show instance 25680680 --raw
+2025-09-07 05:40:34,647 [INFO] Running: vastai show instance 25680680 --raw
+2025-09-07 05:41:06,538 [INFO] Running: vastai show instance 25680680 --raw
+2025-09-07 05:41:08,437 [INFO] Running: vastai ssh-url 25680680
+2025-09-07 05:41:10,665 [INFO] Running: vastai logs 25680680 --tail 20
