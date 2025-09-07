@@ -227,7 +227,7 @@ class sessionSupervisorClass:
 
             elif payload["topic"] == "user-disconnected":
                 # Handle user disconnection event
-                user_id = payload["data"]["user-id"]
+                user_id = payload["data"]["user_id"]
                 print(f"User {user_id} disconnected")
                 
                 # Handle user disconnection and reassign frames
@@ -772,7 +772,18 @@ class sessionSupervisorClass:
                 "message": f"Error handling user completion: {str(e)}",
                 "user_id": user_id
             }
-   
+
+    async def handle_user_disconnection(self, user_id: str):
+        try:
+            if user_id in self.user_list:
+                self.user_list.remove(user_id)
+                self.number_of_users -= 1
+                print(f"[handle_user_disconnection] User {user_id} disconnected and removed from user_list. Number of users now: {self.number_of_users}")
+            else:
+                print(f"[handle_user_disconnection] Warning: User {user_id} not found in user_list during disconnection handling.")
+            await self.distributeWorkload()
+        except Exception as e:
+            print(f"[handle_user_disconnection] Error handling user disconnection for user {user_id}: {e}")
 
         
     async def get_rendering_progress(self):
