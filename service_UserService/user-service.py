@@ -414,13 +414,25 @@ class Service:
     async def configure_socketio_routes(self):
         @self.sio.event
         async def connect(sid, environ):
-            # Extract client IP address from environ
-            client_ip = environ.get('REMOTE_ADDR', 'Unknown')
-            # Also check for forwarded IP in case of proxy/load balancer
-            forwarded_for = environ.get('HTTP_X_FORWARDED_FOR', '')
+            # Try to extract the real client IP address, considering possible proxy headers
+            client_ip = None
+
+            # Check for standard proxy headers in order of trust
+            # X-Forwarded-For is most common, but also check for other possible headers
+            forwarded_for = environ.get('HTTP_X_FORWARDED_FOR')
+            real_ip = environ.get('HTTP_X_REAL_IP')
+            remote_addr = environ.get('REMOTE_ADDR')
+
             if forwarded_for:
+                # X-Forwarded-For can be a comma-separated list, take the first (original client)
                 client_ip = forwarded_for.split(',')[0].strip()
-            
+            elif real_ip:
+                client_ip = real_ip
+            elif remote_addr:
+                client_ip = remote_addr
+            else:
+                client_ip = 'Unknown'
+
             self.data_class.connected_users[sid] = environ
             payload = {
                 "topic": "new-user",

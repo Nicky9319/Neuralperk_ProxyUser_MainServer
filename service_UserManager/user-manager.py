@@ -210,6 +210,20 @@ class HTTP_SERVER():
                 if user_id in self.userToSupervisorIdMapping:
                     del self.userToSupervisorIdMapping[user_id]
                 await self.distributeUsers()
+
+                payload = {
+                    "topic": "user-disconnected",
+                    "data": {
+                        "user_id": user_id
+                    }
+                }
+
+
+                print("Sending User Disconnected Event to Session Supervisor")
+                supervisor_id = self.userToSupervisorIdMapping[user_id]
+                supervisor_routing_key = self.supervisorToRoutingKeyMapping[supervisor_id]
+
+                await self.mq_client.publish_message("SESSION_SUPERVISOR_EXCHANGE", supervisor_routing_key, json.dumps(payload))
             else:
                 print("Unknown Event Type")
                 print("Received Event: ", payload)
