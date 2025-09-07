@@ -414,6 +414,13 @@ class Service:
     async def configure_socketio_routes(self):
         @self.sio.event
         async def connect(sid, environ):
+            # Extract client IP address from environ
+            client_ip = environ.get('REMOTE_ADDR', 'Unknown')
+            # Also check for forwarded IP in case of proxy/load balancer
+            forwarded_for = environ.get('HTTP_X_FORWARDED_FOR', '')
+            if forwarded_for:
+                client_ip = forwarded_for.split(',')[0].strip()
+            
             self.data_class.connected_users[sid] = environ
             payload = {
                 "topic": "new-user",
@@ -423,7 +430,7 @@ class Service:
             }
 
             await self.data_class.mq_client.publish_message(self.user_manager_exchange_name, "USER_SERVICE", json.dumps(payload))
-            print(f"🔌 Client connected: {sid}")
+            print(f"🔌 Client connected: {sid} from IP: {client_ip}")
 
         @self.sio.event
         async def disconnect(sid):
