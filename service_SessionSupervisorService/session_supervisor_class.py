@@ -227,7 +227,7 @@ class sessionSupervisorClass:
 
             elif payload["topic"] == "user-disconnected":
                 # Handle user disconnection event
-                user_id = payload["payload"]["user-id"]
+                user_id = payload["data"]["user-id"]
                 print(f"User {user_id} disconnected")
                 
                 # Handle user disconnection and reassign frames
