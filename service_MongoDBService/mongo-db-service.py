@@ -872,6 +872,44 @@ class HTTP_SERVER():
                 raise
             except Exception as e:
                 raise HTTPException(status_code=500, detail=f"Internal server error: {str(e)}")
+        
+        @self.app.get("/api/mongodb-service/blender-objects/get-rendered-images/{object_id}")
+        async def get_rendered_images(object_id: str, customer_id: str):
+            """Get all rendered images for a blender object
+            Parameters: object_id (path parameter), customer_id (query parameter)
+            Returns: List of rendered images with frame numbers and file paths
+            """
+            try:
+                # Check if blender object exists and belongs to customer
+                blender_object = self.blender_objects_collection.find_one({
+                    "objectId": object_id,
+                    "customerId": customer_id
+                })
+                
+                if not blender_object:
+                    raise HTTPException(status_code=404, detail="Blender object not found")
+                
+                # Get rendered images array
+                rendered_images = blender_object.get("renderedImages", [])
+                
+                # Sort by frame number for consistent ordering
+                rendered_images.sort(key=lambda x: x.get("frameNumber", 0))
+                
+                return JSONResponse(
+                    content={
+                        "objectId": object_id,
+                        "customerId": customer_id,
+                        "renderedImages": rendered_images,
+                        "totalFrames": len(rendered_images),
+                        "message": "Rendered images retrieved successfully"
+                    },
+                    status_code=200
+                )
+                    
+            except HTTPException:
+                raise
+            except Exception as e:
+                raise HTTPException(status_code=500, detail=f"Internal server error: {str(e)}")
 
     async def run_app(self):
         config = uvicorn.Config(self.app, host=self.host, port=self.port)

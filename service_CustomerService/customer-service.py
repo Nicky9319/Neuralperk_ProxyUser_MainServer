@@ -491,16 +491,190 @@ class HTTP_SERVER():
             # TODO: Implement actual business logic
             return JSONResponse(content={"message": "Get rendered video endpoint", "customer_id": customer_id}, status_code=200)
         
-        @self.app.post("/api/customer-service/get-rendered-images")
-        async def getRenderedImages(
-            request: Request, 
-            customer_id: str = Depends(self.authenticate_token)
+        @self.app.get("/api/customer-service/get-rendered-frames/{object_id}")
+        async def getRenderedFrames(
+            object_id: str,
+            access_token: str = Depends(self.authenticate_token),
+            customer_id: str = Depends(self.getCustomerIdFromAuthorizationHeader)
         ):
-            print(f"Get rendered images endpoint hit for customer: {customer_id}")
-            # TODO: Implement actual business logic
-            return JSONResponse(content={"message": "Get rendered images endpoint", "customer_id": customer_id}, status_code=200)
+            print(f"Get rendered frames endpoint hit for customer: {customer_id}, object: {object_id}")
+            
+            try:
+                # Step 1: Check if the object is paid for
+                print("Checking payment status...")
+                payment_response = await self.http_client.get(
+                    f"{self.mongodb_service_url}/api/mongodb-service/blender-objects/check-plan/{object_id}"
+                )
+                
+                if payment_response.status_code != 200:
+                    raise HTTPException(
+                        status_code=404,
+                        detail=f"Object not found: {payment_response.text}"
+                    )
+                
+                payment_result = payment_response.json()
+                is_paid = payment_result.get("isPaid", False)
+                print(f"Payment status: {'paid' if is_paid else 'unpaid'}")
+                
+                # Step 2: Get all rendered images from MongoDB
+                print("Retrieving rendered images from MongoDB...")
+                images_response = await self.http_client.get(
+                    f"{self.mongodb_service_url}/api/mongodb-service/blender-objects/get-rendered-images/{object_id}",
+                    params={"customer_id": customer_id}
+                )
+                
+                if images_response.status_code != 200:
+                    raise HTTPException(
+                        status_code=404,
+                        detail=f"Rendered images not found: {images_response.text}"
+                    )
+                
+                images_result = images_response.json()
+                all_rendered_images = images_result.get("renderedImages", [])
+                total_frames = len(all_rendered_images)
+                
+                print(f"Total rendered frames: {total_frames}")
+                
+                if total_frames == 0:
+                    return JSONResponse(content={
+                        "message": "No rendered frames available",
+                        "objectId": object_id,
+                        "customerId": customer_id,
+                        "frames": [],
+                        "totalFrames": 0,
+                        "framesReturned": 0,
+                        "paymentStatus": "paid" if is_paid else "unpaid"
+                    }, status_code=200)
+                
+                # Step 3: Determine which frames to return based on payment status
+                if is_paid:
+                    # If paid, return all frames
+                    frames_to_return = all_rendered_images
+                    print(f"Customer has paid - returning all {total_frames} frames")
+                else:
+                    # If not paid, return 30% of frames in sequential order
+                    frames_to_return_count = max(1, int(total_frames * 0.3))  # At least 1 frame
+                    
+                    # Calculate step size to distribute frames evenly across the sequence
+                    if frames_to_return_count == 1:
+                        # If only 1 frame, return the middle frame
+                        middle_index = total_frames // 2
+                        frames_to_return = [all_rendered_images[middle_index]]
+                    else:
+                        # Calculate step size to get evenly distributed frames
+                        step_size = total_frames / frames_to_return_count
+                        frames_to_return = []
+                        
+                        for i in range(frames_to_return_count):
+                            # Calculate index for this frame
+                            index = int(i * step_size)
+                            # Ensure we don't go out of bounds
+                            index = min(index, total_frames - 1)
+                            frames_to_return.append(all_rendered_images[index])
+                    
+                    print(f"Customer has not paid - returning {len(frames_to_return)} out of {total_frames} frames (30%)")
+                
+                # Step 4: Create streaming response with images
+                async def stream_frames_with_images():
+                    try:
+                        # First, send the metadata as JSON
+                        frames_metadata = []
+                        for frame in frames_to_return:
+                            frame_number = frame.get("frameNumber")
+                            image_file_path = frame.get("imageFilePath")
+                            
+                            if frame_number is not None and image_file_path:
+                                frames_metadata.append({
+                                    "frameNumber": frame_number,
+                                    "imageFilePath": image_file_path
+                                })
+                        
+                        # Create metadata response
+                        metadata_response = {
+                            "message": "Rendered frames retrieved successfully",
+                            "objectId": object_id,
+                            "customerId": customer_id,
+                            "frames": frames_metadata,
+                            "totalFrames": total_frames,
+                            "framesReturned": len(frames_metadata),
+                            "paymentStatus": "paid" if is_paid else "unpaid",
+                            "isPreview": not is_paid
+                        }
+                        
+                        # Send metadata as JSON
+                        metadata_json = json.dumps(metadata_response) + "\n"
+                        yield metadata_json.encode('utf-8')
+                        
+                        # Then stream each image
+                        for frame in frames_to_return:
+                            frame_number = frame.get("frameNumber")
+                            image_file_path = frame.get("imageFilePath")
+                            
+                            if frame_number is not None and image_file_path:
+                                print(f"Streaming image for frame {frame_number}: {image_file_path}")
+                                
+                                # Get image from blob storage
+                                async with httpx.AsyncClient() as proxy_client:
+                                    try:
+                                        async with proxy_client.stream(
+                                            "GET",
+                                            f"{self.blob_service_url}/api/blob-service/retrieve-image",
+                                            params={
+                                                "bucket": "rendered-frames",
+                                                "key": image_file_path,
+                                                "type": "png"
+                                            }
+                                        ) as response:
+                                            if response.status_code == 200:
+                                                # Send frame separator
+                                                frame_header = f"---FRAME_{frame_number}---\n"
+                                                yield frame_header.encode('utf-8')
+                                                
+                                                # Stream the image data
+                                                async for chunk in response.aiter_bytes():
+                                                    yield chunk
+                                                
+                                                # Send frame end separator
+                                                frame_footer = f"---END_FRAME_{frame_number}---\n"
+                                                yield frame_footer.encode('utf-8')
+                                            else:
+                                                print(f"Failed to retrieve image for frame {frame_number}: {response.status_code}")
+                                                error_msg = f"---ERROR_FRAME_{frame_number}: Failed to retrieve image---\n"
+                                                yield error_msg.encode('utf-8')
+                                    except Exception as e:
+                                        print(f"Error streaming image for frame {frame_number}: {str(e)}")
+                                        error_msg = f"---ERROR_FRAME_{frame_number}: {str(e)}---\n"
+                                        yield error_msg.encode('utf-8')
+                        
+                    except Exception as e:
+                        print(f"Error in stream_frames_with_images: {str(e)}")
+                        error_response = json.dumps({"error": f"Failed to stream frames: {str(e)}"})
+                        yield error_response.encode('utf-8')
+                
+                # Return streaming response
+                return StreamingResponse(
+                    stream_frames_with_images(),
+                    media_type="application/octet-stream",
+                    headers={
+                        "Content-Type": "application/octet-stream",
+                        "Cache-Control": "no-cache",
+                        "X-Object-ID": object_id,
+                        "X-Customer-ID": customer_id,
+                        "X-Payment-Status": "paid" if is_paid else "unpaid",
+                        "X-Total-Frames": str(total_frames),
+                        "X-Frames-Returned": str(len(frames_to_return))
+                    }
+                )
+                
+            except HTTPException:
+                raise
+            except Exception as e:
+                print(f"Error retrieving rendered frames: {str(e)}")
+                raise HTTPException(
+                    status_code=500,
+                    detail=f"Failed to retrieve rendered frames: {str(e)}"
+                )
         
-
 
     async def run_app(self):
         config = uvicorn.Config(self.app, host=self.host, port=self.port)
