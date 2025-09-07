@@ -799,7 +799,8 @@ class sessionSupervisorClass:
     async def check_and_demand_users(self):
         while True:
             if self.number_of_users == 0:
-                await self.demand_users(1)
+                # await self.demand_users(1)
+                await self.demand_users(2)
                 await asyncio.sleep(20)
             else:
                 break
