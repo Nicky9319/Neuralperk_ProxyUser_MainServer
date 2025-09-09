@@ -108,7 +108,7 @@ class MessageQueue:
 # ------------------ Session Supervisor Class -------------------------- #
 
 class sessionSupervisorClass:
-    def __init__(self, customer_id = None, object_id = None, session_id = None):
+    def __init__(self, customer_id = None, object_id = None, session_id = None, workload_removing_callback = None):
         self.customer_id = customer_id
         self.object_id = object_id
 
@@ -166,6 +166,8 @@ class sessionSupervisorClass:
         self.last_frame = None
 
         self.completed = False
+
+        self.workload_completed_callback = workload_removing_callback
 
 
     async def initialization(self):
@@ -509,6 +511,7 @@ class sessionSupervisorClass:
         self.completed = True
         self.workload_status = "completed"
         await self.remove_users(self.user_list)
+        self.workload_removing_callback(self.customer_id)
         print("Workload Completed")
 
     async def distributeWorkload(self):

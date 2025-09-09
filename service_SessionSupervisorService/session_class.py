@@ -27,7 +27,7 @@ class sessionClass:
     # -------------------------
     # Initialization Section
     # -------------------------
-    def __init__(self, customer_id = None, object_id = None):
+    def __init__(self, customer_id = None, object_id = None, workload_removing_callback = None):
         self.session_status : Literal["queued", "rendering", "completed", "failed" , None] = None
         self.customer_id = customer_id
         self.object_id = object_id
@@ -45,6 +45,8 @@ class sessionClass:
             self.user_manager_service_url = "http://127.0.0.1:7000"
         else:
             self.user_manager_service_url = self.user_manager_service_url
+
+        self.workload_removing_callback = workload_removing_callback
 
     # -------------------------
     # Workload Management Section
@@ -78,6 +80,10 @@ class sessionClass:
 
 
     async def stop_and_delete_workload(self, customer_id):
+        await self.workload_removing_callback(customer_id)
+        await self.session_supervisor_instance.cleanup()
+        del self.session_supervisor_instance
+        self.session_supervisor_instance = None
         return JSONResponse(content={"message": "Workload stopped and deleted"}, status_code=200)
 
     # -------------------------
