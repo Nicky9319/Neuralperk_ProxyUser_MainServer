@@ -279,9 +279,32 @@ class HTTP_SERVER():
             object_id: str = Form(...)
         ):
             try:
-                print(f"Redirecting start-workload request to session supervisor service for customer: {customer_id}")
+                print(f"Starting workload for customer: {customer_id}, object: {object_id}")
                 
-                # Forward the request to session supervisor service with form data
+                # Step 1: Change object state to processing in MongoDB
+                print("Updating object state to processing in MongoDB...")
+                try:
+                    mongo_response = await self.http_client.put(
+                        f"{self.mongodb_service_url}/api/mongodb-service/blender-objects/change-state",
+                        json={
+                            "objectId": object_id,
+                            "customerId": customer_id,
+                            "objectState": "processing"
+                        }
+                    )
+                    
+                    if mongo_response.status_code != 200:
+                        print(f"Warning: Failed to update object state: {mongo_response.text}")
+                        # Continue anyway, but log the warning
+                    else:
+                        print("Object state updated to processing successfully")
+                        
+                except Exception as mongo_error:
+                    print(f"Error updating object state: {str(mongo_error)}")
+                    # Continue anyway, but log the error
+                
+                # Step 2: Forward the request to session supervisor service
+                print("Forwarding request to session supervisor service...")
                 response = await self.http_client.post(
                     f"{self.session_supervisor_service_url}/api/session-supervisor-service/start-workload",
                     data={
