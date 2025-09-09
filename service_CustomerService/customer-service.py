@@ -453,28 +453,10 @@ class HTTP_SERVER():
                 print(f"Streaming blend file from blob service...")
                 
                 try:
-                    # Get file info first to set proper headers
-                    head_response = await self.http_client.head(
-                        f"{self.blob_service_url}/api/blob-service/retrieve-blend",
-                        params={
-                            "bucket": bucket,
-                            "key": key
-                        }
-                    )
-                    
-                    if head_response.status_code != 200:
-                        raise HTTPException(
-                            status_code=head_response.status_code,
-                            detail=f"Blob service error: {head_response.text}"
-                        )
-                    
-                    # Get content length from headers
-                    content_length = head_response.headers.get('content-length', 'unknown')
                     file_name = path_parts[2]  # filename.blend
+                    print(f"Streaming blend file: {file_name}")
                     
-                    print(f"Streaming blend file: {file_name}, size: {content_length} bytes")
-                    
-                    # Create a proper streaming response
+                    # Create a proper streaming response that gets content length dynamically
                     async def stream_file():
                         try:
                             async with self.http_client.stream(
@@ -492,6 +474,10 @@ class HTTP_SERVER():
                                         detail=f"Blob service error: {error_content.decode()}"
                                     )
                                 
+                                # Get content length from the actual response headers
+                                content_length = response.headers.get('content-length', 'unknown')
+                                print(f"File size from blob service: {content_length} bytes")
+                                
                                 # Stream chunks directly to client
                                 async for chunk in response.aiter_bytes(chunk_size=8192):
                                     yield chunk
@@ -503,15 +489,14 @@ class HTTP_SERVER():
                                 detail=f"Failed to stream blend file: {str(e)}"
                             )
                     
-                    # Return streaming response with proper headers
+                    # Return streaming response with proper headers (without Content-Length since we can't get it beforehand)
                     return StreamingResponse(
                         stream_file(),
                         media_type="application/octet-stream",
                         headers={
                             "Content-Disposition": f"attachment; filename=\"{file_name}\"",
-                            "Content-Length": content_length,
                             "Cache-Control": "no-cache",
-                            "Accept-Ranges": "bytes"
+                            "Transfer-Encoding": "chunked"
                         }
                     )
                     
