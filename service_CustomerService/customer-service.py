@@ -414,7 +414,7 @@ class HTTP_SERVER():
                 print("Retrieving blend file path from MongoDB...")
                 mongo_response = await self.http_client.get(
                     f"{self.mongodb_service_url}/api/mongodb-service/blender-objects/get-blend-file-name/{object_id}",
-                    params={"customer_id": access_token}
+                    params={"customer_id": customer_id}
                 )
                 
                 if mongo_response.status_code != 200:
@@ -449,52 +449,48 @@ class HTTP_SERVER():
                 
                 print(f"Retrieving from bucket: {bucket}, key: {key}")
                 
-                # Step 3: Proxy the response directly from blob service to client
-                print(f"Proxying blend file from blob service...")
+                # Step 3: Fetch the file from blob service and return it
+                print(f"Fetching blend file from blob service...")
                 
-                # Create a streaming response that proxies the blob service
-                async def proxy_blend_file():
-                    try:
-                        async with httpx.AsyncClient() as proxy_client:
-                            async with proxy_client.stream(
-                                "GET",
-                                f"{self.blob_service_url}/api/blob-service/retrieve-blend",
-                                params={
-                                    "bucket": bucket,
-                                    "key": key
-                                }
-                            ) as response:
-                                if response.status_code != 200:
-                                    # If blob service fails, we need to handle it differently
-                                    error_content = await response.aread()
-                                    raise HTTPException(
-                                        status_code=response.status_code,
-                                        detail=f"Blob service error: {error_content.decode()}"
-                                    )
-                                
-                                # Stream the response directly to the client
-                                async for chunk in response.aiter_bytes():
-                                    yield chunk
-                                
-                    except Exception as e:
-                        print(f"Error in proxy stream: {str(e)}")
+                try:
+                    # Fetch the entire file from blob service
+                    blob_response = await self.http_client.get(
+                        f"{self.blob_service_url}/api/blob-service/retrieve-blend",
+                        params={
+                            "bucket": bucket,
+                            "key": key
+                        }
+                    )
+                    
+                    if blob_response.status_code != 200:
                         raise HTTPException(
-                            status_code=500,
-                            detail=f"Failed to proxy blend file: {str(e)}"
+                            status_code=blob_response.status_code,
+                            detail=f"Blob service error: {blob_response.text}"
                         )
-                
-                # Return streaming response with proper headers
-                file_name = path_parts[2]  # filename.blend
-                print(f"Proxying blend file: {file_name}")
-                
-                return StreamingResponse(
-                    proxy_blend_file(),
-                    media_type="application/octet-stream",
-                    headers={
-                        "Content-Disposition": f"attachment; filename=\"{file_name}\"",
-                        "Cache-Control": "no-cache"
-                    }
-                )
+                    
+                    # Get the file content
+                    file_content = blob_response.content
+                    file_name = path_parts[2]  # filename.blend
+                    
+                    print(f"Successfully fetched blend file: {file_name}, size: {len(file_content)} bytes")
+                    
+                    # Return the file as a proper response
+                    return Response(
+                        content=file_content,
+                        media_type="application/octet-stream",
+                        headers={
+                            "Content-Disposition": f"attachment; filename=\"{file_name}\"",
+                            "Content-Length": str(len(file_content)),
+                            "Cache-Control": "no-cache"
+                        }
+                    )
+                    
+                except Exception as e:
+                    print(f"Error fetching blend file: {str(e)}")
+                    raise HTTPException(
+                        status_code=500,
+                        detail=f"Failed to fetch blend file: {str(e)}"
+                    )
                 
             except HTTPException:
                 raise
