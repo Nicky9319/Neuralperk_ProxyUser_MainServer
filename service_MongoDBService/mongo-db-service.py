@@ -910,6 +910,48 @@ class HTTP_SERVER():
                 raise
             except Exception as e:
                 raise HTTPException(status_code=500, detail=f"Internal server error: {str(e)}")
+        
+        @self.app.get("/api/mongodb-service/blender-objects/get-by-customer/{customer_id}")
+        async def get_blender_objects_by_customer(customer_id: str):
+            """Get all blender objects associated with a specific customer
+            Parameters: customer_id (path parameter)
+            Returns: List of blender objects with objectId, blendFileName, and isPaid
+            """
+            try:
+                # Check if customer exists
+                customer = self.customers_collection.find_one({"customerId": customer_id})
+                if not customer:
+                    raise HTTPException(status_code=404, detail="Customer not found")
+                
+                # Find all blender objects for this customer
+                blender_objects = list(self.blender_objects_collection.find(
+                    {"customerId": customer_id},
+                    {"objectId": 1, "blendFileName": 1, "isPaid": 1, "_id": 0}
+                ))
+                
+                # Format the response
+                objects_list = []
+                for obj in blender_objects:
+                    objects_list.append({
+                        "objectId": obj["objectId"],
+                        "blendFileName": obj.get("blendFileName"),
+                        "isPaid": obj.get("isPaid", False)
+                    })
+                
+                return JSONResponse(
+                    content={
+                        "customerId": customer_id,
+                        "blenderObjects": objects_list,
+                        "totalObjects": len(objects_list),
+                        "message": "Blender objects retrieved successfully"
+                    },
+                    status_code=200
+                )
+                    
+            except HTTPException:
+                raise
+            except Exception as e:
+                raise HTTPException(status_code=500, detail=f"Internal server error: {str(e)}")
 
     async def run_app(self):
         config = uvicorn.Config(self.app, host=self.host, port=self.port)
