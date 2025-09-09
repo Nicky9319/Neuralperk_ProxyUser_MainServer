@@ -675,6 +675,58 @@ class HTTP_SERVER():
                     detail=f"Failed to retrieve rendered frames: {str(e)}"
                 )
         
+        @self.app.get("/api/customer-service/get-blender-objects")
+        async def getBlenderObjects(
+            access_token: str = Depends(self.authenticate_token),
+            customer_id: str = Depends(self.getCustomerIdFromAuthorizationHeader)
+        ):
+            """Get all blender objects associated with the authenticated customer
+            Returns: List of blender objects with objectId, blendFileName, and isPaid
+            """
+            print(f"Get blender objects endpoint hit for customer: {customer_id}")
+            
+            try:
+                # Call MongoDB service to get all blender objects for this customer
+                print("Calling MongoDB service to retrieve blender objects...")
+                mongo_response = await self.http_client.get(
+                    f"{self.mongodb_service_url}/api/mongodb-service/blender-objects/get-by-customer/{customer_id}"
+                )
+                
+                if mongo_response.status_code == 404:
+                    # Customer not found - this shouldn't happen since we authenticated
+                    raise HTTPException(
+                        status_code=404,
+                        detail="Customer not found"
+                    )
+                elif mongo_response.status_code != 200:
+                    raise HTTPException(
+                        status_code=500,
+                        detail=f"MongoDB service error: {mongo_response.text}"
+                    )
+                
+                mongo_result = mongo_response.json()
+                print(f"Retrieved {mongo_result.get('totalObjects', 0)} blender objects")
+                
+                # Return the response directly from MongoDB service
+                return JSONResponse(
+                    content=mongo_result,
+                    status_code=200
+                )
+                
+            except HTTPException:
+                raise
+            except httpx.RequestError as e:
+                print(f"Error connecting to MongoDB service: {str(e)}")
+                raise HTTPException(
+                    status_code=503,
+                    detail="MongoDB service unavailable"
+                )
+            except Exception as e:
+                print(f"Error retrieving blender objects: {str(e)}")
+                raise HTTPException(
+                    status_code=500,
+                    detail=f"Failed to retrieve blender objects: {str(e)}"
+                )
 
     async def run_app(self):
         config = uvicorn.Config(self.app, host=self.host, port=self.port)
