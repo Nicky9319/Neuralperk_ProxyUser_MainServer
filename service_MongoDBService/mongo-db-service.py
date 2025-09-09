@@ -271,7 +271,8 @@ class HTTP_SERVER():
                     "blendFileHash": blend_file_hash,
                     "renderedVideoPath": body.get("renderedVideoPath", None),
                     "customerId": body["customerId"],
-                    "isPaid": body.get("isPaid", False)
+                    "isPaid": body.get("isPaid", False),
+                    "objectState": body.get("objectState", "ready-to-render")
                 }
                 
                 result = self.blender_objects_collection.insert_one(object_doc)
@@ -926,7 +927,7 @@ class HTTP_SERVER():
                 # Find all blender objects for this customer
                 blender_objects = list(self.blender_objects_collection.find(
                     {"customerId": customer_id},
-                    {"objectId": 1, "blendFileName": 1, "isPaid": 1, "_id": 0}
+                    {"objectId": 1, "blendFileName": 1, "isPaid": 1, "objectState": 1, "_id": 0}
                 ))
                 
                 # Format the response
@@ -935,7 +936,8 @@ class HTTP_SERVER():
                     objects_list.append({
                         "objectId": obj["objectId"],
                         "blendFileName": obj.get("blendFileName"),
-                        "isPaid": obj.get("isPaid", False)
+                        "isPaid": obj.get("isPaid", False),
+                        "objectState": obj.get("objectState", "ready-to-render")
                     })
                 
                 return JSONResponse(
@@ -948,6 +950,59 @@ class HTTP_SERVER():
                     status_code=200
                 )
                     
+            except HTTPException:
+                raise
+            except Exception as e:
+                raise HTTPException(status_code=500, detail=f"Internal server error: {str(e)}")
+        
+        @self.app.put("/api/mongodb-service/blender-objects/change-state")
+        async def change_object_state(request: Request):
+            """Change the state of a blender object
+            Required fields: objectId, customerId, objectState
+            Returns: Success message with updated object details
+            """
+            try:
+                body = await request.json()
+                
+                # Validate required fields
+                required_fields = ["objectId", "customerId", "objectState"]
+                for field in required_fields:
+                    if field not in body:
+                        raise HTTPException(status_code=400, detail=f"Missing required field: {field}")
+                
+                # Validate objectState value
+                valid_states = ["ready-to-render", "processing", "video-ready"]
+                if body["objectState"] not in valid_states:
+                    raise HTTPException(
+                        status_code=400, 
+                        detail=f"Invalid objectState. Must be one of: {', '.join(valid_states)}"
+                    )
+                
+                # Check if customer exists
+                customer = self.customers_collection.find_one({"customerId": body["customerId"]})
+                if not customer:
+                    raise HTTPException(status_code=404, detail="Customer not found")
+                
+                # Update the object state
+                result = self.blender_objects_collection.update_one(
+                    {"objectId": body["objectId"], "customerId": body["customerId"]},
+                    {"$set": {"objectState": body["objectState"]}}
+                )
+                
+                if result.matched_count == 0:
+                    raise HTTPException(status_code=404, detail="Blender object not found")
+                
+                return JSONResponse(
+                    content={
+                        "message": "Object state updated successfully",
+                        "objectId": body["objectId"],
+                        "customerId": body["customerId"],
+                        "objectState": body["objectState"],
+                        "success": True
+                    },
+                    status_code=200
+                )
+                
             except HTTPException:
                 raise
             except Exception as e:

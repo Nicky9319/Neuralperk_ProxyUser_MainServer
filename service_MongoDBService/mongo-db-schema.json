@@ -33,7 +33,7 @@
         "$jsonSchema": {
           "bsonType": "object",
           "title": "blenderObjects",
-          "required": ["objectId", "customerId", "isPaid"],
+          "required": ["objectId", "customerId", "isPaid", "objectState"],
           "properties": {
             "objectId": {
               "bsonType": "string",
@@ -80,6 +80,11 @@
             "isPaid": {
               "bsonType": "bool",
               "description": "indicates if the blender object is paid for, must be a boolean and is required"
+            },
+            "objectState": {
+              "bsonType": "string",
+              "enum": ["ready-to-render", "processing", "video-ready"],
+              "description": "current state of the blender object, must be one of: ready-to-render, processing, video-ready and is required"
             }
           }
         }
