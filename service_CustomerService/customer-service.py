@@ -449,12 +449,12 @@ class HTTP_SERVER():
                 
                 print(f"Retrieving from bucket: {bucket}, key: {key}")
                 
-                # Step 3: Fetch the file from blob service and return it
-                print(f"Fetching blend file from blob service...")
+                # Step 3: Stream the file from blob service to client
+                print(f"Streaming blend file from blob service...")
                 
                 try:
-                    # Fetch the entire file from blob service
-                    blob_response = await self.http_client.get(
+                    # Get file info first to set proper headers
+                    head_response = await self.http_client.head(
                         f"{self.blob_service_url}/api/blob-service/retrieve-blend",
                         params={
                             "bucket": bucket,
@@ -462,34 +462,64 @@ class HTTP_SERVER():
                         }
                     )
                     
-                    if blob_response.status_code != 200:
+                    if head_response.status_code != 200:
                         raise HTTPException(
-                            status_code=blob_response.status_code,
-                            detail=f"Blob service error: {blob_response.text}"
+                            status_code=head_response.status_code,
+                            detail=f"Blob service error: {head_response.text}"
                         )
                     
-                    # Get the file content
-                    file_content = blob_response.content
+                    # Get content length from headers
+                    content_length = head_response.headers.get('content-length', 'unknown')
                     file_name = path_parts[2]  # filename.blend
                     
-                    print(f"Successfully fetched blend file: {file_name}, size: {len(file_content)} bytes")
+                    print(f"Streaming blend file: {file_name}, size: {content_length} bytes")
                     
-                    # Return the file as a proper response
-                    return Response(
-                        content=file_content,
+                    # Create a proper streaming response
+                    async def stream_file():
+                        try:
+                            async with self.http_client.stream(
+                                "GET",
+                                f"{self.blob_service_url}/api/blob-service/retrieve-blend",
+                                params={
+                                    "bucket": bucket,
+                                    "key": key
+                                }
+                            ) as response:
+                                if response.status_code != 200:
+                                    error_content = await response.aread()
+                                    raise HTTPException(
+                                        status_code=response.status_code,
+                                        detail=f"Blob service error: {error_content.decode()}"
+                                    )
+                                
+                                # Stream chunks directly to client
+                                async for chunk in response.aiter_bytes(chunk_size=8192):
+                                    yield chunk
+                                    
+                        except Exception as e:
+                            print(f"Error in file stream: {str(e)}")
+                            raise HTTPException(
+                                status_code=500,
+                                detail=f"Failed to stream blend file: {str(e)}"
+                            )
+                    
+                    # Return streaming response with proper headers
+                    return StreamingResponse(
+                        stream_file(),
                         media_type="application/octet-stream",
                         headers={
                             "Content-Disposition": f"attachment; filename=\"{file_name}\"",
-                            "Content-Length": str(len(file_content)),
-                            "Cache-Control": "no-cache"
+                            "Content-Length": content_length,
+                            "Cache-Control": "no-cache",
+                            "Accept-Ranges": "bytes"
                         }
                     )
                     
                 except Exception as e:
-                    print(f"Error fetching blend file: {str(e)}")
+                    print(f"Error setting up file stream: {str(e)}")
                     raise HTTPException(
                         status_code=500,
-                        detail=f"Failed to fetch blend file: {str(e)}"
+                        detail=f"Failed to setup blend file stream: {str(e)}"
                     )
                 
             except HTTPException:
