@@ -1007,6 +1007,52 @@ class HTTP_SERVER():
                 raise
             except Exception as e:
                 raise HTTPException(status_code=500, detail=f"Internal server error: {str(e)}")
+        
+        @self.app.delete("/api/mongodb-service/blender-objects/delete/{object_id}")
+        async def delete_blender_object(object_id: str, customer_id: str):
+            """Delete a blender object by objectId and customerId
+            Parameters: object_id (path parameter), customer_id (query parameter)
+            Returns: Success message with deleted object details
+            """
+            try:
+                # Check if customer exists
+                customer = self.customers_collection.find_one({"customerId": customer_id})
+                if not customer:
+                    raise HTTPException(status_code=404, detail="Customer not found")
+                
+                # Check if blender object exists and belongs to customer
+                blender_object = self.blender_objects_collection.find_one({
+                    "objectId": object_id,
+                    "customerId": customer_id
+                })
+                
+                if not blender_object:
+                    raise HTTPException(status_code=404, detail="Blender object not found")
+                
+                # Delete the blender object
+                result = self.blender_objects_collection.delete_one({
+                    "objectId": object_id,
+                    "customerId": customer_id
+                })
+                
+                if result.deleted_count == 0:
+                    raise HTTPException(status_code=404, detail="Blender object not found or already deleted")
+                
+                return JSONResponse(
+                    content={
+                        "message": "Blender object deleted successfully",
+                        "objectId": object_id,
+                        "customerId": customer_id,
+                        "blendFileName": blender_object.get("blendFileName"),
+                        "deletedCount": result.deleted_count
+                    },
+                    status_code=200
+                )
+                    
+            except HTTPException:
+                raise
+            except Exception as e:
+                raise HTTPException(status_code=500, detail=f"Internal server error: {str(e)}")
 
     async def run_app(self):
         config = uvicorn.Config(self.app, host=self.host, port=self.port)

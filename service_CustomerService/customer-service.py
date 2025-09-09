@@ -493,6 +493,57 @@ class HTTP_SERVER():
                     status_code=500,
                     detail=f"Failed to retrieve blend file: {str(e)}"
                 )
+        
+        @self.app.delete("/api/customer-service/delete-blend-file/{object_id}")
+        async def deleteBlendFile(
+            object_id: str,
+            access_token: str = Depends(self.authenticate_token),
+            customer_id: str = Depends(self.getCustomerIdFromAuthorizationHeader)
+        ):
+            """Delete a blender object by objectId
+            Parameters: object_id (path parameter)
+            Returns: Success message with deleted object details
+            """
+            print(f"Delete blend file endpoint hit for customer: {customer_id}")
+            print(f"Requested object ID: {object_id}")
+            
+            try:
+                # Forward the delete request to MongoDB service
+                mongo_response = await self.http_client.delete(
+                    f"{self.mongodb_service_url}/api/mongodb-service/blender-objects/delete/{object_id}",
+                    params={"customer_id": customer_id}
+                )
+                
+                if mongo_response.status_code == 200:
+                    result = mongo_response.json()
+                    print(f"Successfully deleted blender object: {object_id}")
+                    return JSONResponse(
+                        content={
+                            "message": "Blender object deleted successfully",
+                            "objectId": object_id,
+                            "customerId": customer_id,
+                            "blendFileName": result.get("blendFileName"),
+                            "deletedCount": result.get("deletedCount")
+                        },
+                        status_code=200
+                    )
+                else:
+                    # Forward the error from MongoDB service
+                    error_detail = mongo_response.text
+                    print(f"MongoDB service error: {mongo_response.status_code} - {error_detail}")
+                    raise HTTPException(
+                        status_code=mongo_response.status_code,
+                        detail=f"MongoDB service error: {error_detail}"
+                    )
+                    
+            except HTTPException:
+                raise
+            except Exception as e:
+                print(f"Error deleting blend file: {str(e)}")
+                raise HTTPException(
+                    status_code=500,
+                    detail=f"Failed to delete blend file: {str(e)}"
+                )
     
         @self.app.get("/api/customer-service/get-rendered-video")
         async def getRenderedVideo(
