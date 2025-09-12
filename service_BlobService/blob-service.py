@@ -204,6 +204,39 @@ class HTTP_SERVER():
                     content={"error": f"Failed to retrieve blend file: {str(e)}"},
                     status_code=500
                 )
+
+        # 4.5. Retrieve blend file metadata
+        @self.app.get("/api/blob-service/retrieve-blend-metadata")
+        async def retrieveBlendMetadata(
+            bucket: str,
+            key: str
+        ):
+            try:
+                print(f"[INFO] Retrieving blend file metadata from bucket: {bucket}")
+                print(f"[INFO] Key: {key}")
+                
+                # Add .blend extension if not present in key
+                if not key.endswith(".blend"):
+                    key = f"{key}.blend"
+                    print(f"[DEBUG] Appended .blend extension to key. New key: {key}")
+                
+                # Retrieve metadata from blob storage
+                metadata = await self.retrieveBlendFileMetadataFromBlobStorage(bucket, key)
+                
+                if isinstance(metadata, dict) and "error" in metadata:
+                    print(f"[ERROR] Error retrieving blend file metadata: {metadata['error']}")
+                    return JSONResponse(content={"error": metadata["error"]}, status_code=404)
+                
+                # Return metadata as JSON
+                print(f"[INFO] Successfully retrieved blend file metadata: {key} from bucket: {bucket}")
+                return JSONResponse(content=metadata, status_code=200)
+            except Exception as e:
+                import traceback
+                print(f"[ERROR] Exception occurred while retrieving blend file metadata: {traceback.format_exc()}")
+                return JSONResponse(
+                    content={"error": f"Failed to retrieve blend file metadata: {str(e)}"},
+                    status_code=500
+                )
         
         # 5. List buckets
         @self.app.get("/api/blob-service/list-buckets")
@@ -370,6 +403,53 @@ class HTTP_SERVER():
             return data
         except Exception as e:
             print(f"[ERROR] Exception occurred while retrieving blend file from bucket '{bucket}', key '{key}': {str(e)}")
+            return {"error": str(e)}
+
+    async def retrieveBlendFileMetadataFromBlobStorage(self, bucket: str, key: str):
+        try:
+            print(f"[INFO] Attempting to retrieve blend file metadata from bucket: {bucket}, key: {key}")
+            # Ensure bucket exists before retrieving
+            bucket_created = await self.ensure_bucket_exists(bucket)
+            if not bucket_created:
+                print(f"[ERROR] Failed to create or access bucket: {bucket}")
+                return {"error": f"Failed to create bucket '{bucket}'"}
+            
+            print(f"[INFO] Bucket '{bucket}' exists. Proceeding to get object metadata with key '{key}'")
+            
+            # Get object metadata using head_object (doesn't download the file content)
+            response = self.client.head_object(Bucket=bucket, Key=key)
+            
+            # Extract relevant metadata
+            metadata = {
+                "bucket": bucket,
+                "key": key,
+                "filename": key.split('/')[-1],  # Get filename from key
+                "size_bytes": response.get('ContentLength', 0),
+                "last_modified": response.get('LastModified', '').isoformat() if response.get('LastModified') else None,
+                "content_type": response.get('ContentType', 'application/octet-stream'),
+                "etag": response.get('ETag', '').strip('"'),  # Remove quotes from ETag
+                "storage_class": response.get('StorageClass', 'STANDARD'),
+                "metadata": response.get('Metadata', {}),
+                "server_side_encryption": response.get('ServerSideEncryption'),
+                "version_id": response.get('VersionId'),
+                "exists": True
+            }
+            
+            # Calculate human-readable file size
+            size_bytes = metadata["size_bytes"]
+            if size_bytes < 1024:
+                metadata["size_human"] = f"{size_bytes} B"
+            elif size_bytes < 1024 * 1024:
+                metadata["size_human"] = f"{size_bytes / 1024:.2f} KB"
+            elif size_bytes < 1024 * 1024 * 1024:
+                metadata["size_human"] = f"{size_bytes / (1024 * 1024):.2f} MB"
+            else:
+                metadata["size_human"] = f"{size_bytes / (1024 * 1024 * 1024):.2f} GB"
+            
+            print(f"[INFO] Successfully retrieved blend file metadata. Size: {metadata['size_human']}")
+            return metadata
+        except Exception as e:
+            print(f"[ERROR] Exception occurred while retrieving blend file metadata from bucket '{bucket}', key '{key}': {str(e)}")
             return {"error": str(e)}
 
     # Temp bucket helper methods
