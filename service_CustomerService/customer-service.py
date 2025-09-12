@@ -412,86 +412,114 @@ class HTTP_SERVER():
             print(f"Requested object ID: {object_id}")
 
             try:
-                # Step 1: Get blend file path from MongoDB
-                mongo_response = await self.http_client.get(
-                    f"{self.mongodb_service_url}/api/mongodb-service/blender-objects/get-blend-file-name/{object_id}",
-                    params={"customer_id": customer_id}
-                )
-
-                if mongo_response.status_code != 200:
+                # Step 1: Query MongoDB service for blend file path using object ID
+                try:
+                    blend_file_data = await self.http_client.get(
+                        f"{self.mongodb_service_url}/api/mongodb-service/blender-objects/get-blend-file-name/{object_id}",
+                        params={"customer_id": customer_id},
+                        timeout=10.0
+                    )
+                except Exception as e:
+                    print(f"Error contacting MongoDB service: {str(e)}")
                     raise HTTPException(
-                        status_code=404,
-                        detail=f"Blend file not found: {mongo_response.text}"
+                        status_code=502,
+                        detail=f"Failed to contact MongoDB service: {str(e)}"
                     )
 
-                mongo_result = mongo_response.json()
-                blend_file_path = mongo_result.get("blendFilePath")
-
-                if not blend_file_path:
+                if blend_file_data.status_code != 200:
+                    try:
+                        error_detail = blend_file_data.json().get("detail", blend_file_data.text)
+                    except Exception:
+                        error_detail = blend_file_data.text
+                    print(f"MongoDB service returned error: {blend_file_data.status_code} - {error_detail}")
                     raise HTTPException(
-                        status_code=404,
-                        detail="Blend file path not found in database"
+                        status_code=blend_file_data.status_code,
+                        detail=f"MongoDB service error: {error_detail}"
                     )
 
-                print(f"Found blend file path: {blend_file_path}")
-
-                # Step 2: Extract bucket + key
-                path_parts = blend_file_path.split('/')
-                if len(path_parts) != 3:
+                try:
+                    blend_file_json = blend_file_data.json()
+                except Exception as e:
+                    print(f"Failed to parse MongoDB response JSON: {str(e)}")
                     raise HTTPException(
                         status_code=500,
-                        detail=f"Invalid blend file path format: {blend_file_path}"
+                        detail="Failed to parse MongoDB service response"
+                    )
+
+                blend_file_path = blend_file_json.get("blendFilePath")
+                if not blend_file_path:
+                    print("blendFilePath not found in MongoDB response")
+                    raise HTTPException(
+                        status_code=404,
+                        detail="Blend file not found for the given object ID"
                     )
 
                 bucket = "blend-files"
                 key = blend_file_path
-                file_name = path_parts[2]
 
-                print(f"Streaming from bucket={bucket}, key={key}, file={file_name}")
+                print(f"Retrieving from bucket: {bucket}, key: {key}")
 
-                # Step 3: Stream file from blob service
-                async def stream_file():
-                    async with self.http_client.stream(
-                        "GET",
-                        f"{self.blob_service_url}/api/blob-service/retrieve-blend",
-                        params={"bucket": bucket, "key": key}
-                    ) as response:
-                        if response.status_code != 200:
-                            error_content = await response.aread()
-                            raise HTTPException(
-                                status_code=response.status_code,
-                                detail=f"Blob service error: {error_content.decode()}"
-                            )
+                # Step 2: Proxy the response directly from blob service to client
+                print(f"Proxying blend file from blob service...")
 
-                        # Forward content length if available
-                        content_length = response.headers.get("content-length")
-                        if content_length:
-                            nonlocal response_headers
-                            response_headers["Content-Length"] = content_length
-                            print(f"File size from blob service: {content_length} bytes")
+                # Create a streaming response that proxies the blob service
+                async def proxy_blend_file():
+                    try:
+                        async with httpx.AsyncClient() as proxy_client:
+                            async with proxy_client.stream(
+                                "GET",
+                                f"{self.blob_service_url}/api/blob-service/retrieve-blend",
+                                params={
+                                    "bucket": bucket,
+                                    "key": key
+                                },
+                                timeout=30.0
+                            ) as response:
+                                if response.status_code != 200:
+                                    # If blob service fails, we need to handle it differently
+                                    try:
+                                        error_content = await response.aread()
+                                        error_detail = error_content.decode(errors="replace")
+                                    except Exception:
+                                        error_detail = "Unknown error"
+                                    print(f"Blob service returned error: {response.status_code} - {error_detail}")
+                                    raise HTTPException(
+                                        status_code=response.status_code,
+                                        detail=f"Blob service error: {error_detail}"
+                                    )
 
-                        async for chunk in response.aiter_bytes(chunk_size=8192):
-                            yield chunk
+                                # Stream the response directly to the client
+                                async for chunk in response.aiter_bytes():
+                                    yield chunk
 
-                # Prepare headers
-                response_headers = {
-                    "Content-Disposition": f'attachment; filename="{file_name}"',
-                    "Cache-Control": "no-cache"
-                }
+                    except HTTPException:
+                        raise
+                    except Exception as e:
+                        print(f"Error in proxy stream: {str(e)}")
+                        raise HTTPException(
+                            status_code=500,
+                            detail=f"Failed to proxy blend file: {str(e)}"
+                        )
+
+                # Return streaming response with proper headers
+                file_name = os.path.basename(blend_file_path) if blend_file_path else "blendfile.blend"
+                print(f"Proxying blend file: {file_name}")
 
                 return StreamingResponse(
-                    stream_file(),
+                    proxy_blend_file(),
                     media_type="application/octet-stream",
-                    headers=response_headers
+                    headers={
+                        "Content-Disposition": f"attachment; filename=\"{file_name}\"",
+                        "Cache-Control": "no-cache"
+                    }
                 )
-
             except HTTPException:
                 raise
             except Exception as e:
-                print(f"Error retrieving blend file: {str(e)}")
+                print(f"Unexpected error in getBlendFile: {str(e)}")
                 raise HTTPException(
                     status_code=500,
-                    detail=f"Failed to retrieve blend file: {str(e)}"
+                    detail=f"Internal server error: {str(e)}"
                 )
         
         @self.app.delete("/api/customer-service/delete-blend-file/{object_id}")
