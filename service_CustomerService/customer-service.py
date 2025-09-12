@@ -71,6 +71,20 @@ class HTTP_SERVER():
         # HTTP client for making requests to MongoDB service and Auth service
         self.http_client = httpx.AsyncClient(timeout=30.0)
 
+    def _format_file_size(self, size_bytes):
+        """Format file size in human-readable format"""
+        if size_bytes is None:
+            return None
+        
+        if size_bytes < 1024:
+            return f"{size_bytes} B"
+        elif size_bytes < 1024 * 1024:
+            return f"{size_bytes / 1024:.2f} KB"
+        elif size_bytes < 1024 * 1024 * 1024:
+            return f"{size_bytes / (1024 * 1024):.2f} MB"
+        else:
+            return f"{size_bytes / (1024 * 1024 * 1024):.2f} GB"
+
     async def authenticate_token(self, credentials: HTTPAuthorizationCredentials = Depends(security)):
         """
         Middleware function to authenticate the access token (customerId)
@@ -697,20 +711,47 @@ class HTTP_SERVER():
                     
                     print(f"Customer has not paid - returning {len(frames_to_return)} out of {total_frames} frames (30%)")
                 
-                # Step 4: Create streaming response with images
+                # Step 4: Get metadata for each frame (including content length)
+                print("Retrieving metadata for rendered frames...")
+                frames_metadata = []
+                for frame in frames_to_return:
+                    frame_number = frame.get("frameNumber")
+                    image_file_path = frame.get("imageFilePath")
+                    
+                    if frame_number is not None and image_file_path:
+                        # Get image metadata from blob service
+                        try:
+                            metadata_response = await self.http_client.get(
+                                f"{self.blob_service_url}/api/blob-service/retrieve-blend-metadata",
+                                params={
+                                    "bucket": "rendered-frames",
+                                    "key": image_file_path
+                                },
+                                timeout=5.0
+                            )
+                            
+                            content_length = None
+                            if metadata_response.status_code == 200:
+                                metadata_json = metadata_response.json()
+                                content_length = metadata_json.get("size_bytes")
+                                print(f"Retrieved metadata for frame {frame_number} - Content length: {content_length} bytes")
+                            else:
+                                print(f"Warning: Could not retrieve metadata for frame {frame_number}, status: {metadata_response.status_code}")
+                                
+                        except Exception as e:
+                            print(f"Warning: Error retrieving metadata for frame {frame_number}: {str(e)}")
+                            content_length = None
+                        
+                        frames_metadata.append({
+                            "frameNumber": frame_number,
+                            "imageFilePath": image_file_path,
+                            "contentLength": content_length,
+                            "contentLengthHuman": self._format_file_size(content_length) if content_length else None
+                        })
+                
+                # Step 5: Create streaming response with images
                 async def stream_frames_with_images():
                     try:
-                        # First, send the metadata as JSON
-                        frames_metadata = []
-                        for frame in frames_to_return:
-                            frame_number = frame.get("frameNumber")
-                            image_file_path = frame.get("imageFilePath")
-                            
-                            if frame_number is not None and image_file_path:
-                                frames_metadata.append({
-                                    "frameNumber": frame_number,
-                                    "imageFilePath": image_file_path
-                                })
                         
                         # Create metadata response
                         metadata_response = {
