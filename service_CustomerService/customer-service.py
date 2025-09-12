@@ -521,7 +521,127 @@ class HTTP_SERVER():
                     status_code=500,
                     detail=f"Internal server error: {str(e)}"
                 )
-        
+
+        @self.app.get("/api/customer-service/download-blend-file/{object_id}/{customer_id}")
+        async def downloadBlendFile(
+            object_id: str,
+            customer_id: str
+        ):
+            print(f"Download blend file endpoint hit for customer: {customer_id}")
+            print(f"Requested object ID: {object_id}")
+
+            try:
+                # Step 1: Query MongoDB service for blend file path using object ID
+                try:
+                    blend_file_data = await self.http_client.get(
+                        f"{self.mongodb_service_url}/api/mongodb-service/blender-objects/get-blend-file-name/{object_id}",
+                        params={"customer_id": customer_id},
+                        timeout=10.0
+                    )
+                except Exception as e:
+                    print(f"Error contacting MongoDB service: {str(e)}")
+                    raise HTTPException(
+                        status_code=502,
+                        detail=f"Failed to contact MongoDB service: {str(e)}"
+                    )
+
+                if blend_file_data.status_code != 200:
+                    try:
+                        error_detail = blend_file_data.json().get("detail", blend_file_data.text)
+                    except Exception:
+                        error_detail = blend_file_data.text
+                    print(f"MongoDB service returned error: {blend_file_data.status_code} - {error_detail}")
+                    raise HTTPException(
+                        status_code=blend_file_data.status_code,
+                        detail=f"MongoDB service error: {error_detail}"
+                    )
+
+                try:
+                    blend_file_json = blend_file_data.json()
+                except Exception as e:
+                    print(f"Failed to parse MongoDB response JSON: {str(e)}")
+                    raise HTTPException(
+                        status_code=500,
+                        detail="Failed to parse MongoDB service response"
+                    )
+
+                blend_file_path = blend_file_json.get("blendFilePath")
+                if not blend_file_path:
+                    print("blendFilePath not found in MongoDB response")
+                    raise HTTPException(
+                        status_code=404,
+                        detail="Blend file not found for the given object ID"
+                    )
+
+                bucket = "blend-files"
+                key = blend_file_path
+
+                print(f"Retrieving from bucket: {bucket}, key: {key}")
+
+                # Step 2: Proxy the response directly from blob service to client
+                print(f"Proxying blend file from blob service...")
+
+                # Create a streaming response that proxies the blob service
+                async def proxy_blend_file():
+                    try:
+                        async with httpx.AsyncClient() as proxy_client:
+                            async with proxy_client.stream(
+                                "GET",
+                                f"{self.blob_service_url}/api/blob-service/retrieve-blend",
+                                params={
+                                    "bucket": bucket,
+                                    "key": key
+                                },
+                                timeout=30.0
+                            ) as response:
+                                if response.status_code != 200:
+                                    # If blob service fails, we need to handle it differently
+                                    try:
+                                        error_content = await response.aread()
+                                        error_detail = error_content.decode(errors="replace")
+                                    except Exception:
+                                        error_detail = "Unknown error"
+                                    print(f"Blob service returned error: {response.status_code} - {error_detail}")
+                                    raise HTTPException(
+                                        status_code=response.status_code,
+                                        detail=f"Blob service error: {error_detail}"
+                                    )
+
+                                # Stream the response directly to the client
+                                async for chunk in response.aiter_bytes():
+                                    yield chunk
+
+                    except HTTPException:
+                        raise
+                    except Exception as e:
+                        print(f"Error in proxy stream: {str(e)}")
+                        raise HTTPException(
+                            status_code=500,
+                            detail=f"Failed to proxy blend file: {str(e)}"
+                        )
+
+                # Return streaming response with proper headers for download
+                file_name = os.path.basename(blend_file_path) if blend_file_path else "blendfile.blend"
+                print(f"Downloading blend file: {file_name}")
+
+                return StreamingResponse(
+                    proxy_blend_file(),
+                    media_type="application/octet-stream",
+                    headers={
+                        "Content-Disposition": f"attachment; filename=\"{file_name}\"",
+                        "Cache-Control": "no-cache",
+                        "Content-Type": "application/octet-stream"
+                    }
+                )
+            except HTTPException:
+                raise
+            except Exception as e:
+                print(f"Unexpected error in downloadBlendFile: {str(e)}")
+                raise HTTPException(
+                    status_code=500,
+                    detail=f"Internal server error: {str(e)}"
+                )
+
         @self.app.delete("/api/customer-service/delete-blend-file/{object_id}")
         async def deleteBlendFile(
             object_id: str,
