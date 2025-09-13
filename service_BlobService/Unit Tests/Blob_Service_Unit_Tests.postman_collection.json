@@ -98,6 +98,136 @@
 				"description": "Tests the generate signed URL functionality with 5-minute expiration time."
 			},
 			"response": []
+		},
+		{
+			"name": "5. Test Delete Single File",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "{{base_url}}/api/blob-service/delete-key?bucket={{test_bucket}}&key={{test_single_file_key}}",
+					"host": ["{{base_url}}"],
+					"path": ["api", "blob-service", "delete-key"],
+					"query": [
+						{
+							"key": "bucket",
+							"value": "{{test_bucket}}",
+							"description": "Bucket name containing the file to delete"
+						},
+						{
+							"key": "key",
+							"value": "{{test_single_file_key}}",
+							"description": "Single file key/name to delete"
+						}
+					]
+				},
+				"description": "Tests deletion of a single file from blob storage."
+			},
+			"response": []
+		},
+		{
+			"name": "6. Test Delete Folder (with trailing slash)",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "{{base_url}}/api/blob-service/delete-key?bucket={{test_bucket}}&key={{test_folder_key_with_slash}}",
+					"host": ["{{base_url}}"],
+					"path": ["api", "blob-service", "delete-key"],
+					"query": [
+						{
+							"key": "bucket",
+							"value": "{{test_bucket}}",
+							"description": "Bucket name containing the folder to delete"
+						},
+						{
+							"key": "key",
+							"value": "{{test_folder_key_with_slash}}",
+							"description": "Folder path with trailing slash to delete"
+						}
+					]
+				},
+				"description": "Tests deletion of a folder (with trailing slash) and all its contents from blob storage."
+			},
+			"response": []
+		},
+		{
+			"name": "7. Test Delete Folder (without trailing slash)",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "{{base_url}}/api/blob-service/delete-key?bucket={{test_bucket}}&key={{test_folder_key_without_slash}}",
+					"host": ["{{base_url}}"],
+					"path": ["api", "blob-service", "delete-key"],
+					"query": [
+						{
+							"key": "bucket",
+							"value": "{{test_bucket}}",
+							"description": "Bucket name containing the folder to delete"
+						},
+						{
+							"key": "key",
+							"value": "{{test_folder_key_without_slash}}",
+							"description": "Folder path without trailing slash to delete"
+						}
+					]
+				},
+				"description": "Tests deletion of a folder (without trailing slash) and all its contents from blob storage."
+			},
+			"response": []
+		},
+		{
+			"name": "8. Test Delete Non-existent Key",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "{{base_url}}/api/blob-service/delete-key?bucket={{test_bucket}}&key={{test_nonexistent_key}}",
+					"host": ["{{base_url}}"],
+					"path": ["api", "blob-service", "delete-key"],
+					"query": [
+						{
+							"key": "bucket",
+							"value": "{{test_bucket}}",
+							"description": "Bucket name"
+						},
+						{
+							"key": "key",
+							"value": "{{test_nonexistent_key}}",
+							"description": "Non-existent key to test error handling"
+						}
+					]
+				},
+				"description": "Tests deletion of a non-existent key to verify proper error handling."
+			},
+			"response": []
+		},
+		{
+			"name": "9. Test Delete from Non-existent Bucket",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "{{base_url}}/api/blob-service/delete-key?bucket={{test_nonexistent_bucket}}&key={{test_single_file_key}}",
+					"host": ["{{base_url}}"],
+					"path": ["api", "blob-service", "delete-key"],
+					"query": [
+						{
+							"key": "bucket",
+							"value": "{{test_nonexistent_bucket}}",
+							"description": "Non-existent bucket name to test error handling"
+						},
+						{
+							"key": "key",
+							"value": "{{test_single_file_key}}",
+							"description": "File key to delete"
+						}
+					]
+				},
+				"description": "Tests deletion from a non-existent bucket to verify proper error handling."
+			},
+			"response": []
 		}
 	],
 	"event": [
@@ -150,6 +280,63 @@
 					"            pm.expect(responseJson.expiration_seconds.toString()).to.equal(requestExpiration.value);",
 					"        }",
 					"    });",
+					"}",
+					"",
+					"// Additional tests for delete key endpoint",
+					"if (pm.request.url.toString().includes('delete-key')) {",
+					"    pm.test('Delete key response has correct structure', function () {",
+					"        const responseJson = pm.response.json();",
+					"        pm.expect(responseJson).to.have.property('message');",
+					"        pm.expect(responseJson).to.have.property('bucket');",
+					"        pm.expect(responseJson).to.have.property('key');",
+					"        pm.expect(responseJson).to.have.property('deleted_objects');",
+					"        pm.expect(responseJson).to.have.property('total_deleted');",
+					"    });",
+					"    ",
+					"    pm.test('Deleted objects is an array', function () {",
+					"        const responseJson = pm.response.json();",
+					"        pm.expect(responseJson.deleted_objects).to.be.an('array');",
+					"    });",
+					"    ",
+					"    pm.test('Total deleted is a number', function () {",
+					"        const responseJson = pm.response.json();",
+					"        pm.expect(responseJson.total_deleted).to.be.a('number');",
+					"        pm.expect(responseJson.total_deleted).to.be.at.least(0);",
+					"    });",
+					"    ",
+					"    pm.test('Bucket parameter matches response', function () {",
+					"        const responseJson = pm.response.json();",
+					"        const requestBucket = pm.request.url.query.get('bucket');",
+					"        if (responseJson.bucket && requestBucket) {",
+					"            pm.expect(responseJson.bucket).to.equal(requestBucket.value);",
+					"        }",
+					"    });",
+					"    ",
+					"    pm.test('Key parameter matches response', function () {",
+					"        const responseJson = pm.response.json();",
+					"        const requestKey = pm.request.url.query.get('key');",
+					"        if (responseJson.key && requestKey) {",
+					"            pm.expect(responseJson.key).to.equal(requestKey.value);",
+					"        }",
+					"    });",
+					"    ",
+					"    // Test for successful deletion (200 status)",
+					"    if (pm.response.code === 200) {",
+					"        pm.test('Successful deletion response', function () {",
+					"            const responseJson = pm.response.json();",
+					"            pm.expect(responseJson.message).to.include('deleted successfully');",
+					"            pm.expect(responseJson.total_deleted).to.be.at.least(0);",
+					"        });",
+					"    }",
+					"    ",
+					"    // Test for error responses (500 status)",
+					"    if (pm.response.code === 500) {",
+					"        pm.test('Error response structure', function () {",
+					"            const responseJson = pm.response.json();",
+					"            pm.expect(responseJson).to.have.property('error');",
+					"            pm.expect(responseJson.error).to.be.a('string');",
+					"        });",
+					"    }",
 					"}"
 				]
 			}
@@ -191,6 +378,36 @@
 			"value": "300",
 			"type": "string",
 			"description": "Test expiration time in seconds (300 = 5 minutes)"
+		},
+		{
+			"key": "test_single_file_key",
+			"value": "test-single-file.txt",
+			"type": "string",
+			"description": "Test single file key for deletion testing"
+		},
+		{
+			"key": "test_folder_key_with_slash",
+			"value": "test-folder/",
+			"type": "string",
+			"description": "Test folder key with trailing slash for deletion testing"
+		},
+		{
+			"key": "test_folder_key_without_slash",
+			"value": "test-folder",
+			"type": "string",
+			"description": "Test folder key without trailing slash for deletion testing"
+		},
+		{
+			"key": "test_nonexistent_key",
+			"value": "nonexistent-file.txt",
+			"type": "string",
+			"description": "Test non-existent key for error handling testing"
+		},
+		{
+			"key": "test_nonexistent_bucket",
+			"value": "nonexistent-bucket",
+			"type": "string",
+			"description": "Test non-existent bucket for error handling testing"
 		}
 	]
 }

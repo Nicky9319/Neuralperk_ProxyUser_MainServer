@@ -559,6 +559,53 @@ class HTTP_SERVER():
                     status_code=500
                 )
 
+        # =============================================================================
+        # DELETE OPERATIONS ROUTES
+        # =============================================================================
+        
+        @self.app.delete("/api/blob-service/delete-key")
+        async def deleteKey(
+            bucket: str,
+            key: str
+        ):
+            """
+            Delete a key (file or folder) from the specified bucket.
+            If the key is a folder, all objects within that folder will be deleted.
+            
+            Args:
+                bucket: Source bucket name
+                key: File key/name or folder path to delete
+            
+            Returns:
+                JSON response with success/error status and deletion summary
+            """
+            try:
+                print(f"[INFO] Deleting key from bucket: {bucket}")
+                print(f"[INFO] Key: {key}")
+                
+                # Delete from blob storage
+                result = await self.deleteKeyFromBlobStorage(bucket, key)
+                
+                if "error" in result:
+                    print(f"[ERROR] Error deleting key: {result['error']}")
+                    return JSONResponse(content={"error": result["error"]}, status_code=500)
+                
+                print(f"[INFO] Successfully deleted key: {key} from bucket: {bucket}")
+                return JSONResponse(content={
+                    "message": "Key deleted successfully",
+                    "bucket": bucket,
+                    "key": key,
+                    "deleted_objects": result.get("deleted_objects", []),
+                    "total_deleted": result.get("total_deleted", 0)
+                }, status_code=200)
+            except Exception as e:
+                import traceback
+                print(f"[ERROR] Exception occurred while deleting key: {traceback.format_exc()}")
+                return JSONResponse(
+                    content={"error": f"Failed to delete key: {str(e)}"},
+                    status_code=500
+                )
+
 
     # =============================================================================
     # BLOB STORAGE OPERATION METHODS
@@ -840,6 +887,159 @@ class HTTP_SERVER():
             return signed_url
         except Exception as e:
             print(f"[ERROR] Exception occurred while generating signed URL for bucket '{bucket}', key '{key}': {str(e)}")
+            return {"error": str(e)}
+
+    # =============================================================================
+    # DELETE OPERATIONS
+    # =============================================================================
+    
+    async def listObjectsWithPrefix(self, bucket: str, prefix: str):
+        """
+        List all objects in a bucket that start with the given prefix.
+        
+        Args:
+            bucket: Source bucket name
+            prefix: Prefix to filter objects
+            
+        Returns:
+            list: List of object keys or dict with error
+        """
+        try:
+            print(f"[INFO] Listing objects with prefix '{prefix}' in bucket '{bucket}'")
+            
+            # Ensure bucket exists
+            bucket_created = await self.ensure_bucket_exists(bucket)
+            if not bucket_created:
+                print(f"[ERROR] Failed to create or access bucket: {bucket}")
+                return {"error": f"Failed to create bucket '{bucket}'"}
+            
+            # List objects with the given prefix
+            paginator = self.client.get_paginator('list_objects_v2')
+            page_iterator = paginator.paginate(Bucket=bucket, Prefix=prefix)
+            
+            objects = []
+            for page in page_iterator:
+                if 'Contents' in page:
+                    for obj in page['Contents']:
+                        objects.append(obj['Key'])
+            
+            print(f"[INFO] Found {len(objects)} objects with prefix '{prefix}'")
+            return objects
+        except Exception as e:
+            print(f"[ERROR] Exception occurred while listing objects with prefix '{prefix}' in bucket '{bucket}': {str(e)}")
+            return {"error": str(e)}
+    
+    async def deleteKeyFromBlobStorage(self, bucket: str, key: str):
+        """
+        Delete a key (file or folder) from blob storage.
+        If the key is a folder, all objects within that folder will be deleted.
+        
+        Args:
+            bucket: Source bucket name
+            key: File key/name or folder path to delete
+            
+        Returns:
+            dict: Success response with deletion summary or error response
+        """
+        try:
+            print(f"[INFO] Attempting to delete key '{key}' from bucket '{bucket}'")
+            
+            # Ensure bucket exists
+            bucket_created = await self.ensure_bucket_exists(bucket)
+            if not bucket_created:
+                print(f"[ERROR] Failed to create or access bucket: {bucket}")
+                return {"error": f"Failed to create bucket '{bucket}'"}
+            
+            deleted_objects = []
+            total_deleted = 0
+            
+            # Check if the key ends with '/' to determine if it's a folder
+            if key.endswith('/'):
+                # It's a folder - delete all objects with this prefix
+                print(f"[INFO] Key '{key}' appears to be a folder. Listing all objects with this prefix.")
+                
+                # List all objects with this prefix
+                objects_result = await self.listObjectsWithPrefix(bucket, key)
+                
+                if isinstance(objects_result, dict) and "error" in objects_result:
+                    return objects_result
+                
+                objects_to_delete = objects_result
+                
+                if not objects_to_delete:
+                    print(f"[WARNING] No objects found with prefix '{key}'")
+                    return {
+                        "message": f"No objects found with prefix '{key}'",
+                        "deleted_objects": [],
+                        "total_deleted": 0
+                    }
+                
+                print(f"[INFO] Found {len(objects_to_delete)} objects to delete")
+                
+                # Delete all objects with this prefix
+                for obj_key in objects_to_delete:
+                    try:
+                        self.client.delete_object(Bucket=bucket, Key=obj_key)
+                        deleted_objects.append(obj_key)
+                        total_deleted += 1
+                        print(f"[INFO] Deleted object: {obj_key}")
+                    except Exception as e:
+                        print(f"[ERROR] Failed to delete object '{obj_key}': {str(e)}")
+                        # Continue with other objects even if one fails
+                
+            else:
+                # It's a single file - try to delete it directly
+                print(f"[INFO] Key '{key}' appears to be a single file. Attempting direct deletion.")
+                
+                try:
+                    # First check if the object exists
+                    self.client.head_object(Bucket=bucket, Key=key)
+                    
+                    # Delete the object
+                    self.client.delete_object(Bucket=bucket, Key=key)
+                    deleted_objects.append(key)
+                    total_deleted = 1
+                    print(f"[INFO] Successfully deleted file: {key}")
+                    
+                except Exception as e:
+                    # If direct deletion fails, check if it might be a folder without trailing slash
+                    print(f"[WARNING] Direct deletion failed for '{key}': {str(e)}")
+                    print(f"[INFO] Checking if '{key}' might be a folder without trailing slash...")
+                    
+                    # Try to list objects with this key as prefix
+                    folder_prefix = key + '/'
+                    objects_result = await self.listObjectsWithPrefix(bucket, folder_prefix)
+                    
+                    if isinstance(objects_result, dict) and "error" in objects_result:
+                        return objects_result
+                    
+                    objects_to_delete = objects_result
+                    
+                    if objects_to_delete:
+                        print(f"[INFO] Found {len(objects_to_delete)} objects with prefix '{folder_prefix}'. Deleting them.")
+                        
+                        # Delete all objects with this prefix
+                        for obj_key in objects_to_delete:
+                            try:
+                                self.client.delete_object(Bucket=bucket, Key=obj_key)
+                                deleted_objects.append(obj_key)
+                                total_deleted += 1
+                                print(f"[INFO] Deleted object: {obj_key}")
+                            except Exception as e:
+                                print(f"[ERROR] Failed to delete object '{obj_key}': {str(e)}")
+                    else:
+                        # No objects found, return error
+                        return {"error": f"Object '{key}' not found in bucket '{bucket}'"}
+            
+            print(f"[INFO] Deletion completed. Total objects deleted: {total_deleted}")
+            return {
+                "message": f"Successfully deleted {total_deleted} object(s)",
+                "deleted_objects": deleted_objects,
+                "total_deleted": total_deleted
+            }
+            
+        except Exception as e:
+            print(f"[ERROR] Exception occurred while deleting key '{key}' from bucket '{bucket}': {str(e)}")
             return {"error": str(e)}
 
     # =============================================================================

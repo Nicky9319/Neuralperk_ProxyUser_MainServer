@@ -328,6 +328,9 @@ class HTTP_SERVER():
                         "object_id": object_id
                     }
                 )
+
+                print("Response when starting workload is: ")
+                print(response.json())
                 
                 # Return the response directly to the client
                 return JSONResponse(
