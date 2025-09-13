@@ -123,7 +123,7 @@ class HTTP_SERVER():
         async def getWorkloadResults(
             customer_id: str = Form(...),
         ):
-            response = await self.data_class.customerSessionsMapping[customer_id].stop_and_delete_workload()
+            response = await self.data_class.customerSessionsMapping[customer_id].stop_and_delete_workload(customer_id)
             if response.status_code == 200:
                 return JSONResponse(content={"message": "Workload stopped and deleted"}, status_code=response.status_code)
             else:
