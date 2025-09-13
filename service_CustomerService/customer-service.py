@@ -740,12 +740,15 @@ class HTTP_SERVER():
         @self.app.get("/api/customer-service/get-render-video-from-signed-url/{video_path:path}")
         async def getRenderVideoFromSignedUrl(
             video_path: str,
-            request: Request
+            request: Request,
+            download: bool = False
         ):
             """
-            Proxy endpoint to stream rendered video from blob storage using signed URL
-            Parameters: video_path (path parameter) - the full path from blob service with signed URL params
-            Returns: Streaming response of the rendered video
+            Proxy endpoint to stream or download rendered video from blob storage using signed URL
+            Parameters: 
+                - video_path (path parameter) - the full path from blob service with signed URL params
+                - download (query parameter, optional) - if True, forces download; if False, streams for playback
+            Returns: Streaming response of the rendered video (streamable or downloadable)
             """
             print(f"Get render video from signed URL endpoint hit")
             print(f"Video path: {video_path}")
@@ -802,12 +805,22 @@ class HTTP_SERVER():
                 # Return streaming response with proper headers
                 video_name = os.path.basename(video_path.split('?')[0]) if video_path else "video.mp4"
                 print(f"Proxying video: {video_name}")
+                print(f"Download mode: {download}")
 
-                # Prepare response headers
+                # Prepare response headers based on download parameter
                 response_headers = {
-                    "Content-Disposition": f"attachment; filename=\"{video_name}\"",
-                    "Cache-Control": "no-cache"
+                    "Cache-Control": "no-cache",
+                    "Accept-Ranges": "bytes"  # Enable range requests for better streaming
                 }
+                
+                # Only add Content-Disposition: attachment for downloads
+                if download:
+                    response_headers["Content-Disposition"] = f"attachment; filename=\"{video_name}\""
+                    print(f"Setting download headers for: {video_name}")
+                else:
+                    # For streaming, use inline disposition or omit it entirely
+                    response_headers["Content-Disposition"] = f"inline; filename=\"{video_name}\""
+                    print(f"Setting streaming headers for: {video_name}")
 
                 return StreamingResponse(
                     proxy_video_stream(),
