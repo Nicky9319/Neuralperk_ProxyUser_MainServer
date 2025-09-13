@@ -1042,6 +1042,126 @@
 						}
 					},
 					"response": []
+				},
+				{
+					"name": "Get Render Video from Signed URL - Success",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/customer-service/get-render-video-from-signed-url/rendered-videos/test-customer/test-object/video.mp4?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=admin%2F20240101%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20240101T120000Z&X-Amz-Expires=60&X-Amz-SignedHeaders=host&X-Amz-Signature=test-signature",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"customer-service",
+								"get-render-video-from-signed-url",
+								"rendered-videos/test-customer/test-object/video.mp4?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=admin%2F20240101%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20240101T120000Z&X-Amz-Expires=60&X-Amz-SignedHeaders=host&X-Amz-Signature=test-signature"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Render Video from Signed URL - Invalid Path",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/customer-service/get-render-video-from-signed-url/invalid/path/video.mp4",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"customer-service",
+								"get-render-video-from-signed-url",
+								"invalid/path/video.mp4"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Render Video from Signed URL - Missing Parameters",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/customer-service/get-render-video-from-signed-url/rendered-videos/test-customer/test-object/video.mp4",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"customer-service",
+								"get-render-video-from-signed-url",
+								"rendered-videos/test-customer/test-object/video.mp4"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Render Video from Signed URL - Expired Signature",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/customer-service/get-render-video-from-signed-url/rendered-videos/test-customer/test-object/video.mp4?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=admin%2F20200101%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20200101T120000Z&X-Amz-Expires=60&X-Amz-SignedHeaders=host&X-Amz-Signature=expired-signature",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"customer-service",
+								"get-render-video-from-signed-url",
+								"rendered-videos/test-customer/test-object/video.mp4?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=admin%2F20200101%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20200101T120000Z&X-Amz-Expires=60&X-Amz-SignedHeaders=host&X-Amz-Signature=expired-signature"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Render Video from Signed URL - Invalid Signature",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/customer-service/get-render-video-from-signed-url/rendered-videos/test-customer/test-object/video.mp4?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=admin%2F20240101%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20240101T120000Z&X-Amz-Expires=60&X-Amz-SignedHeaders=host&X-Amz-Signature=invalid-signature",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"customer-service",
+								"get-render-video-from-signed-url",
+								"rendered-videos/test-customer/test-object/video.mp4?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=admin%2F20240101%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20240101T120000Z&X-Amz-Expires=60&X-Amz-SignedHeaders=host&X-Amz-Signature=invalid-signature"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Render Video from Signed URL - Different Video Format",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/customer-service/get-render-video-from-signed-url/rendered-videos/test-customer/test-object/video.avi?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=admin%2F20240101%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20240101T120000Z&X-Amz-Expires=60&X-Amz-SignedHeaders=host&X-Amz-Signature=test-signature",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"customer-service",
+								"get-render-video-from-signed-url",
+								"rendered-videos/test-customer/test-object/video.avi?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=admin%2F20240101%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20240101T120000Z&X-Amz-Expires=60&X-Amz-SignedHeaders=host&X-Amz-Signature=test-signature"
+							]
+						}
+					},
+					"response": []
 				}
 			]
 		},
@@ -1606,6 +1726,66 @@
 					"            pm.test('Should return 401 Unauthorized', function () {",
 					"                pm.response.to.have.status(401);",
 					"            });",
+					"        }",
+					"    }",
+					"    ",
+					"    // Test specific to render video from signed URL endpoints",
+					"    if (pm.info.requestName.includes('Get Render Video from Signed URL')) {",
+					"        if (pm.info.requestName.includes('Success')) {",
+					"            pm.test('Should return 200 OK', function () {",
+					"                pm.response.to.have.status(200);",
+					"            });",
+					"            ",
+					"            pm.test('Should return video content type', function () {",
+					"                const contentType = pm.response.headers.get('Content-Type');",
+					"                pm.expect(contentType).to.include('video/mp4');",
+					"            });",
+					"            ",
+					"            pm.test('Should have proper headers', function () {",
+					"                pm.expect(pm.response.headers.get('Content-Disposition')).to.include('attachment');",
+					"                pm.expect(pm.response.headers.get('Cache-Control')).to.equal('no-cache');",
+					"            });",
+					"            ",
+					"            pm.test('Should return video data', function () {",
+					"                pm.expect(pm.response.responseSize).to.be.above(0);",
+					"            });",
+					"        }",
+					"        ",
+					"        if (pm.info.requestName.includes('Invalid Path')) {",
+					"            pm.test('Should return 404 Not Found or 500 Internal Server Error', function () {",
+					"                pm.expect(pm.response.code).to.be.oneOf([404, 500]);",
+					"            });",
+					"        }",
+					"        ",
+					"        if (pm.info.requestName.includes('Missing Parameters')) {",
+					"            pm.test('Should return 404 Not Found or 500 Internal Server Error', function () {",
+					"                pm.expect(pm.response.code).to.be.oneOf([404, 500]);",
+					"            });",
+					"        }",
+					"        ",
+					"        if (pm.info.requestName.includes('Expired Signature')) {",
+					"            pm.test('Should return 403 Forbidden or 500 Internal Server Error', function () {",
+					"                pm.expect(pm.response.code).to.be.oneOf([403, 500]);",
+					"            });",
+					"        }",
+					"        ",
+					"        if (pm.info.requestName.includes('Invalid Signature')) {",
+					"            pm.test('Should return 403 Forbidden or 500 Internal Server Error', function () {",
+					"                pm.expect(pm.response.code).to.be.oneOf([403, 500]);",
+					"            });",
+					"        }",
+					"        ",
+					"        if (pm.info.requestName.includes('Different Video Format')) {",
+					"            pm.test('Should return 200 OK or appropriate error', function () {",
+					"                pm.expect(pm.response.code).to.be.oneOf([200, 404, 500]);",
+					"            });",
+					"            ",
+					"            if (pm.response.code === 200) {",
+					"                pm.test('Should return appropriate content type for video format', function () {",
+					"                    const contentType = pm.response.headers.get('Content-Type');",
+					"                    pm.expect(contentType).to.match(/video\\/(mp4|avi|x-msvideo)/);",
+					"                });",
+					"            }",
 					"        }",
 					"    }",
 					"}",

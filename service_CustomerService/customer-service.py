@@ -61,6 +61,8 @@ class HTTP_SERVER():
         else:
             self.blob_service_url = blob_env_url
         
+        self.blob_storage_base_url = "http://localhost:9000"
+        
         # Get Session Supervisor service URL from environment
         session_supervisor_env_url = os.getenv("SESSION_SUPERVISOR_SERVICE", "").strip()
         if not session_supervisor_env_url or not (session_supervisor_env_url.startswith("http://") or session_supervisor_env_url.startswith("https://")):
@@ -672,7 +674,7 @@ class HTTP_SERVER():
                     params={
                         "bucket": "rendered-videos",
                         "key": rendered_video_path,
-                        "expiration": 60  # 1 minute expiration
+                        "expiration": 3600  # 1 minute expiration
                     }
                 )
                 
@@ -693,13 +695,29 @@ class HTTP_SERVER():
                 
                 print(f"Successfully generated signed URL for object {object_id}")
                 
-                # Return the signed URL
+                # Parse the signed URL to extract the path and parameters
+                from urllib.parse import urlparse, parse_qs
+                parsed_url = urlparse(signed_url)
+                
+                # Extract the path and query parameters (everything after the domain)
+                path_with_params = parsed_url.path
+                if parsed_url.query:
+                    path_with_params += "?" + parsed_url.query
+                
+                print(f"Extracted path with params: {path_with_params}")
+                
+                # Create the proxy URL using customer service endpoint
+                print("Signed Url is: ", signed_url)
+                proxy_url = f"{path_with_params}"
+                print(f"Created proxy URL: {proxy_url}")
+                
+                # Return the proxy URL instead of direct blob service URL
                 return JSONResponse(content={
                     "message": "Signed URL generated successfully",
                     "objectId": object_id,
                     "customerId": customer_id,
-                    "signedUrl": signed_url,
-                    "expiration": 60,
+                    "signedUrl": proxy_url,
+                    "expiration": 3600,
                     "videoPath": rendered_video_path,
                     "timestamp": datetime.now().isoformat()
                 }, status_code=200)
@@ -719,14 +737,91 @@ class HTTP_SERVER():
                     detail=f"Failed to generate signed URL: {str(e)}"
                 )
 
-        @self.app.get("/api/customer-service/get-rendered-video")
-        async def getRenderedVideo(
-            request: Request, 
-            customer_id: str = Depends(self.authenticate_token)
+        @self.app.get("/api/customer-service/get-render-video-from-signed-url/{video_path:path}")
+        async def getRenderVideoFromSignedUrl(
+            video_path: str,
+            request: Request
         ):
-            print(f"Get rendered video endpoint hit for customer: {customer_id}")
-            # TODO: Implement actual business logic
-            return JSONResponse(content={"message": "Get rendered video endpoint", "customer_id": customer_id}, status_code=200)
+            """
+            Proxy endpoint to stream rendered video from blob storage using signed URL
+            Parameters: video_path (path parameter) - the full path from blob service with signed URL params
+            Returns: Streaming response of the rendered video
+            """
+            print(f"Get render video from signed URL endpoint hit")
+            print(f"Video path: {video_path}")
+            
+            try:
+                # Reconstruct the full blob service URL
+                print(video_path)
+                print(self.blob_storage_base_url)
+                # Remove leading slash from video_path to avoid double slashes
+                clean_video_path = video_path.lstrip('/')
+                blob_service_url = f"{self.blob_storage_base_url}/{clean_video_path}"
+                
+                # Preserve query parameters from the original request
+                if request.url.query:
+                    blob_service_url += f"?{request.url.query}"
+                print(f"Full blob service URL: {blob_service_url}")
+                print(f"Query parameters: {request.url.query}")
+                
+                # Create a streaming response that proxies the blob service
+                async def proxy_video_stream():
+                    try:
+                        async with httpx.AsyncClient() as proxy_client:
+                            async with proxy_client.stream(
+                                "GET",
+                                blob_service_url,
+                                timeout=30.0
+                            ) as response:
+                                if response.status_code != 200:
+                                    try:
+                                        error_content = await response.aread()
+                                        error_detail = error_content.decode(errors="replace")
+                                    except Exception:
+                                        error_detail = "Unknown error"
+                                    print(f"Blob service returned error: {response.status_code} - {error_detail}")
+                                    raise HTTPException(
+                                        status_code=response.status_code,
+                                        detail=f"Blob service error: {error_detail}"
+                                    )
+
+                                # Stream the video directly to the client
+                                async for chunk in response.aiter_bytes():
+                                    yield chunk
+
+                    except HTTPException:
+                        raise
+                    except Exception as e:
+                        print(f"Error in proxy video stream: {str(e)}")
+                        raise HTTPException(
+                            status_code=500,
+                            detail=f"Failed to proxy video stream: {str(e)}"
+                        )
+
+                # Return streaming response with proper headers
+                video_name = os.path.basename(video_path.split('?')[0]) if video_path else "video.mp4"
+                print(f"Proxying video: {video_name}")
+
+                # Prepare response headers
+                response_headers = {
+                    "Content-Disposition": f"attachment; filename=\"{video_name}\"",
+                    "Cache-Control": "no-cache"
+                }
+
+                return StreamingResponse(
+                    proxy_video_stream(),
+                    media_type="video/mp4",
+                    headers=response_headers
+                )
+                
+            except HTTPException:
+                raise
+            except Exception as e:
+                print(f"Error retrieving rendered video: {str(e)}")
+                raise HTTPException(
+                    status_code=500,
+                    detail=f"Failed to retrieve rendered video: {str(e)}"
+                )
         
         @self.app.get("/api/customer-service/get-rendered-frames/{object_id}")
         async def getRenderedFrames(
