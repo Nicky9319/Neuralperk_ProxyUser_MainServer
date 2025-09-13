@@ -413,7 +413,7 @@ class HTTP_SERVER():
                     data={"customer_id": customer_id}
                 )
 
-                response = await self.http_client.post(
+                response = await self.http_client.put(
                     f"{self.mongodb_service_url}/api/mongodb-service/blender-objects/change-state",
                     json={
                         "objectId": object_id,
