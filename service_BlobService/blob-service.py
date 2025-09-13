@@ -1,18 +1,36 @@
+# =============================================================================
+# BLOB SERVICE - FILE STORAGE AND RETRIEVAL SERVICE
+# =============================================================================
+# This service provides APIs for storing, retrieving, and managing files
+# in blob storage (S3-compatible MinIO). It handles images, blend files,
+# temporary files, and rendered content.
+# =============================================================================
+
+# =============================================================================
+# IMPORTS AND DEPENDENCIES
+# =============================================================================
+
+# Standard library imports
 import asyncio
-from fastapi import FastAPI, Response, Request, Form, UploadFile
-from fastapi.middleware.cors import CORSMiddleware
-import uvicorn
-from fastapi.responses import JSONResponse
-import asyncio
-import aio_pika
 import sys
 import os
+import collections
+import collections.abc
+
+# FastAPI and web framework imports
+from fastapi import FastAPI, Response, Request, Form, UploadFile
+from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import JSONResponse
+import uvicorn
+
+# AWS S3/MinIO client imports
 import boto3
 from botocore.client import Config
 
+# Message queue imports (for future use)
+import aio_pika
+
 # Fix for Python 3.10+ compatibility with collections.Callable
-import collections
-import collections.abc
 collections.Callable = collections.abc.Callable
 
 # Print status of monkey patch
@@ -21,20 +39,41 @@ print("collections.Callable patched:",
       collections.Callable is collections.abc.Callable)
 
 
+# =============================================================================
+# HTTP SERVER CLASS - MAIN SERVER CONFIGURATION
+# =============================================================================
+
 class HTTP_SERVER():
+    """
+    Main HTTP server class that handles FastAPI configuration, S3/MinIO client setup,
+    and route configuration for the blob service.
+    """
+    
     def __init__(self, httpServerHost, httpServerPort, httpServerPrivilegedIpAddress=["127.0.0.1"], data_class_instance=None):
+        """
+        Initialize the HTTP server with FastAPI app, CORS middleware, and S3 client.
+        
+        Args:
+            httpServerHost (str): Host address for the server
+            httpServerPort (int): Port number for the server
+            httpServerPrivilegedIpAddress (list): List of privileged IP addresses
+            data_class_instance: Reference to the Data class instance
+        """
+        # FastAPI application setup
         self.app = FastAPI()
         self.host = httpServerHost
         self.port = httpServerPort
-
         self.privilegedIpAddress = httpServerPrivilegedIpAddress
+        
+        # CORS middleware configuration
         #<HTTP_SERVER_CORS_ADDITION_START>
         self.app.add_middleware(CORSMiddleware, allow_origins=["*"],allow_credentials=True,allow_methods=["*"],allow_headers=["*"],)
         #<HTTP_SERVER_CORS_ADDITION_END>
         
-        self.data_class = data_class_instance  # Reference to the Data class instance
+        # Data class reference
+        self.data_class = data_class_instance
         
-        # Initialize S3 client
+        # S3/MinIO client initialization
         self.client = boto3.client(
             "s3",
             endpoint_url="http://localhost:9000",
@@ -47,8 +86,15 @@ class HTTP_SERVER():
         # Initialize default buckets
         self.initialize_default_buckets()
 
+    # =============================================================================
+    # BUCKET MANAGEMENT METHODS
+    # =============================================================================
+    
     def initialize_default_buckets(self):
-        """Initialize default buckets if they don't exist"""
+        """
+        Initialize default buckets if they don't exist.
+        Creates standard buckets for different file types.
+        """
         try:
             # List of default buckets to create
             default_buckets = ["blend-files", "rendered-videos", "rendered-frames", "temp"]
@@ -67,7 +113,15 @@ class HTTP_SERVER():
             print(f"Warning: Could not initialize default buckets: {str(e)}")
 
     async def ensure_bucket_exists(self, bucket: str):
-        """Ensure a bucket exists, create it if it doesn't"""
+        """
+        Ensure a bucket exists, create it if it doesn't.
+        
+        Args:
+            bucket (str): Name of the bucket to check/create
+            
+        Returns:
+            bool: True if bucket exists or was created successfully, False otherwise
+        """
         try:
             # Check if bucket exists
             self.client.head_bucket(Bucket=bucket)
@@ -82,13 +136,30 @@ class HTTP_SERVER():
                 print(f"Error creating bucket '{bucket}': {str(e)}")
                 return False
 
+    # =============================================================================
+    # API ROUTES CONFIGURATION
+    # =============================================================================
+    
     async def configure_routes(self):
-
+        """
+        Configure all API routes for the blob service.
+        Routes are organized by functionality: health check, image operations,
+        blend file operations, bucket management, and temp file operations.
+        """
+        
+        # =============================================================================
+        # HEALTH CHECK AND STATUS ROUTES
+        # =============================================================================
+        
         @self.app.get("/api/blob-service/")
         async def root():
+            """Health check endpoint to verify service is running"""
             return JSONResponse(content={"message": "Blob Service is active"}, status_code=200)
 
-        # 1. Store image with bucket and key
+        # =============================================================================
+        # IMAGE OPERATIONS ROUTES
+        # =============================================================================
+        
         @self.app.post("/api/blob-service/store-image")
         async def storeImage(
             image: UploadFile = Form(...),
@@ -96,6 +167,18 @@ class HTTP_SERVER():
             key: str = Form(...),
             type: str = Form(default="png")
         ):
+            """
+            Store an image file in the specified bucket with the given key.
+            
+            Args:
+                image: Uploaded image file
+                bucket: Target bucket name
+                key: File key/name
+                type: Image type/extension (default: png)
+            
+            Returns:
+                JSON response with success/error status
+            """
             print(f"Storing image: {image.filename}")
             print(f"Bucket: {bucket}")
             print(f"Key: {key}")
@@ -119,13 +202,23 @@ class HTTP_SERVER():
                 "type": type
             }, status_code=200)
 
-        # 2. Retrieve image with bucket and key
         @self.app.get("/api/blob-service/retrieve-image")
         async def retrieveImage(
             bucket: str,
             key: str,
             type: str = "png"
         ):
+            """
+            Retrieve an image file from the specified bucket and key.
+            
+            Args:
+                bucket: Source bucket name
+                key: File key/name
+                type: Image type/extension (default: png)
+            
+            Returns:
+                Image file with appropriate media type or error response
+            """
             print(f"Retrieving image from bucket: {bucket}")
             print(f"Key: {key}")
             print(f"Type: {type}")
@@ -144,13 +237,27 @@ class HTTP_SERVER():
             media_type = f"image/{type}"
             return Response(content=data, media_type=media_type)
 
-        # 3. Store blend file
+        # =============================================================================
+        # BLEND FILE OPERATIONS ROUTES
+        # =============================================================================
+        
         @self.app.post("/api/blob-service/store-blend")
         async def storeBlend(
             blend_file: UploadFile = Form(...),
             bucket: str = Form(...),
             key: str = Form(...)
         ):
+            """
+            Store a Blender (.blend) file in the specified bucket.
+            
+            Args:
+                blend_file: Uploaded blend file
+                bucket: Target bucket name
+                key: File key/name
+            
+            Returns:
+                JSON response with success/error status
+            """
             print(f"Storing blend file: {blend_file.filename}")
             print(f"Bucket: {bucket}")
             print(f"Key: {key}")
@@ -172,12 +279,21 @@ class HTTP_SERVER():
                 "key": key
             }, status_code=200)
 
-        # 4. Retrieve blend file
         @self.app.get("/api/blob-service/retrieve-blend")
         async def retrieveBlend(
             bucket: str,
             key: str
         ):
+            """
+            Retrieve a Blender (.blend) file from the specified bucket.
+            
+            Args:
+                bucket: Source bucket name
+                key: File key/name
+            
+            Returns:
+                Blend file with appropriate media type or error response
+            """
             try:
                 print(f"[INFO] Retrieving blend file from bucket: {bucket}")
                 print(f"[INFO] Key: {key}")
@@ -205,12 +321,21 @@ class HTTP_SERVER():
                     status_code=500
                 )
 
-        # 4.5. Retrieve blend file metadata
         @self.app.get("/api/blob-service/retrieve-blend-metadata")
         async def retrieveBlendMetadata(
             bucket: str,
             key: str
         ):
+            """
+            Retrieve metadata for a Blender (.blend) file without downloading the file.
+            
+            Args:
+                bucket: Source bucket name
+                key: File key/name
+            
+            Returns:
+                JSON response with file metadata or error response
+            """
             try:
                 print(f"[INFO] Retrieving blend file metadata from bucket: {bucket}")
                 print(f"[INFO] Key: {key}")
@@ -238,10 +363,18 @@ class HTTP_SERVER():
                     status_code=500
                 )
         
-        # 5. List buckets
+        # =============================================================================
+        # BUCKET MANAGEMENT ROUTES
+        # =============================================================================
+        
         @self.app.get("/api/blob-service/list-buckets")
         async def listBuckets():
-            """List all available buckets"""
+            """
+            List all available buckets in the storage system.
+            
+            Returns:
+                JSON response with list of bucket names and count
+            """
             try:
                 response = self.client.list_buckets()
                 buckets = [bucket['Name'] for bucket in response['Buckets']]
@@ -255,10 +388,17 @@ class HTTP_SERVER():
                     "error": f"Failed to list buckets: {str(e)}"
                 }, status_code=500)
         
-        # 6. Create bucket
         @self.app.post("/api/blob-service/create-bucket")
         async def createBucket(bucket_name: str = Form(...)):
-            """Create a new bucket"""
+            """
+            Create a new bucket in the storage system.
+            
+            Args:
+                bucket_name: Name of the bucket to create
+            
+            Returns:
+                JSON response with success/error status
+            """
             try:
                 bucket_created = await self.ensure_bucket_exists(bucket_name)
                 if bucket_created:
@@ -275,13 +415,25 @@ class HTTP_SERVER():
                     "error": f"Failed to create bucket: {str(e)}"
                 }, status_code=500)
 
-        # 7. Store file in temp bucket
+        # =============================================================================
+        # TEMPORARY FILE OPERATIONS ROUTES
+        # =============================================================================
+        
         @self.app.post("/api/blob-service/store-temp")
         async def storeTemp(
             file: UploadFile = Form(...),
             key: str = Form(...)
         ):
-            """Store any file in the temp bucket with the given key (including extension)"""
+            """
+            Store any file in the temp bucket with the given key.
+            
+            Args:
+                file: Uploaded file
+                key: File key/name (including extension)
+            
+            Returns:
+                JSON response with success/error status
+            """
             print(f"Storing file in temp bucket: {file.filename}")
             print(f"Key: {key}")
             
@@ -298,10 +450,17 @@ class HTTP_SERVER():
                 "bucket": "temp"
             }, status_code=200)
 
-        # 8. Retrieve file from temp bucket
         @self.app.get("/api/blob-service/retrieve-temp")
         async def retrieveTemp(key: str):
-            """Retrieve file from temp bucket using the key"""
+            """
+            Retrieve file from temp bucket using the key.
+            
+            Args:
+                key: File key/name
+            
+            Returns:
+                File with appropriate media type or error response
+            """
             print(f"Retrieving file from temp bucket")
             print(f"Key: {key}")
             
@@ -326,10 +485,17 @@ class HTTP_SERVER():
             
             return Response(content=data, media_type=media_type)
 
-        # 9. Delete file from temp bucket
         @self.app.delete("/api/blob-service/delete-temp")
         async def deleteTemp(key: str):
-            """Delete file from temp bucket using the key"""
+            """
+            Delete file from temp bucket using the key.
+            
+            Args:
+                key: File key/name to delete
+            
+            Returns:
+                JSON response with success/error status
+            """
             print(f"Deleting file from temp bucket")
             print(f"Key: {key}")
             
@@ -345,7 +511,27 @@ class HTTP_SERVER():
                 "bucket": "temp"
             }, status_code=200)
 
+
+    # =============================================================================
+    # BLOB STORAGE OPERATION METHODS
+    # =============================================================================
+    
+    # =============================================================================
+    # IMAGE STORAGE OPERATIONS
+    # =============================================================================
+    
     async def uploadImageToBlobStorage(self, image: UploadFile, bucket: str, key: str):
+        """
+        Upload an image file to blob storage.
+        
+        Args:
+            image: Uploaded image file
+            bucket: Target bucket name
+            key: File key/name
+            
+        Returns:
+            dict: Success response with filename or error response
+        """
         print(image)
         try:
             # Ensure bucket exists before uploading
@@ -360,6 +546,16 @@ class HTTP_SERVER():
             return {"error": str(e)}
         
     async def retrieveImageFromBlobStorage(self, bucket: str, key: str):
+        """
+        Retrieve an image file from blob storage.
+        
+        Args:
+            bucket: Source bucket name
+            key: File key/name
+            
+        Returns:
+            bytes: Image data or dict with error
+        """
         try:
             # Ensure bucket exists before retrieving
             bucket_created = await self.ensure_bucket_exists(bucket)
@@ -373,7 +569,22 @@ class HTTP_SERVER():
         except Exception as e:
             return {"error": str(e)}
 
+    # =============================================================================
+    # BLEND FILE STORAGE OPERATIONS
+    # =============================================================================
+    
     async def uploadBlendFileToBlobStorage(self, blend_file: UploadFile, bucket: str, key: str):
+        """
+        Upload a Blender (.blend) file to blob storage.
+        
+        Args:
+            blend_file: Uploaded blend file
+            bucket: Target bucket name
+            key: File key/name
+            
+        Returns:
+            dict: Success response with filename or error response
+        """
         print(blend_file)
         try:
             # Ensure bucket exists before uploading
@@ -388,6 +599,16 @@ class HTTP_SERVER():
             return {"error": str(e)}
         
     async def retrieveBlendFileFromBlobStorage(self, bucket: str, key: str):
+        """
+        Retrieve a Blender (.blend) file from blob storage.
+        
+        Args:
+            bucket: Source bucket name
+            key: File key/name
+            
+        Returns:
+            bytes: Blend file data or dict with error
+        """
         try:
             print(f"[INFO] Attempting to retrieve blend file from bucket: {bucket}, key: {key}")
             # Ensure bucket exists before retrieving
@@ -406,6 +627,16 @@ class HTTP_SERVER():
             return {"error": str(e)}
 
     async def retrieveBlendFileMetadataFromBlobStorage(self, bucket: str, key: str):
+        """
+        Retrieve metadata for a Blender (.blend) file without downloading the file content.
+        
+        Args:
+            bucket: Source bucket name
+            key: File key/name
+            
+        Returns:
+            dict: File metadata including size, timestamps, etc. or error response
+        """
         try:
             print(f"[INFO] Attempting to retrieve blend file metadata from bucket: {bucket}, key: {key}")
             # Ensure bucket exists before retrieving
@@ -452,9 +683,21 @@ class HTTP_SERVER():
             print(f"[ERROR] Exception occurred while retrieving blend file metadata from bucket '{bucket}', key '{key}': {str(e)}")
             return {"error": str(e)}
 
-    # Temp bucket helper methods
+    # =============================================================================
+    # TEMPORARY FILE STORAGE OPERATIONS
+    # =============================================================================
+    
     async def uploadFileToTempBucket(self, file: UploadFile, key: str):
-        """Upload any file to the temp bucket with the given key"""
+        """
+        Upload any file to the temp bucket with the given key.
+        
+        Args:
+            file: Uploaded file
+            key: File key/name
+            
+        Returns:
+            dict: Success response with filename and key or error response
+        """
         try:
             # Ensure temp bucket exists
             bucket_created = await self.ensure_bucket_exists("temp")
@@ -468,7 +711,15 @@ class HTTP_SERVER():
             return {"error": str(e)}
     
     async def retrieveFileFromTempBucket(self, key: str):
-        """Retrieve any file from the temp bucket using the key"""
+        """
+        Retrieve any file from the temp bucket using the key.
+        
+        Args:
+            key: File key/name
+            
+        Returns:
+            bytes: File data or dict with error
+        """
         try:
             # Ensure temp bucket exists
             bucket_created = await self.ensure_bucket_exists("temp")
@@ -482,7 +733,15 @@ class HTTP_SERVER():
             return {"error": str(e)}
     
     async def deleteFileFromTempBucket(self, key: str):
-        """Delete any file from the temp bucket using the key"""
+        """
+        Delete any file from the temp bucket using the key.
+        
+        Args:
+            key: File key/name to delete
+            
+        Returns:
+            dict: Success message or error response
+        """
         try:
             # Ensure temp bucket exists
             bucket_created = await self.ensure_bucket_exists("temp")
@@ -494,46 +753,108 @@ class HTTP_SERVER():
         except Exception as e:
             return {"error": str(e)}
 
+    # =============================================================================
+    # SERVER LIFECYCLE METHODS
+    # =============================================================================
+    
     async def run_app(self):
+        """
+        Start the FastAPI server with uvicorn.
+        
+        Returns:
+            None
+        """
         config = uvicorn.Config(self.app, host=self.host, port=self.port, log_level="info")
         server = uvicorn.Server(config)
         await server.serve()
 
 
+# =============================================================================
+# HELPER CLASSES
+# =============================================================================
+
 class Data():
+    """
+    Data class for storing service state and metadata.
+    Currently contains placeholders for image metadata and storage statistics.
+    """
     def __init__(self):
+        """Initialize data storage containers"""
         self.uploadedImages = {}
         self.imageMetadata = {}
         self.storageStats = {}
 
     def get_value(self):
+        """Get value from data storage (placeholder implementation)"""
         pass
 
     def set_value(self, value):
+        """Set value in data storage (placeholder implementation)"""
         pass
 
 
 class Service():
+    """
+    Main service class that orchestrates the HTTP server and service lifecycle.
+    """
     def __init__(self, httpServer=None):
+        """
+        Initialize the service with an HTTP server instance.
+        
+        Args:
+            httpServer: HTTP_SERVER instance
+        """
         self.httpServer = httpServer
 
     async def startService(self):
+        """
+        Start the service by configuring routes and running the HTTP server.
+        
+        Returns:
+            None
+        """
         await self.httpServer.configure_routes()
         await self.httpServer.run_app()
 
 
+# =============================================================================
+# SERVICE STARTUP AND MAIN EXECUTION
+# =============================================================================
+
 async def start_service():
+    """
+    Initialize and start the blob service.
+    
+    This function sets up the data class, HTTP server configuration,
+    and starts the service.
+    
+    Returns:
+        None
+    """
+    # Initialize data storage
     dataClass = Data()
 
+    # Server configuration
     httpServerPort = 13000
     httpServerHost = "127.0.0.1"
-
     httpServerPrivilegedIpAddress = ["127.0.0.1"]
 
-    http_server = HTTP_SERVER(httpServerHost=httpServerHost, httpServerPort=httpServerPort, httpServerPrivilegedIpAddress=httpServerPrivilegedIpAddress, data_class_instance=dataClass)
+    # Create HTTP server instance
+    http_server = HTTP_SERVER(
+        httpServerHost=httpServerHost, 
+        httpServerPort=httpServerPort, 
+        httpServerPrivilegedIpAddress=httpServerPrivilegedIpAddress, 
+        data_class_instance=dataClass
+    )
 
+    # Create and start service
     service = Service(http_server)
     await service.startService()
 
+
 if __name__ == "__main__":
+    """
+    Main entry point for the blob service.
+    Starts the service using asyncio event loop.
+    """
     asyncio.run(start_service())
