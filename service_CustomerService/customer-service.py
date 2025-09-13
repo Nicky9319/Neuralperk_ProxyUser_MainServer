@@ -297,29 +297,7 @@ class HTTP_SERVER():
             try:
                 print(f"Starting workload for customer: {customer_id}, object: {object_id}")
                 
-                # Step 1: Change object state to processing in MongoDB
-                print("Updating object state to processing in MongoDB...")
-                try:
-                    mongo_response = await self.http_client.put(
-                        f"{self.mongodb_service_url}/api/mongodb-service/blender-objects/change-state",
-                        json={
-                            "objectId": object_id,
-                            "customerId": customer_id,
-                            "objectState": "processing"
-                        }
-                    )
-                    
-                    if mongo_response.status_code != 200:
-                        print(f"Warning: Failed to update object state: {mongo_response.text}")
-                        # Continue anyway, but log the warning
-                    else:
-                        print("Object state updated to processing successfully")
-                        
-                except Exception as mongo_error:
-                    print(f"Error updating object state: {str(mongo_error)}")
-                    # Continue anyway, but log the error
-                
-                # Step 2: Forward the request to session supervisor service
+                # Step 1: Forward the request to session supervisor service FIRST
                 print("Forwarding request to session supervisor service...")
                 response = await self.http_client.post(
                     f"{self.session_supervisor_service_url}/api/session-supervisor-service/start-workload",
@@ -331,6 +309,33 @@ class HTTP_SERVER():
 
                 print("Response when starting workload is: ")
                 print(response.json())
+                print(f"Response status code: {response.status_code}")
+                
+                # Step 2: Only update MongoDB if session supervisor service returns 200
+                if response.status_code == 200:
+                    print("Session supervisor service returned 200. Updating object state to processing in MongoDB...")
+                    try:
+                        mongo_response = await self.http_client.put(
+                            f"{self.mongodb_service_url}/api/mongodb-service/blender-objects/change-state",
+                            json={
+                                "objectId": object_id,
+                                "customerId": customer_id,
+                                "objectState": "processing"
+                            }
+                        )
+                        
+                        if mongo_response.status_code != 200:
+                            print(f"Warning: Failed to update object state to processing: {mongo_response.text}")
+                            # Log warning but don't fail the request since workload started successfully
+                        else:
+                            print("Object state updated to processing successfully")
+                            
+                    except Exception as mongo_error:
+                        print(f"Error updating object state to processing: {str(mongo_error)}")
+                        # Log error but don't fail the request since workload started successfully
+                else:
+                    print(f"Session supervisor service returned non-200 status ({response.status_code}). Skipping MongoDB update.")
+                    print("Workload start failed - object state will remain unchanged")
                 
                 # Return the response directly to the client
                 return JSONResponse(
