@@ -767,6 +767,7 @@ class HTTP_SERVER():
                 # Create a streaming response that proxies the blob service
                 async def proxy_video_stream():
                     try:
+                        print(f"Making API call to blob service with URL: {blob_service_url}")
                         async with httpx.AsyncClient() as proxy_client:
                             async with proxy_client.stream(
                                 "GET",
