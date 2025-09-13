@@ -383,18 +383,35 @@ class HTTP_SERVER():
                 raise HTTPException(status_code=500, detail=f"Internal server error: {str(e)}")
 
         @self.app.post("/api/customer-service/stop-and-delete-workload")
-        async def getWorkloadResults(
-            request: Request, 
+        async def stopAndDeleteWorkload(
+            object_id: str = Form(None),
             access_token: str = Depends(self.authenticate_token),
             customer_id: str = Depends(self.getCustomerIdFromAuthorizationHeader)
         ):
             try:
+                # Error handling if object_id is not present in the API request
+                if not object_id or object_id.strip() == "":
+                    print("Error: object_id is missing in the API request.")
+                    raise HTTPException(
+                        status_code=400,
+                        detail="Missing required field: object_id"
+                    )
+
                 print(f"Redirecting stop-and-delete-workload request to session supervisor service for customer: {customer_id}")
                 
                 # Forward the request to session supervisor service with form data
                 response = await self.http_client.post(
                     f"{self.session_supervisor_service_url}/api/session-supervisor-service/stop-and-delete-workload",
                     data={"customer_id": customer_id}
+                )
+
+                response = await self.http_client.post(
+                    f"{self.mongodb_service_url}/api/mongodb-service/blender-objects/change-state",
+                    json={
+                        "objectId": object_id,
+                        "customerId": customer_id,
+                        "objectState": "ready-to-render"
+                    }
                 )
                 
                 # Return the response directly to the client
@@ -415,7 +432,6 @@ class HTTP_SERVER():
                 import traceback
                 print(f"Error in stopAndDeleteWorkload: {traceback.format_exc()}")
                 raise HTTPException(status_code=500, detail=f"Internal server error: {str(e)}")
-                
 
 
         @self.app.get("/api/customer-service/get-blend-file/{object_id}")
