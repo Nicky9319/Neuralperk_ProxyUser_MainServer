@@ -608,22 +608,26 @@ class HTTP_SERVER():
             print(f"Requested object ID: {object_id}")
             
             try:
-                # Forward the delete request to MongoDB service
+                # Step 1: Delete from blob storage first
+                print("Deleting files from blob storage...")
+                blob_deletion_results = await self.deleteObjectFilesFromBlobStorage(customer_id, object_id)
+                
+                # Step 2: Forward the delete request to MongoDB service
+                print("Deleting from MongoDB...")
                 mongo_response = await self.http_client.delete(
                     f"{self.mongodb_service_url}/api/mongodb-service/blender-objects/delete/{object_id}",
                     params={"customer_id": customer_id}
                 )
-                
+
                 if mongo_response.status_code == 200:
                     result = mongo_response.json()
                     print(f"Successfully deleted blender object: {object_id}")
                     return JSONResponse(
                         content={
-                            "message": "Blender object deleted successfully",
+                            "message": "Blender object and all associated files deleted successfully",
                             "objectId": object_id,
                             "customerId": customer_id,
-                            "blendFileName": result.get("blendFileName"),
-                            "deletedCount": result.get("deletedCount")
+                            "blendFileName": result.get("blendFileName")
                         },
                         status_code=200
                     )
@@ -1114,6 +1118,77 @@ class HTTP_SERVER():
                     status_code=500,
                     detail=f"Failed to retrieve blender objects: {str(e)}"
                 )
+
+    async def deleteObjectFilesFromBlobStorage(self, customer_id: str, object_id: str):
+        """
+        Delete all files associated with an object from blob storage.
+        This includes blend files, rendered videos, and rendered frames.
+        
+        Args:
+            customer_id: The customer ID
+            object_id: The object ID
+            
+        Returns:
+            dict: Results of deletion operations for each bucket
+        """
+        try:
+            print(f"Deleting files for customer: {customer_id}, object: {object_id}")
+            
+            # Define the path prefix for this object
+            object_path = f"{customer_id}/{object_id}/"
+            
+            # Define buckets to clean up
+            buckets_to_clean = [
+                "blend-files",
+                "rendered-videos", 
+                "rendered-frames"
+            ]
+            
+            deletion_results = {}
+            
+            for bucket in buckets_to_clean:
+                try:
+                    print(f"Deleting from bucket: {bucket}, path: {object_path}")
+                    
+                    # Call blob service to delete the folder
+                    blob_response = await self.http_client.delete(
+                        f"{self.blob_service_url}/api/blob-service/delete-key",
+                        params={
+                            "bucket": bucket,
+                            "key": object_path
+                        }
+                    )
+                    
+                    if blob_response.status_code == 200:
+                        result = blob_response.json()
+                        deletion_results[bucket] = {
+                            "success": True,
+                            "deleted_objects": result.get("deleted_objects", []),
+                            "total_deleted": result.get("total_deleted", 0)
+                        }
+                        print(f"Successfully deleted from {bucket}: {result.get('total_deleted', 0)} objects")
+                    else:
+                        deletion_results[bucket] = {
+                            "success": False,
+                            "error": f"HTTP {blob_response.status_code}: {blob_response.text}"
+                        }
+                        print(f"Failed to delete from {bucket}: {blob_response.status_code} - {blob_response.text}")
+                        
+                except Exception as e:
+                    deletion_results[bucket] = {
+                        "success": False,
+                        "error": str(e)
+                    }
+                    print(f"Exception while deleting from {bucket}: {str(e)}")
+            
+            return deletion_results
+            
+        except Exception as e:
+            print(f"Error in deleteObjectFilesFromBlobStorage: {str(e)}")
+            return {
+                "error": str(e),
+                "success": False
+            }
 
     async def run_app(self):
         config = uvicorn.Config(self.app, host=self.host, port=self.port)
