@@ -67,6 +67,37 @@
 				"description": "Tests file download functionality."
 			},
 			"response": []
+		},
+		{
+			"name": "4. Test Generate Signed URL",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{base_url}}/api/blob-service/generate-signed-url?bucket={{test_bucket}}&key={{test_key}}&expiration={{test_expiration}}",
+					"host": ["{{base_url}}"],
+					"path": ["api", "blob-service", "generate-signed-url"],
+					"query": [
+						{
+							"key": "bucket",
+							"value": "{{test_bucket}}",
+							"description": "Bucket name containing the file"
+						},
+						{
+							"key": "key",
+							"value": "{{test_key}}",
+							"description": "File key/name"
+						},
+						{
+							"key": "expiration",
+							"value": "{{test_expiration}}",
+							"description": "URL expiration time in seconds (300 = 5 minutes)"
+						}
+					]
+				},
+				"description": "Tests the generate signed URL functionality with 5-minute expiration time."
+			},
+			"response": []
 		}
 	],
 	"event": [
@@ -92,7 +123,34 @@
 					"",
 					"pm.test('Response time is acceptable', function () {",
 					"    pm.expect(pm.response.responseTime).to.be.below(5000);",
-					"});"
+					"});",
+					"",
+					"// Additional tests for signed URL endpoint",
+					"if (pm.request.url.toString().includes('generate-signed-url')) {",
+					"    pm.test('Signed URL response has correct structure', function () {",
+					"        const responseJson = pm.response.json();",
+					"        pm.expect(responseJson).to.have.property('signed_url');",
+					"        pm.expect(responseJson).to.have.property('bucket');",
+					"        pm.expect(responseJson).to.have.property('key');",
+					"        pm.expect(responseJson).to.have.property('expiration_seconds');",
+					"        pm.expect(responseJson).to.have.property('message');",
+					"    });",
+					"    ",
+					"    pm.test('Signed URL is a valid URL', function () {",
+					"        const responseJson = pm.response.json();",
+					"        if (responseJson.signed_url) {",
+					"            pm.expect(responseJson.signed_url).to.match(/^https?:\\/\\//);",
+					"        }",
+					"    });",
+					"    ",
+					"    pm.test('Expiration time matches request parameter', function () {",
+					"        const responseJson = pm.response.json();",
+					"        const requestExpiration = pm.request.url.query.get('expiration');",
+					"        if (responseJson.expiration_seconds && requestExpiration) {",
+					"            pm.expect(responseJson.expiration_seconds.toString()).to.equal(requestExpiration.value);",
+					"        }",
+					"    });",
+					"}"
 				]
 			}
 		}
@@ -115,6 +173,24 @@
 			"value": "file_001",
 			"type": "string",
 			"description": "Test file ID for reuse across tests"
+		},
+		{
+			"key": "test_bucket",
+			"value": "test-bucket",
+			"type": "string",
+			"description": "Test bucket name for signed URL generation"
+		},
+		{
+			"key": "test_key",
+			"value": "test-file.jpg",
+			"type": "string",
+			"description": "Test file key/name for signed URL generation"
+		},
+		{
+			"key": "test_expiration",
+			"value": "300",
+			"type": "string",
+			"description": "Test expiration time in seconds (300 = 5 minutes)"
 		}
 	]
 }

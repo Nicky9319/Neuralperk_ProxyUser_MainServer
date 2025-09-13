@@ -511,6 +511,54 @@ class HTTP_SERVER():
                 "bucket": "temp"
             }, status_code=200)
 
+        # =============================================================================
+        # SIGNED URL OPERATIONS ROUTES
+        # =============================================================================
+        
+        @self.app.get("/api/blob-service/generate-signed-url")
+        async def generateSignedUrl(
+            bucket: str,
+            key: str,
+            expiration: int = 3600
+        ):
+            """
+            Generate a signed URL for accessing a file in blob storage.
+            
+            Args:
+                bucket: Source bucket name
+                key: File key/name
+                expiration: URL expiration time in seconds (default: 3600 = 1 hour)
+            
+            Returns:
+                JSON response with signed URL or error response
+            """
+            try:
+                print(f"[INFO] Generating signed URL for bucket: {bucket}, key: {key}")
+                print(f"[INFO] Expiration: {expiration} seconds")
+                
+                # Generate signed URL
+                signed_url = await self.generateSignedUrlForBlobStorage(bucket, key, expiration)
+                
+                if isinstance(signed_url, dict) and "error" in signed_url:
+                    print(f"[ERROR] Error generating signed URL: {signed_url['error']}")
+                    return JSONResponse(content={"error": signed_url["error"]}, status_code=500)
+                
+                print(f"[INFO] Successfully generated signed URL for: {key} in bucket: {bucket}")
+                return JSONResponse(content={
+                    "signed_url": signed_url,
+                    "bucket": bucket,
+                    "key": key,
+                    "expiration_seconds": expiration,
+                    "message": "Signed URL generated successfully"
+                }, status_code=200)
+            except Exception as e:
+                import traceback
+                print(f"[ERROR] Exception occurred while generating signed URL: {traceback.format_exc()}")
+                return JSONResponse(
+                    content={"error": f"Failed to generate signed URL: {str(e)}"},
+                    status_code=500
+                )
+
 
     # =============================================================================
     # BLOB STORAGE OPERATION METHODS
@@ -751,6 +799,47 @@ class HTTP_SERVER():
             self.client.delete_object(Bucket="temp", Key=key)
             return {"message": f"File '{key}' deleted successfully from temp bucket"}
         except Exception as e:
+            return {"error": str(e)}
+
+    # =============================================================================
+    # SIGNED URL OPERATIONS
+    # =============================================================================
+    
+    async def generateSignedUrlForBlobStorage(self, bucket: str, key: str, expiration: int = 3600):
+        """
+        Generate a signed URL for accessing a file in blob storage.
+        
+        Args:
+            bucket: Source bucket name
+            key: File key/name
+            expiration: URL expiration time in seconds (default: 3600 = 1 hour)
+            
+        Returns:
+            str: Signed URL or dict with error
+        """
+        try:
+            print(f"[INFO] Attempting to generate signed URL for bucket: {bucket}, key: {key}")
+            print(f"[INFO] Expiration time: {expiration} seconds")
+            
+            # Ensure bucket exists before generating signed URL
+            bucket_created = await self.ensure_bucket_exists(bucket)
+            if not bucket_created:
+                print(f"[ERROR] Failed to create or access bucket: {bucket}")
+                return {"error": f"Failed to create bucket '{bucket}'"}
+            
+            print(f"[INFO] Bucket '{bucket}' exists. Proceeding to generate signed URL for key '{key}'")
+            
+            # Generate presigned URL using boto3
+            signed_url = self.client.generate_presigned_url(
+                'get_object',
+                Params={'Bucket': bucket, 'Key': key},
+                ExpiresIn=expiration
+            )
+            
+            print(f"[INFO] Successfully generated signed URL. URL length: {len(signed_url)} characters")
+            return signed_url
+        except Exception as e:
+            print(f"[ERROR] Exception occurred while generating signed URL for bucket '{bucket}', key '{key}': {str(e)}")
             return {"error": str(e)}
 
     # =============================================================================
