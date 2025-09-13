@@ -848,6 +848,10 @@ class sessionSupervisorClass:
     async def _async_cleanup(self):
         """Internal async cleanup method"""
         try:
+
+            print("Sending stop work message to users")
+            await self.sendUserStopWork(self.user_list)
+            
             payload = {
                 "topic": "users-released",
                 "supervisor-id": self.session_id,
