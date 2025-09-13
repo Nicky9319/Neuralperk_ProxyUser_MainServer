@@ -944,6 +944,104 @@
 						}
 					},
 					"response": []
+				},
+				{
+					"name": "Get Signed URL for Rendered Video - Success",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{valid_customer_id}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/customer-service/get-signed-url-for-rendered-video/{{valid_object_id}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"customer-service",
+								"get-signed-url-for-rendered-video",
+								"{{valid_object_id}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Signed URL for Rendered Video - Object Not Found",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{valid_customer_id}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/customer-service/get-signed-url-for-rendered-video/nonexistent_object_123",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"customer-service",
+								"get-signed-url-for-rendered-video",
+								"nonexistent_object_123"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Signed URL for Rendered Video - No Video Available",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{customer_with_no_renders}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/customer-service/get-signed-url-for-rendered-video/{{object_with_no_frames}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"customer-service",
+								"get-signed-url-for-rendered-video",
+								"{{object_with_no_frames}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Signed URL for Rendered Video - Missing Authorization",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/customer-service/get-signed-url-for-rendered-video/{{valid_object_id}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"customer-service",
+								"get-signed-url-for-rendered-video",
+								"{{valid_object_id}}"
+							]
+						}
+					},
+					"response": []
 				}
 			]
 		},
@@ -1455,6 +1553,60 @@
 					"        pm.test('Should return 401 Unauthorized', function () {",
 					"            pm.response.to.have.status(401);",
 					"        });",
+					"    }",
+					"    ",
+					"    // Test specific to signed URL for rendered video endpoints",
+					"    if (pm.info.requestName.includes('Get Signed URL for Rendered Video')) {",
+					"        if (pm.info.requestName.includes('Success')) {",
+					"            pm.test('Should return 200 OK', function () {",
+					"                pm.response.to.have.status(200);",
+					"            });",
+					"            ",
+					"            pm.test('Response should contain signed URL', function () {",
+					"                const responseJson = pm.response.json();",
+					"                pm.expect(responseJson).to.have.property('signedUrl');",
+					"                pm.expect(responseJson.signedUrl).to.be.a('string');",
+					"                pm.expect(responseJson.signedUrl).to.match(/^https?:\\\\/\\\\//);",
+					"            });",
+					"            ",
+					"            pm.test('Response should contain required fields', function () {",
+					"                const responseJson = pm.response.json();",
+					"                pm.expect(responseJson).to.have.property('message');",
+					"                pm.expect(responseJson).to.have.property('objectId');",
+					"                pm.expect(responseJson).to.have.property('customerId');",
+					"                pm.expect(responseJson).to.have.property('expiration');",
+					"                pm.expect(responseJson).to.have.property('videoPath');",
+					"                pm.expect(responseJson).to.have.property('timestamp');",
+					"            });",
+					"            ",
+					"            pm.test('Signed URL should be valid', function () {",
+					"                const responseJson = pm.response.json();",
+					"                if (responseJson.signedUrl) {",
+					"                    pm.expect(responseJson.signedUrl).to.match(/^https?:\\\\/\\\\//);",
+					"                    pm.expect(responseJson.signedUrl).to.include('X-Amz-Algorithm');",
+					"                    pm.expect(responseJson.signedUrl).to.include('X-Amz-Credential');",
+					"                    pm.expect(responseJson.signedUrl).to.include('X-Amz-Signature');",
+					"                }",
+					"            });",
+					"        }",
+					"        ",
+					"        if (pm.info.requestName.includes('Object Not Found')) {",
+					"            pm.test('Should return 404 Not Found', function () {",
+					"                pm.response.to.have.status(404);",
+					"            });",
+					"        }",
+					"        ",
+					"        if (pm.info.requestName.includes('No Video Available')) {",
+					"            pm.test('Should return 404 Not Found', function () {",
+					"                pm.response.to.have.status(404);",
+					"            });",
+					"        }",
+					"        ",
+					"        if (pm.info.requestName.includes('Missing Authorization')) {",
+					"            pm.test('Should return 401 Unauthorized', function () {",
+					"                pm.response.to.have.status(401);",
+					"            });",
+					"        }",
 					"    }",
 					"}",
 					""

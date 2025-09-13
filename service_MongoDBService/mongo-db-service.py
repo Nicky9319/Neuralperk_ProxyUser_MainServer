@@ -912,6 +912,41 @@ class HTTP_SERVER():
             except Exception as e:
                 raise HTTPException(status_code=500, detail=f"Internal server error: {str(e)}")
         
+        @self.app.get("/api/mongodb-service/blender-objects/get-by-object-id/{object_id}")
+        async def get_blender_object_by_object_id(object_id: str, customer_id: str):
+            """Get a blender object by object ID
+            Parameters: object_id (path parameter), customer_id (query parameter)
+            Returns: Complete blender object details
+            """
+            try:
+                # Check if blender object exists and belongs to customer
+                blender_object = self.blender_objects_collection.find_one({
+                    "objectId": object_id,
+                    "customerId": customer_id
+                })
+                
+                if not blender_object:
+                    raise HTTPException(status_code=404, detail="Blender object not found")
+                
+                # Convert ObjectId to string for JSON serialization
+                if "_id" in blender_object:
+                    blender_object["_id"] = str(blender_object["_id"])
+                
+                return JSONResponse(
+                    content={
+                        "objectId": object_id,
+                        "customerId": customer_id,
+                        "blenderObject": blender_object,
+                        "message": "Blender object retrieved successfully"
+                    },
+                    status_code=200
+                )
+                    
+            except HTTPException:
+                raise
+            except Exception as e:
+                raise HTTPException(status_code=500, detail=f"Internal server error: {str(e)}")
+        
         @self.app.get("/api/mongodb-service/blender-objects/get-by-customer/{customer_id}")
         async def get_blender_objects_by_customer(customer_id: str):
             """Get all blender objects associated with a specific customer

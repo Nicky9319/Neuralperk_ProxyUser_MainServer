@@ -619,6 +619,106 @@ class HTTP_SERVER():
                     detail=f"Failed to delete blend file: {str(e)}"
                 )
     
+        @self.app.get("/api/customer-service/get-signed-url-for-rendered-video/{object_id}")
+        async def getSignedUrlForRenderedVideo(
+            object_id: str,
+            access_token: str = Depends(self.authenticate_token),
+            customer_id: str = Depends(self.getCustomerIdFromAuthorizationHeader)
+        ):
+            """
+            Get signed URL for rendered video
+            Parameters: object_id (path parameter)
+            Returns: Signed URL for accessing the rendered video
+            """
+            print(f"Get signed URL for rendered video endpoint hit for customer: {customer_id}, object: {object_id}")
+            
+            try:
+                # Step 1: Get blender object information from MongoDB by object ID
+                print(f"Retrieving blender object {object_id} from MongoDB...")
+                mongo_response = await self.http_client.get(
+                    f"{self.mongodb_service_url}/api/mongodb-service/blender-objects/get-by-object-id/{object_id}",
+                    params={"customer_id": customer_id}
+                )
+                
+                if mongo_response.status_code != 200:
+                    raise HTTPException(
+                        status_code=mongo_response.status_code,
+                        detail=f"MongoDB service error: {mongo_response.text}"
+                    )
+                
+                mongo_result = mongo_response.json()
+                blender_object = mongo_result.get("blenderObject")
+                
+                if not blender_object:
+                    raise HTTPException(
+                        status_code=404,
+                        detail=f"Blender object with ID {object_id} not found for customer {customer_id}"
+                    )
+                
+                # Check if rendered video path exists
+                rendered_video_path = blender_object.get("renderedVideoPath")
+                if not rendered_video_path:
+                    raise HTTPException(
+                        status_code=404,
+                        detail=f"No rendered video found for object {object_id}"
+                    )
+                
+                print(f"Found rendered video path: {rendered_video_path}")
+                
+                # Step 2: Generate signed URL using blob service
+                print("Generating signed URL from blob service...")
+                blob_response = await self.http_client.get(
+                    f"{self.blob_service_url}/api/blob-service/generate-signed-url",
+                    params={
+                        "bucket": "rendered-videos",
+                        "key": rendered_video_path,
+                        "expiration": 60  # 1 minute expiration
+                    }
+                )
+                
+                if blob_response.status_code != 200:
+                    raise HTTPException(
+                        status_code=blob_response.status_code,
+                        detail=f"Blob service error: {blob_response.text}"
+                    )
+                
+                blob_result = blob_response.json()
+                signed_url = blob_result.get("signed_url")
+                
+                if not signed_url:
+                    raise HTTPException(
+                        status_code=500,
+                        detail="Failed to generate signed URL from blob service"
+                    )
+                
+                print(f"Successfully generated signed URL for object {object_id}")
+                
+                # Return the signed URL
+                return JSONResponse(content={
+                    "message": "Signed URL generated successfully",
+                    "objectId": object_id,
+                    "customerId": customer_id,
+                    "signedUrl": signed_url,
+                    "expiration": 60,
+                    "videoPath": rendered_video_path,
+                    "timestamp": datetime.now().isoformat()
+                }, status_code=200)
+                
+            except HTTPException:
+                raise
+            except httpx.RequestError as e:
+                print(f"Error connecting to external services: {str(e)}")
+                raise HTTPException(
+                    status_code=503,
+                    detail="External service unavailable"
+                )
+            except Exception as e:
+                print(f"Error generating signed URL for rendered video: {str(e)}")
+                raise HTTPException(
+                    status_code=500,
+                    detail=f"Failed to generate signed URL: {str(e)}"
+                )
+
         @self.app.get("/api/customer-service/get-rendered-video")
         async def getRenderedVideo(
             request: Request, 
