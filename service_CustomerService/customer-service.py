@@ -805,22 +805,12 @@ class HTTP_SERVER():
                 # Return streaming response with proper headers
                 video_name = os.path.basename(video_path.split('?')[0]) if video_path else "video.mp4"
                 print(f"Proxying video: {video_name}")
-                print(f"Download mode: {download}")
 
-                # Prepare response headers based on download parameter
+                # Prepare response headers
                 response_headers = {
-                    "Cache-Control": "no-cache",
-                    "Accept-Ranges": "bytes"  # Enable range requests for better streaming
+                    "Content-Disposition": f"attachment; filename=\"{video_name}\"",
+                    "Cache-Control": "no-cache"
                 }
-                
-                # Only add Content-Disposition: attachment for downloads
-                if download:
-                    response_headers["Content-Disposition"] = f"attachment; filename=\"{video_name}\""
-                    print(f"Setting download headers for: {video_name}")
-                else:
-                    # For streaming, use inline disposition or omit it entirely
-                    response_headers["Content-Disposition"] = f"inline; filename=\"{video_name}\""
-                    print(f"Setting streaming headers for: {video_name}")
 
                 return StreamingResponse(
                     proxy_video_stream(),
