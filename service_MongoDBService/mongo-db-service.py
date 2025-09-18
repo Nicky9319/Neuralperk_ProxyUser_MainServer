@@ -37,10 +37,9 @@ class HTTP_SERVER():
 
         self.data_class = data_class_instance  # Reference to the Data class instance
 
-        # MongoDB connection setup (use Docker network bridge and service name 'mongodb')
-        self.mongo_client = MongoClient('mongodb://mongodb:27017/', server_api=ServerApi('1'))
+        # MongoDB connection setup
+        self.mongo_client = MongoClient('mongodb://localhost:27017/', server_api=ServerApi('1'))
         self.db = self.mongo_client["neuralperk"]  # Database name from MongoSchema.json
-        print(self.mongo_client)    
         
         # Collections based on schema
         self.customers_collection = self.db["customers"]
