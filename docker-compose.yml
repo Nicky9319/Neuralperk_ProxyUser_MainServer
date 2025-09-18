@@ -20,8 +20,10 @@ services:
   mongodb:
     image: mongo:6
     container_name: mongodb
-    ports:
-      - "27017:27017"
+    expose:
+      - "27017"   # internal only, not public
+    networks:
+      - internal_net
     volumes:
       - mongodb_data:/data/db
 
@@ -37,7 +39,10 @@ services:
     command: server /data --console-address ":9001"
     volumes:
       - minio_data:/data
-
 volumes:
   mongodb_data:
   minio_data:
+
+networks:
+  internal_net:
+    driver: bridge 
