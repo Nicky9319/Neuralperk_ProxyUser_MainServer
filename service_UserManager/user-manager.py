@@ -192,7 +192,7 @@ class HTTP_SERVER():
                 supervisor_id = self.userToSupervisorIdMapping[user_id]
                 supervisor_routing_key = self.supervisorToRoutingKeyMapping[supervisor_id]
 
-                self.mq_client.publish_message("SESSION_SUPERVISOR_EXCHANGE", supervisor_routing_key, payload)
+                await self.mq_client.publish_message("SESSION_SUPERVISOR_EXCHANGE", supervisor_routing_key, payload)
             elif topic == "new-user":
                 print("New User Event Received")
                 print("Current Connected Users: ", self.users)
