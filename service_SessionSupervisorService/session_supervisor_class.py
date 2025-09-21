@@ -112,7 +112,7 @@ class sessionSupervisorClass:
         self.customer_id = customer_id
         self.object_id = object_id
 
-        self.session_id : Literal[str]  = session_id
+        self.session_id : str  = session_id
         self.sessionRoutingKey = f"SESSION_SUPERVISOR_{self.session_id}"
 
         self.mongodb_service_url = os.getenv("MONGODB_SERVICE", "").strip()
@@ -164,6 +164,8 @@ class sessionSupervisorClass:
         self.remaining_frame_list = []
         self.first_frame = None
         self.last_frame = None
+        
+        self.total_frames = None
 
         self.completed = False
 
@@ -250,6 +252,24 @@ class sessionSupervisorClass:
 
         await handleUserManagerMessages(json_message)
 
+
+
+    # -------------------------
+    # Status Functions  Section
+    # -------------------------
+
+    async def get_workload_status(self):
+        completed_frames = self.total_frames - len(self.remaining_frame_list) if self.total_frames is not None else 0
+        print("Frames Completed: ", completed_frames)
+        
+        completion_percentage = (completed_frames / self.total_frames * 100) if self.total_frames else 0
+        
+        return {
+            "total-frames" : self.total_frames,
+            "completed-frames" : completed_frames,
+            "completion-percentage" : completion_percentage,
+        }
+    
 
 
     # -------------------------
@@ -396,6 +416,8 @@ class sessionSupervisorClass:
             # Step 3: Store the frame range in instance variables
             self.first_frame = first_frame
             self.last_frame = last_frame
+            
+            self.total_frames = last_frame - first_frame + 1
             
             # Step 4: Create frame list for distribution
             self.remaining_frame_list = list(range(first_frame, last_frame + 1))

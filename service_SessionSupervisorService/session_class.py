@@ -96,6 +96,13 @@ class sessionClass:
     async def set_session_status(self, session_status):
         # Sets the session status
         self.session_status = session_status
+        
+    async def get_session_progress(self):
+        # Returns the current session progress from the session supervisor instance
+        if self.session_supervisor_instance:
+            return await self.session_supervisor_instance.get_workload_status()
+        else:
+            return {"message": "Session supervisor instance not available"}
 
     # -------------------------
     # Customer ID Section

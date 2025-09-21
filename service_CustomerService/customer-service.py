@@ -1119,6 +1119,48 @@ class HTTP_SERVER():
                     detail=f"Failed to retrieve blender objects: {str(e)}"
                 )
 
+        @self.app.get("/api/customer-service/get-workload-progress")
+        async def getWorkloadProgress(
+            access_token: str = Depends(self.authenticate_token),
+            customer_id: str = Depends(self.getCustomerIdFromAuthorizationHeader)
+        ):
+            try:
+                response = await self.http_client.get(
+                    f"{self.session_supervisor_service_url}/api/session-supervisor-service/get-workload-progress",
+                    params={"customer_id": customer_id}
+                )
+                if response.status_code == 200:
+                    return JSONResponse(
+                    content={
+                        "message": "Workload progress retrieved",
+                        "progress": response.json()
+                    },
+                    status_code=200
+                    )
+                else:
+                    try:
+                        error_detail = response.json().get("detail", response.text)
+                    except Exception:
+                        error_detail = response.text
+                        raise HTTPException(
+                        status_code=response.status_code,
+                        detail=f"Session supervisor service error: {error_detail}"
+                        )
+            except httpx.RequestError as e:
+                print(f"Error connecting to session supervisor service: {str(e)}")
+                raise HTTPException(
+                    status_code=503,
+                    detail="Session supervisor service unavailable"
+                )
+            except HTTPException:
+                raise
+            except Exception as e:
+                print(f"Error retrieving workload progress: {str(e)}")
+                raise HTTPException(
+                    status_code=500,
+                    detail=f"Failed to retrieve workload progress: {str(e)}"
+                )
+
     async def deleteObjectFilesFromBlobStorage(self, customer_id: str, object_id: str):
         """
         Delete all files associated with an object from blob storage.

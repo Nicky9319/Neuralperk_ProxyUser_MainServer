@@ -129,6 +129,12 @@ class HTTP_SERVER():
             else:
                 return JSONResponse(content={"message": "Failed to stop and delete workload"}, status_code=response.status_code)
             
+        @self.app.get("/api/session-supervisor-service/get-workload-progress")
+        async def getWorkloadProgress(
+            customer_id: str = Query(...),
+        ):
+            response = await self.data_class.customerSessionsMapping[customer_id].get_session_progress()
+            return JSONResponse(content={"message": "Workload progress", "progress": response}, status_code=200)
 
 
     async def run_app(self):
