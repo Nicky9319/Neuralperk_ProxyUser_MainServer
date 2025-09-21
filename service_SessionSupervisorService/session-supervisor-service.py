@@ -134,7 +134,7 @@ class HTTP_SERVER():
             customer_id: str = Query(...),
         ):
             response = await self.data_class.customerSessionsMapping[customer_id].get_session_progress()
-            return JSONResponse(content={"message": "Workload progress", "progress": response}, status_code=200)
+            return JSONResponse(content=response, status_code=200)
 
 
     async def run_app(self):
