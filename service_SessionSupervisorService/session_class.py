@@ -128,7 +128,7 @@ class sessionClass:
 
 
     # -------------------------
-    # Session Overvier and Control Section
+    # Admin Panel Controls
     # -------------------------
 
     async def get_number_of_users(self):
