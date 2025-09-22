@@ -833,13 +833,12 @@ class sessionSupervisorClass:
         }
 
     async def check_and_demand_users(self):
-        while True:
-            if self.number_of_users == 0:
-                # await self.demand_users(1)
-                await self.demand_users(2)
-                await asyncio.sleep(20)
-            else:
-                break
+        print("Checking and Demanding for more Users")
+        print("Current Time when requesting users: ", datetime.now())
+        if self.number_of_users == 0:
+            await self.demand_users(1)
+        else:
+            return
 
     async def start_workload(self):
         if self.completed:
@@ -871,6 +870,7 @@ class sessionSupervisorClass:
         """Internal async cleanup method"""
         try:
 
+            # Send stop work message to users
             print("Sending stop work message to users")
             await self.sendUserStopWork(self.user_list)
             
@@ -883,9 +883,20 @@ class sessionSupervisorClass:
             }
             
             # Convert payload to JSON string for message queue
-            import json
             message_body = json.dumps(payload)
             
+
+            # Send users released message to user manager
+            await self.mq_client.publish_message("USER_MANAGER_EXCHANGE", "SESSION_SUPERVISOR", message_body)
+
+            payload = {
+                "topic": "remove-users-demand-completely",
+                "session-supervisor-id": self.session_id,
+                "data": {
+                }
+            }
+
+            message_body = json.dumps(payload)
             await self.mq_client.publish_message("USER_MANAGER_EXCHANGE", "SESSION_SUPERVISOR", message_body)
             
             # Close the message queue connection

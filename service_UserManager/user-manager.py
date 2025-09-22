@@ -270,6 +270,24 @@ class HTTP_SERVER():
                         "session_supervisor_id": supervisor_id
                     })
                 await self.distributeUsers()
+            elif payload["topic"] == "update-user-count":
+                print("Update User Count Event Received")
+                user_count = data["user_count"]
+                # Find and update existing demand for this supervisor
+                for demand in self.user_demand_queue:
+                    if demand["session_supervisor_id"] == supervisor_id:
+                        old_count = demand["user_count"]
+                        demand["user_count"] = user_count
+                        print(f"Updated user count for supervisor {supervisor_id}: {old_count} -> {user_count}")
+                        break
+                else:
+                    # If no existing demand found, create a new one
+                    self.user_demand_queue.append({
+                        "user_count": user_count,
+                        "session_supervisor_id": supervisor_id
+                    })
+                    print(f"Created new demand for supervisor {supervisor_id}: {user_count} users")
+                await self.distributeUsers()
             elif payload["topic"] == "users-released":
                 print("Users Released Event Received")
                 user_list = data["user_list"]
@@ -279,6 +297,15 @@ class HTTP_SERVER():
                     if user_id in self.userToSupervisorIdMapping:
                         del self.userToSupervisorIdMapping[user_id]
                 await self.distributeUsers()
+            elif payload["topic"] == "remove-users-demand-completely":
+                print("Remove Users Demand Event Received")
+                supervisor_id = data["session_supervisor_id"]
+                
+                for demand in self.user_demand_queue:
+                    if demand["session_supervisor_id"] == supervisor_id:
+                        self.user_demand_queue.remove(demand)
+                        print(f"Removed demand for supervisor {supervisor_id}")
+                        break
             else:
                 print("Unknown Event Type")
                 print("Received Event: ", payload)
