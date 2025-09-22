@@ -652,6 +652,51 @@ class HTTP_SERVER():
         # Admin Panel API Calls
         # ----------------------------
 
+        @self.app.get("/api/user-manager/get-overview")
+        async def getUserManagerOverviewEndpoint(request: Request):
+            """
+            Get comprehensive overview of User Manager service state.
+            
+            This endpoint provides detailed information about the current state
+            of the User Manager service, including user mappings, session
+            supervisor information, and demand queue status.
+            
+            Args:
+                request (Request): FastAPI request object
+                
+            Returns:
+                JSONResponse: Response containing User Manager overview information
+                
+            Status Codes:
+                200: Overview retrieved successfully
+                
+            Example Response:
+                {
+                    "userToSupervisorIdMapping": {
+                        "user-123": "supervisor-456",
+                        "user-789": "supervisor-456"
+                    },
+                    "supervisorToRoutingKeyMapping": {
+                        "supervisor-456": "SESSION_SUPERVISOR_456"
+                    },
+                    "user_demand_queue": [
+                        {
+                            "user_count": 3,
+                            "session_supervisor_id": "supervisor-789"
+                        }
+                    ],
+                    "activeSessions": ["supervisor-456", "supervisor-789"],
+                    "idle_users": ["user-111", "user-222"]
+                }
+            """
+            try:
+                overview_data = await self.getUserManagerOverview()
+                return JSONResponse(content=overview_data, status_code=200)
+            except Exception as e:
+                return JSONResponse(
+                    content={"message": f"Error retrieving User Manager overview: {str(e)}"}, 
+                    status_code=500
+                )
 
     async def run_app(self):
         """

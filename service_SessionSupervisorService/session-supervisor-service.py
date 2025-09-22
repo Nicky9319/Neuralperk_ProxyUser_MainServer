@@ -401,6 +401,21 @@ class HTTP_SERVER():
         # -------------------------
         # Admin Panel Controls
         # -------------------------
+
+
+        @self.app.get("/api/session-supervisor-service/get-all-supervisor-information")
+        async def getAllSupervisorInformation(request: Request):
+            response_list = []
+            for customer_id in self.data_class.customerSessionsMapping.keys():
+                response = await self.get_session_supervisor_information(customer_id)
+                response_list.append(response)
+            return JSONResponse(content=response_list, status_code=200)
+            
+        @self.app.get("/api/session-supervisor-service/get-session-supervisor-overview/{customer_id}")
+        async def getSessionSupervisorOverview(customer_id: str):
+            response = await self.get_session_supervisor_information(customer_id)          
+            return JSONResponse(content=response, status_code=200)
+
         @self.app.get("/api/session-supervisor-service/get-user-count/{customer_id}")
         async def getUserCount(
             customer_id: str
@@ -438,6 +453,15 @@ class HTTP_SERVER():
                 return JSONResponse(content=response, status_code=200)
             except Exception as e:
                 return JSONResponse(content={"message": f"Error setting user count: {str(e)}"}, status_code=500)
+
+    async def get_session_supervisor_information(self, customer_id: str):
+        return {
+            "object_id" : self.data_class.customerSessionsMapping[customer_id].object_id,
+            "session_routing_key" : self.data_class.customerSessionsMapping[customer_id].sessionRoutingKey,
+            "session_id" : self.data_class.customerSessionsMapping[customer_id].session_id,
+            "number_of_users" : await self.data_class.customerSessionsMapping[customer_id].get_number_of_users(),
+            "session_status" : self.data_class.customerSessionsMapping[customer_id].session_status,
+        }  
 
 
     async def run_app(self):
