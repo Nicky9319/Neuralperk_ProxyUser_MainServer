@@ -1212,7 +1212,11 @@ class sessionSupervisorClass:
                 print(f"[handle_user_disconnection] User {user_id} disconnected and removed from user_list. Number of users now: {self.number_of_users}")
             else:
                 print(f"[handle_user_disconnection] Warning: User {user_id} not found in user_list during disconnection handling.")
-            await self.distributeWorkload()
+            
+            if self.number_of_users == 0:
+                background_task = asyncio.create_task(self.check_and_demand_users())
+            else:
+                await self.distributeWorkload()
         except Exception as e:
             print(f"[handle_user_disconnection] Error handling user disconnection for user {user_id}: {e}")
 
