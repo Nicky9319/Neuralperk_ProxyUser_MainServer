@@ -24,11 +24,21 @@ load_dotenv()
 # ---------------- Message Queue ---------------- #
 
 class MessageQueue:
+    """
+    A generic RabbitMQ wrapper class that provides both producer and consumer functionality.
+    
+    This class manages RabbitMQ connections, exchanges, queues, and message publishing/consuming.
+    It supports various exchange types and provides a robust async interface for message queuing.
+    """
 
     def __init__(self, connection_url="amqp://guest:guest@localhost/"):
         """
-        Generic RabbitMQ wrapper.
-        Works for both producer and consumer roles.
+        Initialize the MessageQueue instance.
+        
+        Args:
+            connection_url (str): RabbitMQ connection URL in the format 
+                                'amqp://username:password@host:port/vhost'
+                                Defaults to 'amqp://guest:guest@localhost/'
         """
         self.connection_url = connection_url
         self.connection = None
@@ -37,13 +47,32 @@ class MessageQueue:
         self.queues = {}     # store declared queues
 
     async def connect(self):
-        """Establish robust async connection and channel"""
+        """
+        Establish a robust async connection to RabbitMQ and create a channel.
+        
+        This method creates a persistent connection that will automatically reconnect
+        if the connection is lost. The channel is used for all subsequent operations.
+        
+        Raises:
+            aio_pika.exceptions.AMQPException: If connection to RabbitMQ fails
+        """
         self.connection = await aio_pika.connect_robust(self.connection_url)
         self.channel = await self.connection.channel()
 
     async def declare_exchange(self, name, exchange_type=ExchangeType.DIRECT):
         """
-        Declare an exchange of any type (direct, fanout, topic, headers)
+        Declare an exchange of the specified type.
+        
+        Args:
+            name (str): Name of the exchange to declare
+            exchange_type (ExchangeType): Type of exchange (DIRECT, FANOUT, TOPIC, HEADERS)
+                                         Defaults to ExchangeType.DIRECT
+        
+        Returns:
+            aio_pika.Exchange: The declared exchange object
+        
+        Raises:
+            Exception: If exchange declaration fails
         """
         if name not in self.exchanges:
             exchange = await self.channel.declare_exchange(name, exchange_type, durable=True)
@@ -52,7 +81,21 @@ class MessageQueue:
 
     async def declare_queue(self, name, **kwargs):
         """
-        Declare a queue. If not durable, it will vanish when broker restarts.
+        Declare a queue with specified parameters.
+        
+        Args:
+            name (str): Name of the queue to declare
+            **kwargs: Additional queue parameters such as:
+                     - durable (bool): If True, queue survives broker restarts
+                     - auto_delete (bool): If True, queue is deleted when no consumers
+                     - exclusive (bool): If True, queue can only be used by one connection
+                     - arguments (dict): Additional queue arguments
+        
+        Returns:
+            aio_pika.Queue: The declared queue object
+        
+        Raises:
+            Exception: If queue declaration fails
         """
         if name not in self.queues:
             queue = await self.channel.declare_queue(name, **kwargs)
@@ -62,6 +105,14 @@ class MessageQueue:
     async def bind_queue(self, queue_name, exchange_name, routing_key=""):
         """
         Bind a queue to an exchange with an optional routing key.
+        
+        Args:
+            queue_name (str): Name of the queue to bind
+            exchange_name (str): Name of the exchange to bind to
+            routing_key (str): Routing key for message routing. Defaults to empty string
+        
+        Raises:
+            Exception: If queue or exchange not declared before binding
         """
         queue = self.queues.get(queue_name)
         exchange = self.exchanges.get(exchange_name)
@@ -73,7 +124,16 @@ class MessageQueue:
 
     async def publish_message(self, exchange_name, routing_key, message_body, headers=None):
         """
-        Publish message to exchange with routing key.
+        Publish a message to an exchange with a routing key.
+        
+        Args:
+            exchange_name (str): Name of the exchange to publish to
+            routing_key (str): Routing key for message routing
+            message_body (str or bytes): Message content to publish
+            headers (dict, optional): Message headers. Defaults to None
+        
+        Raises:
+            Exception: If exchange not declared before publishing
         """
         if exchange_name not in self.exchanges:
             raise Exception(f"Exchange '{exchange_name}' not declared!")
@@ -88,7 +148,17 @@ class MessageQueue:
 
     async def consume(self, queue_name, callback, no_ack=False):
         """
-        Consume messages from a queue.
+        Start consuming messages from a queue.
+        
+        Args:
+            queue_name (str): Name of the queue to consume from
+            callback (callable): Async function to handle received messages.
+                               Should accept a message parameter
+            no_ack (bool): If True, messages are automatically acknowledged.
+                          If False, manual acknowledgment is required. Defaults to False
+        
+        Raises:
+            Exception: If queue not declared before consuming
         """
         if queue_name not in self.queues:
             raise Exception(f"Queue '{queue_name}' not declared!")
@@ -96,14 +166,36 @@ class MessageQueue:
         await self.queues[queue_name].consume(callback, no_ack=no_ack)
 
     async def close(self):
-        """Close connection gracefully"""
+        """
+        Close the RabbitMQ connection gracefully.
+        
+        This method properly closes the connection and cleans up resources.
+        Should be called when the MessageQueue instance is no longer needed.
+        """
         await self.connection.close()
 
 
 # ---------------- HTTP Server ---------------- #
 
 class HTTP_SERVER():
+    """
+    HTTP server class that manages user sessions and coordinates with various microservices.
+    
+    This class provides a FastAPI-based HTTP server that handles user management,
+    session supervision, and communication with MongoDB, Auth, and Blob services.
+    It also manages message queue communication for real-time user distribution.
+    """
+    
     def __init__(self, httpServerHost, httpServerPort, httpServerPrivilegedIpAddress=["127.0.0.1"], data_class_instance=None):
+        """
+        Initialize the HTTP server instance.
+        
+        Args:
+            httpServerHost (str): Host address to bind the server to
+            httpServerPort (int): Port number to bind the server to
+            httpServerPrivilegedIpAddress (list): List of privileged IP addresses for access control
+            data_class_instance (Data, optional): Instance of the Data class for shared state
+        """
         self.app = FastAPI()
         self.host = httpServerHost
         self.port = httpServerPort
@@ -154,18 +246,35 @@ class HTTP_SERVER():
         self.distributingUsers = False
 
 
-    # Callback Function to Listen to events emitted by the User Service
     async def callbackUserServiceMessages(self, message):
         """
-            Callback Function to Listen to events emitted by the User Service
-            Currently It is only works with json format data.
-            other data types like bytes and all Can be added later if needed.
-
+        Callback function to handle messages from the User Service.
+        
+        This function processes various user-related events such as frame rendering,
+        rendering completion, new user connections, and user disconnections.
+        It forwards relevant events to the appropriate session supervisors.
+        
+        Args:
+            message (aio_pika.Message): The message received from the User Service queue
+        
+        Note:
+            Currently only supports JSON format data. Other data types can be added later.
         """
 
         async def handleUserServiceEvent(payload):
             """
-                payload should contain a Mandatory topic field and the data field.
+            Handle individual user service events based on topic.
+            
+            Args:
+                payload (dict): Event payload containing:
+                    - topic (str): Event type identifier (mandatory)
+                    - data (dict): Event-specific data (mandatory)
+            
+            Supported topics:
+                - user-frame-rendered: User has rendered a frame
+                - user-rendering-completed: User has completed rendering
+                - new-user: New user has connected
+                - user-disconnected: User has disconnected
             """
 
 
@@ -238,10 +347,17 @@ class HTTP_SERVER():
         
     async def callbackSessionSupervisorMessages(self, message):
         """
-            Callback Function to Listen to events emitted by the Session Supervisor
-            Currently It is only works with json format data.
-            other data types like bytes and all Can be added later if needed.
-
+        Callback function to handle messages from Session Supervisors.
+        
+        This function processes session supervisor events such as user demand requests,
+        user count updates, user releases, and demand removal requests.
+        It manages the user distribution queue and coordinates user allocation.
+        
+        Args:
+            message (aio_pika.Message): The message received from the Session Supervisor queue
+        
+        Note:
+            Currently only supports JSON format data. Other data types can be added later.
         """
         print("Received Message from Session Supervisor")
         decoded_message = message.body.decode()
@@ -249,7 +365,19 @@ class HTTP_SERVER():
 
         async def handleSessionSupervisorEvent(payload):
             """
-                payload should contain a Mandatory topic field, supervisor id and the data field.
+            Handle individual session supervisor events based on topic.
+            
+            Args:
+                payload (dict): Event payload containing:
+                    - topic (str): Event type identifier (mandatory)
+                    - supervisor-id (str): Session supervisor identifier (mandatory)
+                    - data (dict): Event-specific data (mandatory)
+            
+            Supported topics:
+                - more-users: Request for additional users
+                - update-user-count: Update the number of users needed
+                - users-released: Release users back to idle pool
+                - remove-users-demand-completely: Remove all user demand for supervisor
             """
             topic = payload.get("topic", None)
             supervisor_id = payload.get("supervisor-id", None)
@@ -314,6 +442,18 @@ class HTTP_SERVER():
         return
 
     async def initialization(self):
+        """
+        Initialize the HTTP server and message queue connections.
+        
+        This method sets up:
+        - RabbitMQ connection and channels
+        - Message exchanges (USER_MANAGER_EXCHANGE, SESSION_SUPERVISOR_EXCHANGE)
+        - Message queues (USER_SERVICE, SESSION_SUPERVISOR)
+        - Queue bindings and message consumers
+        
+        Raises:
+            Exception: If message queue setup fails
+        """
         await self.mq_client.connect()
 
         await self.mq_client.declare_exchange("USER_MANAGER_EXCHANGE", exchange_type=ExchangeType.DIRECT)
@@ -331,6 +471,16 @@ class HTTP_SERVER():
 
 
     async def sendUserToSessionSupervisor(self, user_list, session_supervisor_id):
+        """
+        Send a list of users to a specific session supervisor.
+        
+        Args:
+            user_list (list): List of user IDs to send to the supervisor
+            session_supervisor_id (str): ID of the target session supervisor
+        
+        Raises:
+            Exception: If session supervisor ID not found in routing mapping
+        """
         try:
             if session_supervisor_id not in self.supervisorToRoutingKeyMapping:
                 print(f"Error: session_supervisor_id={session_supervisor_id} not found in supervisorToRoutingKeyMapping. Cannot send users.")
@@ -358,6 +508,24 @@ class HTTP_SERVER():
 
 
     async def distributeUsers(self):
+        """
+        Distribute idle users to session supervisors based on demand.
+        
+        This method processes the user demand queue and assigns available idle users
+        to session supervisors that have requested them. It ensures that users are
+        properly mapped to supervisors and handles partial fulfillment of demands.
+        
+        The distribution process:
+        1. Checks if distribution is already in progress (prevents concurrent execution)
+        2. Processes demands from the user_demand_queue
+        3. Assigns idle users to supervisors based on demand
+        4. Updates user-to-supervisor mappings
+        5. Sends users to appropriate supervisors via message queue
+        
+        Note:
+            This method is thread-safe and prevents concurrent execution using
+            the distributingUsers flag.
+        """
         print("Distributing Users is being Called !!!")
 
         print(self.users)
@@ -419,9 +587,27 @@ class HTTP_SERVER():
 
 
     async def configure_routes(self):
+        """
+        Configure HTTP API routes for the FastAPI application.
+        
+        This method sets up all the REST API endpoints including:
+        - Service health check endpoint
+        - Session supervisor registration endpoint
+        
+        The routes handle various user management and session supervision operations.
+        """
 
         @self.app.post("/api/user-manager/")
         async def userManagerServiceRoot(request: Request):
+            """
+            Root endpoint for the User Manager service.
+            
+            Args:
+                request (Request): FastAPI request object
+            
+            Returns:
+                JSONResponse: Service status confirmation
+            """
             print("User Manager Service Root Endpoint Hit")
             return JSONResponse(content={"message": "User Manager Service is active"}, status_code=200)
 
@@ -430,10 +616,32 @@ class HTTP_SERVER():
             user_count: int = Form(...),
             session_supervisor_id: str = Form(...)
         ):
+            """
+            Register a new session supervisor and set up routing.
+            
+            Args:
+                user_count (int): Number of users requested by the supervisor
+                session_supervisor_id (str): Unique identifier for the session supervisor
+            
+            This endpoint:
+            - Adds the supervisor to active sessions
+            - Sets up routing key mapping for message queue communication
+            - Enables the supervisor to receive user assignments
+            """
             self.activeSessions.append(session_supervisor_id)
             self.supervisorToRoutingKeyMapping[session_supervisor_id] = f"SESSION_SUPERVISOR_{session_supervisor_id}"
 
     async def run_app(self):
+        """
+        Start the FastAPI application server.
+        
+        This method configures and starts the uvicorn server with the specified
+        host and port settings. The server will handle HTTP requests and run
+        until explicitly stopped.
+        
+        Raises:
+            Exception: If server startup fails
+        """
         config = uvicorn.Config(self.app, host=self.host, port=self.port)
         server = uvicorn.Server(config)
         await server.serve()
@@ -442,22 +650,76 @@ class HTTP_SERVER():
 # ---------------- Data Class ---------------- #
 
 class Data():
+    """
+    Data class for managing shared application state.
+    
+    This class holds global data structures that need to be shared across
+    different components of the user manager service.
+    """
+    
     def __init__(self):
+        """
+        Initialize the Data instance with empty data structures.
+        
+        Attributes:
+            customerSessionsMapping (dict): Mapping of customer IDs to their session data
+        """
         self.customerSessionsMapping = {}
 
 # ---------------- Service Class ---------------- #
 
 class Service():
+    """
+    Main service class that orchestrates the user manager service.
+    
+    This class coordinates the startup and operation of the HTTP server
+    and manages the overall service lifecycle.
+    """
+    
     def __init__(self, httpServer = None):
+        """
+        Initialize the Service instance.
+        
+        Args:
+            httpServer (HTTP_SERVER, optional): HTTP server instance to manage.
+                                              Defaults to None
+        """
         self.httpServer = httpServer
 
     async def startService(self):
+        """
+        Start the user manager service.
+        
+        This method performs the complete service startup sequence:
+        1. Initialize message queue connections and routes
+        2. Configure HTTP API routes
+        3. Start the HTTP server
+        
+        Raises:
+            Exception: If any step in the startup sequence fails
+        """
         await self.httpServer.initialization()
         await self.httpServer.configure_routes()
         await self.httpServer.run_app()
 
          
 async def start_service():
+    """
+    Main entry point for starting the user manager service.
+    
+    This function initializes all necessary components and starts the service:
+    - Creates a Data instance for shared state management
+    - Configures HTTP server settings (host, port, privileged IPs)
+    - Initializes the HTTP server with the data instance
+    - Creates and starts the main service
+    
+    The service will run indefinitely until explicitly stopped.
+    
+    Configuration:
+        - HTTP Server Port: 7000
+        - HTTP Server Host: 0.0.0.0 (all interfaces)
+        - Privileged IP Addresses: ["127.0.0.1"]
+    """
     dataClass = Data()
 
     #<HTTP_SERVER_INSTANCE_INTIALIZATION_START>
@@ -482,4 +744,11 @@ async def start_service():
   
 
 if __name__ == "__main__":
+    """
+    Entry point when the script is run directly.
+    
+    This block ensures the service starts only when the script is executed
+    directly (not when imported as a module). It uses asyncio.run() to start
+    the async service in the event loop.
+    """
     asyncio.run(start_service())
