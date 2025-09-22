@@ -398,6 +398,37 @@ class HTTP_SERVER():
             response = await self.data_class.customerSessionsMapping[customer_id].get_session_progress()
             return JSONResponse(content=response, status_code=200)
 
+        # -------------------------
+        # Admin Panel Controls
+        # -------------------------
+        @self.app.get("/api/session-supervisor-service/get-user-count/{customer_id}")
+        async def getUserCount(
+            customer_id: str
+        ):
+            """
+            Get the number of users assigned to a session supervisor.
+            
+            This endpoint retrieves the current number of users assigned to a
+            session supervisor. It provides information about the current user
+            count for the session supervisor.
+            """
+            response = await self.data_class.customerSessionsMapping[customer_id].get_number_of_users()
+            return JSONResponse(content=response, status_code=200)
+        
+        @self.app.post("/api/session-supervisor-service/set-user-count/{customer_id}/{user_count}")
+        async def setUserCount(
+            customer_id: str,
+            user_count: int
+        ):
+            """
+            Set the number of users assigned to a session supervisor.
+            
+            This endpoint sets the number of users assigned to a session supervisor.
+            It updates the user count for the session supervisor.
+            """
+            response = await self.data_class.customerSessionsMapping[customer_id].set_user_count(user_count)
+            return JSONResponse(content=response, status_code=200)
+
 
     async def run_app(self):
         """
