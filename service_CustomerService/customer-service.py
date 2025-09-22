@@ -177,6 +177,20 @@ class HTTP_SERVER():
         
         @self.app.post("/api/customer-service/")
         async def handleSessionCreationRequest(request: Request):
+            """
+            Customer Service Health Check Endpoint
+            
+            This endpoint provides a simple health check to verify that the Customer Service
+            is running and accessible.
+            
+            Returns:
+                JSONResponse: A simple status message confirming the service is active
+                
+            Example Response:
+                {
+                    "message": "Customer Service is active"
+                }
+            """
             print("Customer Service Root Endpoint Hit")
             return JSONResponse(content={"message": "Customer Service is active"}, status_code=200)
             
@@ -188,6 +202,47 @@ class HTTP_SERVER():
             access_token: str = Depends(self.authenticate_token),
             customer_id: str = Depends(self.getCustomerIdFromAuthorizationHeader)
         ):
+            """
+            Upload Blender File Endpoint
+            
+            This endpoint allows authenticated customers to upload Blender (.blend) files
+            for rendering. The file is stored in blob storage and a corresponding record
+            is created in the MongoDB database.
+            
+            Authentication:
+                Requires valid Bearer token in Authorization header
+                
+            Parameters:
+                blend_file_name (str, Form): Name of the blend file (e.g., "chair_model.blend")
+                blend_file (UploadFile, File): The actual blend file to upload
+                access_token (str): Bearer token for authentication (auto-extracted)
+                customer_id (str): Customer ID extracted from authorization header
+                
+            Process:
+                1. Creates empty blender object record in MongoDB
+                2. Uploads file to blob storage with path: customer_id/object_id/blend_file_name
+                3. Updates MongoDB record with file path and hash
+                4. Returns object details including generated object_id
+                
+            Returns:
+                JSONResponse: Success message with object details
+                
+            Example Response:
+                {
+                    "message": "Blend file uploaded successfully",
+                    "objectId": "uuid-generated-object-id",
+                    "customerId": "customer-uuid",
+                    "blendFileName": "chair_model.blend",
+                    "blendFilePath": "customer-uuid/object-id/chair_model.blend",
+                    "blendFileHash": "sha256-hash-of-file-path",
+                    "fileSize": "2.5 MB"
+                }
+                
+            Raises:
+                HTTPException: 401 if authentication fails
+                HTTPException: 400 if required fields are missing
+                HTTPException: 500 if upload or database operations fail
+            """
             print(f"Upload blend file endpoint hit for customer: {customer_id}")
             print(f"Blend file name: {blend_file_name}")
             print(f"Blend file size: {blend_file.size} bytes")
@@ -294,6 +349,45 @@ class HTTP_SERVER():
             customer_id: str = Depends(self.getCustomerIdFromAuthorizationHeader),
             object_id: str = Form(...)
         ):
+            """
+            Start Rendering Workload Endpoint
+            
+            This endpoint initiates a rendering workload for a specific blender object.
+            It coordinates with the Session Supervisor Service to start the rendering
+            process and updates the object state in MongoDB.
+            
+            Authentication:
+                Requires valid Bearer token in Authorization header
+                
+            Parameters:
+                object_id (str, Form): The unique identifier of the blender object to render
+                access_token (str): Bearer token for authentication (auto-extracted)
+                customer_id (str): Customer ID extracted from authorization header
+                
+            Process:
+                1. Forwards request to Session Supervisor Service to start workload
+                2. If successful, updates object state to "processing" in MongoDB
+                3. Returns the response from Session Supervisor Service
+                
+            Returns:
+                JSONResponse: Response from Session Supervisor Service containing workload details
+                
+            Example Response:
+                {
+                    "message": "Workload started successfully",
+                    "sessionId": "session-uuid",
+                    "objectId": "object-uuid",
+                    "customerId": "customer-uuid",
+                    "status": "queued"
+                }
+                
+            Raises:
+                HTTPException: 401 if authentication fails
+                HTTPException: 400 if object_id is missing
+                HTTPException: 404 if object not found
+                HTTPException: 503 if Session Supervisor Service is unavailable
+                HTTPException: 500 if internal server error occurs
+            """
             try:
                 print(f"Starting workload for customer: {customer_id}, object: {object_id}")
                 
@@ -362,6 +456,43 @@ class HTTP_SERVER():
             access_token: str = Depends(self.authenticate_token),
             customer_id: str = Depends(self.getCustomerIdFromAuthorizationHeader)
         ):
+            """
+            Get Workload Status Endpoint
+            
+            This endpoint retrieves the current status of rendering workloads for the
+            authenticated customer. It forwards the request to the Session Supervisor
+            Service to get real-time workload information.
+            
+            Authentication:
+                Requires valid Bearer token in Authorization header
+                
+            Parameters:
+                access_token (str): Bearer token for authentication (auto-extracted)
+                customer_id (str): Customer ID extracted from authorization header
+                
+            Returns:
+                JSONResponse: Workload status information from Session Supervisor Service
+                
+            Example Response:
+                {
+                    "customerId": "customer-uuid",
+                    "activeWorkloads": [
+                        {
+                            "objectId": "object-uuid",
+                            "sessionId": "session-uuid",
+                            "status": "rendering",
+                            "progress": 45.5,
+                            "startTime": "2024-01-15T10:30:00Z"
+                        }
+                    ],
+                    "totalActiveWorkloads": 1
+                }
+                
+            Raises:
+                HTTPException: 401 if authentication fails
+                HTTPException: 503 if Session Supervisor Service is unavailable
+                HTTPException: 500 if internal server error occurs
+            """
             try:
                 print(f"Redirecting get-workload-status request to session supervisor service for customer: {customer_id}")
                 
@@ -396,6 +527,45 @@ class HTTP_SERVER():
             access_token: str = Depends(self.authenticate_token),
             customer_id: str = Depends(self.getCustomerIdFromAuthorizationHeader)
         ):
+            """
+            Stop and Delete Workload Endpoint
+            
+            This endpoint stops any active rendering workloads for the authenticated customer
+            and resets the object state back to "ready-to-render". It coordinates with both
+            the Session Supervisor Service and MongoDB to properly clean up the workload.
+            
+            Authentication:
+                Requires valid Bearer token in Authorization header
+                
+            Parameters:
+                object_id (str, Form, optional): The unique identifier of the blender object
+                    to stop rendering for. If not provided, stops all workloads for the customer.
+                access_token (str): Bearer token for authentication (auto-extracted)
+                customer_id (str): Customer ID extracted from authorization header
+                
+            Process:
+                1. Stops active workloads via Session Supervisor Service
+                2. Updates object state to "ready-to-render" in MongoDB
+                3. Returns success confirmation
+                
+            Returns:
+                JSONResponse: Success message confirming workload termination
+                
+            Example Response:
+                {
+                    "message": "Workload stopped and object state reset successfully",
+                    "objectId": "object-uuid",
+                    "customerId": "customer-uuid",
+                    "objectState": "ready-to-render"
+                }
+                
+            Raises:
+                HTTPException: 401 if authentication fails
+                HTTPException: 400 if object_id is missing when required
+                HTTPException: 404 if object not found
+                HTTPException: 503 if Session Supervisor Service is unavailable
+                HTTPException: 500 if internal server error occurs
+            """
             try:
                 # Error handling if object_id is not present in the API request
                 if not object_id or object_id.strip() == "":
@@ -448,6 +618,39 @@ class HTTP_SERVER():
             access_token: str = Depends(self.authenticate_token),
             customer_id: str = Depends(self.getCustomerIdFromAuthorizationHeader)
         ):
+            """
+            Get Blender File Endpoint
+            
+            This endpoint allows authenticated customers to download their uploaded
+            Blender files. It retrieves the file from blob storage and streams it
+            back to the client.
+            
+            Authentication:
+                Requires valid Bearer token in Authorization header
+                
+            Parameters:
+                object_id (str): The unique identifier of the blender object
+                access_token (str): Bearer token for authentication (auto-extracted)
+                customer_id (str): Customer ID extracted from authorization header
+                
+            Process:
+                1. Queries MongoDB to get blend file path and metadata
+                2. Retrieves file from blob storage
+                3. Streams file content back to client with appropriate headers
+                
+            Returns:
+                StreamingResponse: The blend file content with appropriate headers
+                
+            Response Headers:
+                Content-Type: application/octet-stream
+                Content-Disposition: attachment; filename="blend_file_name.blend"
+                Content-Length: file size in bytes
+                
+            Raises:
+                HTTPException: 401 if authentication fails
+                HTTPException: 404 if object not found or file doesn't exist
+                HTTPException: 500 if file retrieval fails
+            """
             print(f"Get blend file endpoint hit for customer: {customer_id}")
             print(f"Requested object ID: {object_id}")
 
@@ -600,9 +803,41 @@ class HTTP_SERVER():
             access_token: str = Depends(self.authenticate_token),
             customer_id: str = Depends(self.getCustomerIdFromAuthorizationHeader)
         ):
-            """Delete a blender object by objectId
-            Parameters: object_id (path parameter)
-            Returns: Success message with deleted object details
+            """
+            Delete Blender Object Endpoint
+            
+            This endpoint allows authenticated customers to permanently delete their
+            blender objects and all associated files. It removes the object from both
+            blob storage and the MongoDB database.
+            
+            Authentication:
+                Requires valid Bearer token in Authorization header
+                
+            Parameters:
+                object_id (str): The unique identifier of the blender object to delete
+                access_token (str): Bearer token for authentication (auto-extracted)
+                customer_id (str): Customer ID extracted from authorization header
+                
+            Process:
+                1. Deletes all associated files from blob storage (blend file, rendered images, video)
+                2. Removes the object record from MongoDB database
+                3. Returns confirmation of successful deletion
+                
+            Returns:
+                JSONResponse: Success message with deleted object details
+                
+            Example Response:
+                {
+                    "message": "Blender object and all associated files deleted successfully",
+                    "objectId": "object-uuid",
+                    "customerId": "customer-uuid",
+                    "blendFileName": "chair_model.blend"
+                }
+                
+            Raises:
+                HTTPException: 401 if authentication fails
+                HTTPException: 404 if object not found
+                HTTPException: 500 if deletion fails
             """
             print(f"Delete blend file endpoint hit for customer: {customer_id}")
             print(f"Requested object ID: {object_id}")
@@ -656,9 +891,44 @@ class HTTP_SERVER():
             customer_id: str = Depends(self.getCustomerIdFromAuthorizationHeader)
         ):
             """
-            Get signed URL for rendered video
-            Parameters: object_id (path parameter)
-            Returns: Signed URL for accessing the rendered video
+            Get Signed URL for Rendered Video Endpoint
+            
+            This endpoint generates a signed URL that allows temporary access to the
+            rendered video file for a specific blender object. The signed URL provides
+            secure, time-limited access to the video without requiring authentication
+            for the actual file download.
+            
+            Authentication:
+                Requires valid Bearer token in Authorization header
+                
+            Parameters:
+                object_id (str): The unique identifier of the blender object
+                access_token (str): Bearer token for authentication (auto-extracted)
+                customer_id (str): Customer ID extracted from authorization header
+                
+            Process:
+                1. Retrieves blender object information from MongoDB
+                2. Checks if rendered video path exists
+                3. Generates signed URL from blob service
+                4. Returns the signed URL with expiration information
+                
+            Returns:
+                JSONResponse: Signed URL and metadata for video access
+                
+            Example Response:
+                {
+                    "message": "Signed URL generated successfully",
+                    "objectId": "object-uuid",
+                    "customerId": "customer-uuid",
+                    "signedUrl": "https://blob-storage.com/signed-url-with-token",
+                    "expiresIn": 3600,
+                    "videoPath": "customer-uuid/object-uuid/rendered_video.mp4"
+                }
+                
+            Raises:
+                HTTPException: 401 if authentication fails
+                HTTPException: 404 if object not found or video doesn't exist
+                HTTPException: 500 if signed URL generation fails
             """
             print(f"Get signed URL for rendered video endpoint hit for customer: {customer_id}, object: {object_id}")
             

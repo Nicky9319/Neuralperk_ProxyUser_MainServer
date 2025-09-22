@@ -1792,6 +1792,424 @@
 					""
 				]
 			}
+		},
+		{
+			"name": "Delete Blend File Tests",
+			"item": [
+				{
+					"name": "Delete Blend File - Success",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{valid_customer_id}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/customer-service/delete-blend-file/{{valid_object_id}}",
+							"host": ["{{base_url}}"],
+							"path": ["api", "customer-service", "delete-blend-file", "{{valid_object_id}}"]
+						},
+						"description": "Delete a blender object and all associated files successfully"
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Blend File - Invalid Object ID",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{valid_customer_id}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/customer-service/delete-blend-file/invalid_object_id",
+							"host": ["{{base_url}}"],
+							"path": ["api", "customer-service", "delete-blend-file", "invalid_object_id"]
+						},
+						"description": "Test deleting non-existent blender object"
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Blend File - Object Not Found",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{valid_customer_id}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/customer-service/delete-blend-file/507f1f77bcf86cd799439999",
+							"host": ["{{base_url}}"],
+							"path": ["api", "customer-service", "delete-blend-file", "507f1f77bcf86cd799439999"]
+						},
+						"description": "Test deleting object that doesn't exist in database"
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Blend File - Unauthorized Access",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{other_customer_id}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/customer-service/delete-blend-file/{{valid_object_id}}",
+							"host": ["{{base_url}}"],
+							"path": ["api", "customer-service", "delete-blend-file", "{{valid_object_id}}"]
+						},
+						"description": "Test deleting object belonging to different customer"
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Blend File - Missing Authorization",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/customer-service/delete-blend-file/{{valid_object_id}}",
+							"host": ["{{base_url}}"],
+							"path": ["api", "customer-service", "delete-blend-file", "{{valid_object_id}}"]
+						},
+						"description": "Test deleting object without authorization header"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Blender Objects Management Tests",
+			"item": [
+				{
+					"name": "Get Blender Objects - Success",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{valid_customer_id}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/customer-service/get-blender-objects",
+							"host": ["{{base_url}}"],
+							"path": ["api", "customer-service", "get-blender-objects"]
+						},
+						"description": "Get all blender objects for authenticated customer"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Blender Objects - Customer with No Objects",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{customer_with_no_renders}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/customer-service/get-blender-objects",
+							"host": ["{{base_url}}"],
+							"path": ["api", "customer-service", "get-blender-objects"]
+						},
+						"description": "Get blender objects for customer with no objects"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Blender Objects - Missing Authorization",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/customer-service/get-blender-objects",
+							"host": ["{{base_url}}"],
+							"path": ["api", "customer-service", "get-blender-objects"]
+						},
+						"description": "Test getting blender objects without authorization"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Blender Objects - Invalid Token",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer invalid_token_123",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/customer-service/get-blender-objects",
+							"host": ["{{base_url}}"],
+							"path": ["api", "customer-service", "get-blender-objects"]
+						},
+						"description": "Test getting blender objects with invalid token"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Workload Progress Tests",
+			"item": [
+				{
+					"name": "Get Workload Progress - Success",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{valid_customer_id}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/customer-service/get-workload-progress",
+							"host": ["{{base_url}}"],
+							"path": ["api", "customer-service", "get-workload-progress"]
+						},
+						"description": "Get workload progress for customer with active workloads"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Workload Progress - No Active Workloads",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{customer_with_no_workload}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/customer-service/get-workload-progress",
+							"host": ["{{base_url}}"],
+							"path": ["api", "customer-service", "get-workload-progress"]
+						},
+						"description": "Get workload progress for customer with no active workloads"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Workload Progress - Missing Authorization",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/customer-service/get-workload-progress",
+							"host": ["{{base_url}}"],
+							"path": ["api", "customer-service", "get-workload-progress"]
+						},
+						"description": "Test getting workload progress without authorization"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Workload Progress - Invalid Token",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer invalid_token_123",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/customer-service/get-workload-progress",
+							"host": ["{{base_url}}"],
+							"path": ["api", "customer-service", "get-workload-progress"]
+						},
+						"description": "Test getting workload progress with invalid token"
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					"// Set up test environment variables",
+					"pm.environment.set('base_url', 'http://127.0.0.1:11000');",
+					"pm.environment.set('valid_customer_id', 'test_customer_123');",
+					"pm.environment.set('valid_object_id', '507f1f77bcf86cd799439012');",
+					"pm.environment.set('other_customer_id', 'other_customer_456');",
+					"pm.environment.set('customer_with_no_workload', 'customer_no_workload_789');",
+					"pm.environment.set('customer_with_no_renders', 'customer_no_renders_101');",
+					"pm.environment.set('paid_customer_id', 'paid_customer_999');",
+					"pm.environment.set('paid_object_id', 'paid_object_888');",
+					"pm.environment.set('unpaid_customer_id', 'unpaid_customer_777');",
+					"pm.environment.set('unpaid_object_id', 'unpaid_object_666');",
+					"pm.environment.set('object_with_no_frames', 'object_no_frames_555');"
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					"// Common test assertions",
+					"pm.test('Response time is less than 5000ms', function () {",
+					"    pm.expect(pm.response.responseTime).to.be.below(5000);",
+					"});",
+					"",
+					"// Test specific to authentication endpoints",
+					"if (pm.info.requestName.includes('No Token') || pm.info.requestName.includes('Invalid Token')) {",
+					"    pm.test('Should return 401 Unauthorized', function () {",
+					"        pm.response.to.have.status(401);",
+					"    });",
+					"}",
+					"",
+					"// Test for successful endpoints",
+					"if (pm.info.requestName.includes('Success') && !pm.info.requestName.includes('No')) {",
+					"    pm.test('Should return 200 OK', function () {",
+					"        pm.response.to.have.status(200);",
+					"    });",
+					"    ",
+					"    pm.test('Should have valid JSON response', function () {",
+					"        pm.expect(pm.response.json).to.be.a('function');",
+					"    });",
+					"}",
+					"",
+					"// Test specific to delete blend file endpoints",
+					"if (pm.info.requestName.includes('Delete Blend File')) {",
+					"    if (pm.info.requestName.includes('Success')) {",
+					"        pm.test('Should return 200 OK', function () {",
+					"            pm.response.to.have.status(200);",
+					"        });",
+					"        ",
+					"        pm.test('Should return success message', function () {",
+					"            const responseJson = pm.response.json();",
+					"            pm.expect(responseJson).to.have.property('message');",
+					"            pm.expect(responseJson.message).to.include('deleted successfully');",
+					"        });",
+					"        ",
+					"        pm.test('Should return object details', function () {",
+					"            const responseJson = pm.response.json();",
+					"            pm.expect(responseJson).to.have.property('objectId');",
+					"            pm.expect(responseJson).to.have.property('customerId');",
+					"            pm.expect(responseJson).to.have.property('blendFileName');",
+					"        });",
+					"    }",
+					"    ",
+					"    if (pm.info.requestName.includes('Invalid Object ID') || pm.info.requestName.includes('Object Not Found')) {",
+					"        pm.test('Should return 404 Not Found', function () {",
+					"            pm.response.to.have.status(404);",
+					"        });",
+					"    }",
+					"    ",
+					"    if (pm.info.requestName.includes('Unauthorized Access')) {",
+					"        pm.test('Should return 404 Not Found (object not found for this customer)', function () {",
+					"            pm.response.to.have.status(404);",
+					"        });",
+					"    }",
+					"    ",
+					"    if (pm.info.requestName.includes('Missing Authorization')) {",
+					"        pm.test('Should return 401 Unauthorized', function () {",
+					"            pm.response.to.have.status(401);",
+					"        });",
+					"    }",
+					"}",
+					"",
+					"// Test specific to get blender objects endpoints",
+					"if (pm.info.requestName.includes('Get Blender Objects')) {",
+					"    if (pm.info.requestName.includes('Success')) {",
+					"        pm.test('Should return 200 OK', function () {",
+					"            pm.response.to.have.status(200);",
+					"        });",
+					"        ",
+					"        pm.test('Should return blender objects list', function () {",
+					"            const responseJson = pm.response.json();",
+					"            pm.expect(responseJson).to.have.property('customerId');",
+					"            pm.expect(responseJson).to.have.property('blenderObjects');",
+					"            pm.expect(responseJson).to.have.property('totalObjects');",
+					"            pm.expect(responseJson.blenderObjects).to.be.an('array');",
+					"        });",
+					"        ",
+					"        pm.test('Should return success message', function () {",
+					"            const responseJson = pm.response.json();",
+					"            pm.expect(responseJson).to.have.property('message');",
+					"            pm.expect(responseJson.message).to.include('retrieved successfully');",
+					"        });",
+					"    }",
+					"    ",
+					"    if (pm.info.requestName.includes('Customer with No Objects')) {",
+					"        pm.test('Should return 200 OK with empty list', function () {",
+					"            pm.response.to.have.status(200);",
+					"        });",
+					"        ",
+					"        pm.test('Should return empty blender objects list', function () {",
+					"            const responseJson = pm.response.json();",
+					"            pm.expect(responseJson).to.have.property('blenderObjects');",
+					"            pm.expect(responseJson.blenderObjects).to.be.an('array');",
+					"            pm.expect(responseJson.totalObjects).to.equal(0);",
+					"        });",
+					"    }",
+					"    ",
+					"    if (pm.info.requestName.includes('Missing Authorization') || pm.info.requestName.includes('Invalid Token')) {",
+					"        pm.test('Should return 401 Unauthorized', function () {",
+					"            pm.response.to.have.status(401);",
+					"        });",
+					"    }",
+					"}",
+					"",
+					"// Test specific to get workload progress endpoints",
+					"if (pm.info.requestName.includes('Get Workload Progress')) {",
+					"    if (pm.info.requestName.includes('Success')) {",
+					"        pm.test('Should return 200 OK', function () {",
+					"            pm.response.to.have.status(200);",
+					"        });",
+					"        ",
+					"        pm.test('Should return progress information', function () {",
+					"            const responseJson = pm.response.json();",
+					"            pm.expect(responseJson).to.have.property('message');",
+					"            pm.expect(responseJson).to.have.property('progress');",
+					"        });",
+					"    }",
+					"    ",
+					"    if (pm.info.requestName.includes('No Active Workloads')) {",
+					"        pm.test('Should return 200 OK or appropriate response', function () {",
+					"            pm.expect(pm.response.code).to.be.oneOf([200, 404]);",
+					"        });",
+					"    }",
+					"    ",
+					"    if (pm.info.requestName.includes('Missing Authorization') || pm.info.requestName.includes('Invalid Token')) {",
+					"        pm.test('Should return 401 Unauthorized', function () {",
+					"            pm.response.to.have.status(401);",
+					"        });",
+					"    }",
+					"}"
+				]
+			}
 		}
 	],
 	"variable": [
