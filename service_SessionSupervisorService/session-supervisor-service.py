@@ -407,14 +407,19 @@ class HTTP_SERVER():
         ):
             """
             Get the number of users assigned to a session supervisor.
-            
+
             This endpoint retrieves the current number of users assigned to a
             session supervisor. It provides information about the current user
             count for the session supervisor.
             """
-            response = await self.data_class.customerSessionsMapping[customer_id].get_number_of_users()
-            return JSONResponse(content=response, status_code=200)
-        
+            try:
+                if customer_id not in self.data_class.customerSessionsMapping:
+                    return JSONResponse(content={"message": f"No active session for customer_id: {customer_id}"}, status_code=404)
+                response = await self.data_class.customerSessionsMapping[customer_id].get_number_of_users()
+                return JSONResponse(content=response, status_code=200)
+            except Exception as e:
+                return JSONResponse(content={"message": f"Error retrieving user count: {str(e)}"}, status_code=500)
+
         @self.app.post("/api/session-supervisor-service/set-user-count/{customer_id}/{user_count}")
         async def setUserCount(
             customer_id: str,
@@ -422,12 +427,17 @@ class HTTP_SERVER():
         ):
             """
             Set the number of users assigned to a session supervisor.
-            
+
             This endpoint sets the number of users assigned to a session supervisor.
             It updates the user count for the session supervisor.
             """
-            response = await self.data_class.customerSessionsMapping[customer_id].set_user_count(user_count)
-            return JSONResponse(content=response, status_code=200)
+            try:
+                if customer_id not in self.data_class.customerSessionsMapping:
+                    return JSONResponse(content={"message": f"No active session for customer_id: {customer_id}"}, status_code=404)
+                response = await self.data_class.customerSessionsMapping[customer_id].set_user_count(user_count)
+                return JSONResponse(content=response, status_code=200)
+            except Exception as e:
+                return JSONResponse(content={"message": f"Error setting user count: {str(e)}"}, status_code=500)
 
 
     async def run_app(self):
