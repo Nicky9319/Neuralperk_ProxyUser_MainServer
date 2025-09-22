@@ -804,7 +804,7 @@ class HTTP_SERVER():
         async def get_blend_file_name(object_id: str, customer_id: str):
             """Get the blend file name for a blender object
             Parameters: object_id (path parameter), customer_id (query parameter)
-            Returns: Blend file name and object details
+            Returns: Blend file name, object details, and cost
             """
             try:
                 # Check if blender object exists
@@ -823,6 +823,7 @@ class HTTP_SERVER():
                         "blendFileName": blender_object.get("blendFileName"),
                         "blendFilePath": blender_object.get("blendFilePath"),
                         "blendFileHash": blender_object.get("blendFileHash"),
+                        "cost": blender_object.get("cost"),
                         "message": "Blend file name retrieved successfully"
                     },
                     status_code=200
@@ -837,7 +838,7 @@ class HTTP_SERVER():
         async def find_blend_file_by_hash(file_hash: str):
             """Find blend file path by SHA-256 hash
             Parameters: file_hash (path parameter) - SHA-256 hash of the blend file
-            Returns: Blend file path and object details (without hash)
+            Returns: Blend file path, object details, and cost
             """
             try:
                 # Validate hash format (SHA-256 should be 64 characters)
@@ -858,6 +859,7 @@ class HTTP_SERVER():
                         "customerId": blender_object["customerId"],
                         "blendFileName": blender_object.get("blendFileName"),
                         "blendFilePath": blender_object.get("blendFilePath"),
+                        "cost": blender_object.get("cost"),
                         "message": "Blend file found successfully by hash"
                     },
                     status_code=200
@@ -872,7 +874,7 @@ class HTTP_SERVER():
         async def check_plan(object_id: str):
             """Check the payment plan status for a blender object
             Parameters: object_id (path parameter)
-            Returns: Payment status (paid/unpaid) based on isPaid field
+            Returns: Payment status (paid/unpaid), isPaid field, and cost
             """
             try:
                 # Find blender object by objectId
@@ -890,6 +892,7 @@ class HTTP_SERVER():
                         "objectId": object_id,
                         "paymentStatus": payment_status,
                         "isPaid": is_paid,
+                        "cost": blender_object.get("cost"),
                         "message": f"Payment status: {payment_status}"
                     },
                     status_code=200
@@ -904,7 +907,7 @@ class HTTP_SERVER():
         async def get_blend_file_from_path(file_path: str):
             """Get blend file path from database by calculating hash of input path and finding matching record
             Parameters: file_path (query parameter) - File path to search for in database
-            Returns: Blend file details if found in database
+            Returns: Blend file details and cost if found in database
             """
             try:
                 if not file_path:
@@ -927,6 +930,7 @@ class HTTP_SERVER():
                         "customerId": blender_object["customerId"],
                         "blendFileName": blender_object.get("blendFileName"),
                         "blendFilePath": blender_object.get("blendFilePath"),
+                        "cost": blender_object.get("cost"),
                         "message": "Blend file found successfully by path hash"
                     },
                     status_code=200
@@ -1013,7 +1017,7 @@ class HTTP_SERVER():
         async def get_blender_objects_by_customer(customer_id: str):
             """Get all blender objects associated with a specific customer
             Parameters: customer_id (path parameter)
-            Returns: List of blender objects with objectId, blendFileName, and isPaid
+            Returns: List of blender objects with objectId, blendFileName, isPaid, objectState, and cost
             """
             try:
                 # Check if customer exists
@@ -1024,7 +1028,7 @@ class HTTP_SERVER():
                 # Find all blender objects for this customer
                 blender_objects = list(self.blender_objects_collection.find(
                     {"customerId": customer_id},
-                    {"objectId": 1, "blendFileName": 1, "isPaid": 1, "objectState": 1, "_id": 0}
+                    {"objectId": 1, "blendFileName": 1, "isPaid": 1, "objectState": 1, "cost": 1, "_id": 0}
                 ))
                 
                 # Format the response
@@ -1034,7 +1038,8 @@ class HTTP_SERVER():
                         "objectId": obj["objectId"],
                         "blendFileName": obj.get("blendFileName"),
                         "isPaid": obj.get("isPaid", False),
-                        "objectState": obj.get("objectState", "ready-to-render")
+                        "objectState": obj.get("objectState", "ready-to-render"),
+                        "cost": obj.get("cost")
                     })
                 
                 return JSONResponse(
