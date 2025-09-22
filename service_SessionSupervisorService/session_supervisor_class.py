@@ -1267,7 +1267,7 @@ class sessionSupervisorClass:
             await supervisor.check_and_demand_users()
         """
         print("Checking and Demanding for more Users")
-        print("Current Time when requesting users: ", datetime.now())
+        print("Current Time when requesting users: ", datetime.datetime.now())
         if self.number_of_users == 0:
             await self.demand_users(1)
         else:

@@ -585,6 +585,22 @@ class HTTP_SERVER():
             print("Finished distributing users.")
                 
 
+    # ----------------------------
+    # Admin Panel Section
+    # ----------------------------
+
+    async def getUserManagerOverview(self):
+        return {
+            "userToSupervisorIdMapping": self.userToSupervisorIdMapping,
+            "supervisorToRoutingKeyMapping": self.supervisorToRoutingKeyMapping,
+            "user_demand_queue": self.user_demand_queue,
+            "activeSessions": self.activeSessions,
+            "idle_users": self.idle_users,
+        }
+
+    # ----------------------------
+    # API Calls Section
+    # ----------------------------
 
     async def configure_routes(self):
         """
@@ -630,6 +646,12 @@ class HTTP_SERVER():
             """
             self.activeSessions.append(session_supervisor_id)
             self.supervisorToRoutingKeyMapping[session_supervisor_id] = f"SESSION_SUPERVISOR_{session_supervisor_id}"
+
+
+        # ----------------------------
+        # Admin Panel API Calls
+        # ----------------------------
+
 
     async def run_app(self):
         """
