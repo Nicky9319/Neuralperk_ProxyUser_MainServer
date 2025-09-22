@@ -108,7 +108,54 @@ class MessageQueue:
 # ------------------ Session Supervisor Class -------------------------- #
 
 class sessionSupervisorClass:
+    """
+    Session Supervisor Class - Manages rendering sessions for 3D objects.
+    
+    This class coordinates the rendering of Blender objects by:
+    - Downloading blend files from blob storage
+    - Determining frame ranges to render
+    - Distributing frames among available users
+    - Managing user assignments and workload distribution
+    - Handling frame completion and storage
+    - Coordinating with User Manager for user allocation
+    
+    Attributes:
+        customer_id (str): Unique identifier for the customer
+        object_id (str): Unique identifier for the 3D object to render
+        session_id (str): Unique identifier for this rendering session
+        blendFilePath (str): Path to the blend file in blob storage
+        blendFileHash (str): Hash of the blend file for verification
+        user_list (list): List of user IDs currently assigned to this session
+        frameNumberMappedToUser (dict): Maps frame numbers to assigned user IDs
+        workload_status (str): Current status - "initialized", "running", or "completed"
+    """
+    
     def __init__(self, customer_id = None, object_id = None, session_id = None, workload_removing_callback = None):
+        """
+        Initialize a new Session Supervisor instance.
+        
+        Sets up the session supervisor to manage rendering of a specific 3D object
+        for a customer. Fetches blend file information from MongoDB service and
+        prepares for workload distribution.
+        
+        Args:
+            customer_id (str): Unique identifier for the customer who owns the object
+            object_id (str): Unique identifier for the 3D object to be rendered
+            session_id (str): Unique identifier for this rendering session
+            workload_removing_callback (callable): Function to call when workload is completed
+                                                  Should accept customer_id as parameter
+                                                  
+        Raises:
+            ValueError: If blendFilePath is not found in API response
+            Exception: If API call to get blend file information fails
+            
+        Example:
+            supervisor = sessionSupervisorClass(
+                customer_id="123e4567-e89b-12d3-a456-426614174000",
+                object_id="987fcdeb-51a2-43d1-b789-123456789abc", 
+                session_id="session-001"
+            )
+        """
         self.customer_id = customer_id
         self.object_id = object_id
 
@@ -173,6 +220,25 @@ class sessionSupervisorClass:
 
 
     async def initialization(self):
+        """
+        Initialize message queue connections and set up communication channels.
+        
+        This method establishes the necessary RabbitMQ connections and queues
+        for communication with the User Manager service. It sets up:
+        - Connection to the message broker
+        - Exchange for receiving messages from User Manager
+        - Queue specific to this session supervisor
+        - Message consumption callback for handling incoming messages
+        
+        The session supervisor will listen for messages on its dedicated queue
+        and can send messages to the User Manager through the USER_MANAGER_EXCHANGE.
+        
+        Raises:
+            Exception: If message queue connection or setup fails
+            
+        Example:
+            await supervisor.initialization()
+        """
         await self.mq_client.connect()
 
         await self.mq_client.declare_exchange("SESSION_SUPERVISOR_EXCHANGE", exchange_type=ExchangeType.DIRECT)
@@ -186,10 +252,41 @@ class sessionSupervisorClass:
         
     async def callbackUserManagerMessages(self, message):
         """
-            Callback Function to Listen to events emitted by the User Manager
-            Currently It is only works with json format data.
-            other data types like bytes and all Can be added later if needed.
-
+        Handle incoming messages from the User Manager service.
+        
+        This callback function processes messages received from the User Manager
+        through the message queue. It handles various types of events including:
+        - New user assignments
+        - User frame rendering completion
+        - User disconnection events
+        - User rendering completion
+        
+        The function decodes JSON messages and routes them to appropriate
+        handler methods based on the message topic.
+        
+        Args:
+            message (aio_pika.Message): The incoming message from User Manager
+                                       Expected to contain JSON payload with:
+                                       - topic: Event type identifier
+                                       - data: Event-specific data
+                                       - supervisor-id: Session supervisor identifier
+                                       
+        Supported Topics:
+            - "new-users": New users assigned to this session
+            - "user-frame-rendered": A user completed rendering a frame
+            - "user-rendering-completed": A user completed all assigned frames
+            - "user-disconnected": A user disconnected from the session
+            
+        Example:
+            Message payload:
+            {
+                "topic": "new-users",
+                "supervisor-id": "session-123",
+                "data": {
+                    "user_list": ["user-1", "user-2"],
+                    "session_supervisor_id": "session-123"
+                }
+            }
         """
 
         decoded_message = message.body.decode()
@@ -259,6 +356,24 @@ class sessionSupervisorClass:
     # -------------------------
 
     async def get_workload_status(self):
+        """
+        Get the current status and progress of the rendering workload.
+        
+        Calculates the completion status of the rendering session by comparing
+        the total frames to be rendered against the remaining frames in the queue.
+        This provides a real-time view of rendering progress.
+        
+        Returns:
+            dict: Status information containing:
+                - total-frames (int): Total number of frames to render
+                - completed-frames (int): Number of frames already completed
+                - completion-percentage (float): Percentage of work completed (0-100)
+                
+        Example:
+            status = await supervisor.get_workload_status()
+            print(f"Progress: {status['completion-percentage']:.1f}% complete")
+            # Output: Progress: 45.2% complete
+        """
         completed_frames = self.total_frames - len(self.remaining_frame_list) if self.total_frames is not None else 0
         print("Frames Completed: ", completed_frames)
         
@@ -278,8 +393,28 @@ class sessionSupervisorClass:
     
     async def downloadBlendFileFromBlobStorage(self, blend_file_path: str) -> str:
         """
-        Download blend file from blob storage to a temporary local file.
-        Returns the path to the temporary local file.
+        Download a Blender blend file from blob storage to a temporary local location.
+        
+        This method downloads the blend file from the blob storage service to a
+        temporary local directory so it can be processed by Blender. The file
+        is stored in a session-specific temporary directory to avoid conflicts.
+        
+        Args:
+            blend_file_path (str): Path to the blend file in blob storage
+                                 Expected format: "customer_id/object_id/filename.blend"
+                                 
+        Returns:
+            str: Path to the temporary local blend file
+            
+        Raises:
+            ValueError: If the blend file path format is invalid
+            Exception: If the download from blob storage fails
+            
+        Example:
+            temp_path = await supervisor.downloadBlendFileFromBlobStorage(
+                "customer-123/object-456/model.blend"
+            )
+            # Returns: "temp_blend_files/session-789/temp_blend_20240115_143022.blend"
         """
         import tempfile
         import datetime
@@ -331,8 +466,27 @@ class sessionSupervisorClass:
 
     async def getFrameRangeFromBlendFile(self, blend_file_path: str) -> tuple[int, int]:
         """
-        Get first and last frame from a blend file using Blender.
-        Returns tuple of (first_frame, last_frame).
+        Extract the frame range (start and end frames) from a Blender blend file.
+        
+        This method uses Blender's command-line interface to analyze the blend file
+        and determine the frame range defined in the scene. It runs a Python script
+        that extracts the first and last frame numbers from the scene settings.
+        
+        Args:
+            blend_file_path (str): Path to the local blend file to analyze
+            
+        Returns:
+            tuple[int, int]: A tuple containing (first_frame, last_frame)
+                           where first_frame is the starting frame number
+                           and last_frame is the ending frame number
+                           
+        Raises:
+            Exception: If Blender command fails or frame range cannot be extracted
+            
+        Example:
+            first, last = await supervisor.getFrameRangeFromBlendFile("/tmp/model.blend")
+            print(f"Frames to render: {first} to {last}")
+            # Output: Frames to render: 1 to 250
         """
         import subprocess
         
@@ -375,7 +529,21 @@ class sessionSupervisorClass:
 
     async def cleanupTempBlendFile(self, temp_blend_path: str):
         """
-        Clean up temporary blend file after processing.
+        Remove temporary blend file and clean up temporary directory.
+        
+        This method safely removes the temporary blend file that was downloaded
+        for processing. It also attempts to remove the temporary directory if
+        it becomes empty after file deletion.
+        
+        Args:
+            temp_blend_path (str): Path to the temporary blend file to delete
+            
+        Note:
+            This method is safe to call even if the file doesn't exist.
+            It will not raise an exception if the file is already deleted.
+            
+        Example:
+            await supervisor.cleanupTempBlendFile("/tmp/session-123/temp_blend.blend")
         """
         try:
             if os.path.exists(temp_blend_path):
@@ -396,8 +564,32 @@ class sessionSupervisorClass:
 
     async def getAndAssignFrameRange(self):
         """
-        Download blend file from blob storage, get frame range, and assign frames to users.
-        This method replaces the local file approach with blob storage approach.
+        Download blend file, determine frame range, and prepare frame list for distribution.
+        
+        This is a comprehensive method that handles the initial setup of the rendering
+        workload. It performs the following steps:
+        1. Downloads the blend file from blob storage to a temporary location
+        2. Analyzes the blend file to determine the frame range (start/end frames)
+        3. Creates a list of all frames that need to be rendered
+        4. Sets up internal tracking variables for workload management
+        5. Cleans up the temporary blend file
+        
+        This method must be called before starting the rendering workload to
+        determine how many frames need to be rendered and distributed among users.
+        
+        Returns:
+            dict: Frame range information containing:
+                - first_frame (int): Starting frame number
+                - last_frame (int): Ending frame number  
+                - total_frames (int): Total number of frames to render
+                - frame_list (list): List of all frame numbers to render
+                
+        Raises:
+            Exception: If any step in the process fails (download, analysis, etc.)
+            
+        Example:
+            frame_info = await supervisor.getAndAssignFrameRange()
+            print(f"Will render {frame_info['total_frames']} frames from {frame_info['first_frame']} to {frame_info['last_frame']}")
         """
         temp_blend_path = None
         
@@ -449,10 +641,42 @@ class sessionSupervisorClass:
 
 
     async def sendMessageToUser(self, user_id, topic, payload):
+        """
+        Send a message to a specific user through the User Service.
+        
+        This method sends a message to a user by making an HTTP request to the
+        User Service. The message contains a topic (message type) and payload
+        (message data) that the user will receive and process.
+        
+        Args:
+            user_id (str): Unique identifier of the user to send message to
+            topic (str): Type of message being sent (e.g., "start-rendering", "stop-work")
+            payload (dict): Message data to send to the user
+            
+        Example:
+            await supervisor.sendMessageToUser(
+                user_id="user-123",
+                topic="start-rendering", 
+                payload={"frame_list": [1, 2, 3], "blend_file_hash": "abc123"}
+            )
+        """
         await self.http_client.post(f"{self.user_service_url}/api/user-service/user/send-msg-to-user", json={"user_id": user_id, "data": payload, "topic": topic})
         print(f"Message sent to user {user_id}: {payload}")
 
     async def sendUserStopWork(self, user_list):
+        """
+        Send stop work messages to a list of users.
+        
+        This method sends a "stop-work" message to all users in the provided list,
+        instructing them to stop their current rendering work. This is typically
+        used when releasing users from the session or when the workload is completed.
+        
+        Args:
+            user_list (list): List of user IDs to send stop work messages to
+            
+        Example:
+            await supervisor.sendUserStopWork(["user-1", "user-2", "user-3"])
+        """
         for user_id in user_list:
             topic = "stop-work"
             payload = {
@@ -461,8 +685,19 @@ class sessionSupervisorClass:
 
     async def sendUserStartRendering(self, user_id, frame_list):
         """
-        Send start rendering message to user with frame list and blend file path.
-        If blend_file_path is None, uses the blob storage path from self.blendFilePath.
+        Send a start rendering message to a user with assigned frames.
+        
+        This method sends a "start-rendering" message to a specific user,
+        providing them with the list of frames they need to render and the
+        blend file hash for verification. The user will then begin rendering
+        the assigned frames.
+        
+        Args:
+            user_id (str): Unique identifier of the user to send rendering work to
+            frame_list (list): List of frame numbers the user should render
+            
+        Example:
+            await supervisor.sendUserStartRendering("user-123", [1, 2, 3, 4, 5])
         """
             
         topic = "start-rendering"
@@ -479,6 +714,20 @@ class sessionSupervisorClass:
     # -------------------------
 
     async def releaseUsers(self, user_id):
+        """
+        Release a user from this session supervisor and notify the User Manager.
+        
+        This method removes a user from the current session, stops their work,
+        and notifies the User Manager that the user is now available for other
+        sessions. The user is removed from the internal user list and the
+        user count is decremented.
+        
+        Args:
+            user_id (str): Unique identifier of the user to release
+            
+        Example:
+            await supervisor.releaseUsers("user-123")
+        """
         print("Releasing Users from Session Supervisor : ", self.session_id)
         self.user_list.remove(user_id)
         self.number_of_users -= 1
@@ -496,6 +745,20 @@ class sessionSupervisorClass:
         await self.mq_client.publish_message("USER_MANAGER_EXCHANGE", "SESSION_SUPERVISOR", json.dumps(payload))
 
     async def remove_users(self, user_list):
+        """
+        Remove multiple users from this session supervisor.
+        
+        This method releases multiple users from the session and handles
+        workload redistribution. If the workload is still running and no
+        users remain, it will request more users. If users remain, it will
+        redistribute the workload among them.
+        
+        Args:
+            user_list (list): List of user IDs to remove from the session
+            
+        Example:
+            await supervisor.remove_users(["user-1", "user-2", "user-3"])
+        """
         for user in user_list:
             await self.releaseUsers(user)
         
@@ -506,6 +769,20 @@ class sessionSupervisorClass:
                 await self.distributeWorkload()
 
     async def users_added(self, user_list):
+        """
+        Add new users to this session supervisor and distribute workload if running.
+        
+        This method adds new users to the session and immediately distributes
+        the current workload among all available users if the workload is
+        currently running. This ensures new users start contributing to the
+        rendering process right away.
+        
+        Args:
+            user_list (list): List of user IDs to add to the session
+            
+        Example:
+            await supervisor.users_added(["user-4", "user-5"])
+        """
         for user_id in user_list:
             self.user_list.append(user_id)
             self.number_of_users += 1
@@ -514,6 +791,20 @@ class sessionSupervisorClass:
             await self.distributeWorkload()
 
     async def demand_users(self, user_count):
+        """
+        Request additional users from the User Manager.
+        
+        This method sends a request to the User Manager asking for a specific
+        number of users to be assigned to this session supervisor. The User
+        Manager will then attempt to allocate available users to fulfill this
+        request.
+        
+        Args:
+            user_count (int): Number of users to request from the User Manager
+            
+        Example:
+            await supervisor.demand_users(3)  # Request 3 users
+        """
         payload = {
             "topic" : "more-users",
             "supervisor-id" : self.session_id,
@@ -525,11 +816,62 @@ class sessionSupervisorClass:
         print("Demanding users from Session Supervisor : ", self.session_id)
         await self.mq_client.publish_message("USER_MANAGER_EXCHANGE", "SESSION_SUPERVISOR", json.dumps(payload))
 
+    async def fix_user_count(self, total_user_count):
+        """
+        Adjust the number of users to match the desired total user count.
+        
+        This method ensures that the session supervisor has exactly the specified
+        number of users by either requesting more users or removing excess users.
+        It's useful for dynamic scaling based on workload requirements or admin
+        intervention to optimize resource allocation.
+        
+        The method performs the following actions:
+        1. If more users are needed: Requests additional users from User Manager
+        2. If too many users: Removes excess users (starting from the beginning of the list)
+        3. If user count is correct: No action taken
+        
+        Args:
+            total_user_count (int): The desired total number of users for this session
+                                 Must be a positive integer
+                                 
+        Example:
+            # Current session has 2 users, want 5 users total
+            await supervisor.fix_user_count(5)  # Will request 3 more users
+            
+            # Current session has 5 users, want 2 users total  
+            await supervisor.fix_user_count(2)  # Will remove 3 users
+            
+            # Current session has 3 users, want 3 users total
+            await supervisor.fix_user_count(3)  # No action taken
+        """
+        if total_user_count > self.number_of_users:
+            await self.demand_users(total_user_count - self.number_of_users)
+        elif total_user_count < self.number_of_users:
+            await self.remove_users(self.user_list[:self.number_of_users - total_user_count])
+        else:
+            return
+
     # -------------------------
     # Workload Management Section
     # -------------------------
 
     async def workload_completed(self):
+        """
+        Mark the rendering workload as completed and perform cleanup.
+        
+        This method is called when all frames have been successfully rendered.
+        It performs the following actions:
+        1. Marks the workload as completed
+        2. Releases all users from the session
+        3. Calls the workload completion callback
+        4. Logs completion status
+        
+        This method should be called automatically when all frames are rendered,
+        but can also be called manually if needed.
+        
+        Example:
+            await supervisor.workload_completed()
+        """
         self.completed = True
         self.workload_status = "completed"
         await self.remove_users(self.user_list)
@@ -538,9 +880,22 @@ class sessionSupervisorClass:
 
     async def distributeWorkload(self):
         """
-        Distribute workload among available users.
-        This method should be called after getAndAssignFrameRange() to distribute frames.
-        frameNumberMappedToUser maps frame_number -> user_id (not user_id -> frame_list)
+        Distribute rendering frames among available users.
+        
+        This method takes the remaining frames that need to be rendered and
+        distributes them evenly among all available users. It calculates how
+        many frames each user should get and sends start-rendering messages
+        to each user with their assigned frames.
+        
+        The method updates the frameNumberMappedToUser dictionary to track
+        which user is responsible for each frame number.
+        
+        Note:
+            This method should be called after getAndAssignFrameRange() to
+            ensure frames are available for distribution.
+            
+        Example:
+            await supervisor.distributeWorkload()
         """
 
         print(self.user_list)
@@ -584,11 +939,33 @@ class sessionSupervisorClass:
 
     async def user_frame_rendered(self, user_id: str, frame_number: int, image_binary_path: str, image_extension: str):
         """
-        Handle when a user completes rendering a frame.
-        1. Remove frame from frameNumberMappedToUser dictionary
-        2. Download image from blob storage (temp bucket)
-        3. Delete image from temp bucket
-        4. Store image in correct location: customer_id/object_id/frame_number.png
+        Process a completed frame rendered by a user.
+        
+        This method handles the complete workflow when a user finishes rendering
+        a frame. It performs the following steps:
+        1. Removes the frame from the tracking dictionary
+        2. Downloads the rendered image from the temporary blob storage
+        3. Deletes the temporary image file
+        4. Stores the image in the final location in blob storage
+        5. Updates MongoDB with frame information
+        6. Checks if all frames are completed
+        
+        Args:
+            user_id (str): ID of the user who rendered the frame
+            frame_number (int): Frame number that was rendered
+            image_binary_path (str): Path to the image in temporary blob storage
+            image_extension (str): File extension of the rendered image (e.g., "png", "jpg")
+            
+        Returns:
+            dict: Processing result containing status, frame info, and progress
+            
+        Example:
+            result = await supervisor.user_frame_rendered(
+                user_id="user-123",
+                frame_number=42,
+                image_binary_path="temp/user-123/frame_42.png",
+                image_extension="png"
+            )
         """
         try:
             print(f"Processing rendered frame {frame_number} from user {user_id}")
@@ -709,9 +1086,25 @@ class sessionSupervisorClass:
     async def user_rendering_completed(self, user_id: str):
         """
         Handle when a user completes all their assigned frames.
-        1. Check if all frames are completed
-        2. If not all frames are completed, redistribute remaining frames between available users
-        Note: Workflow completion is handled in user_frame_rendered method, not here
+        
+        This method is called when a user finishes rendering all frames that were
+        assigned to them. It performs the following actions:
+        1. Checks if all frames in the entire workload are completed
+        2. If not all frames are completed, redistributes remaining frames among available users
+        3. Ensures optimal workload distribution for maximum efficiency
+        
+        Note:
+            The actual workload completion (when all frames are done) is handled
+            in the user_frame_rendered method, not here.
+            
+        Args:
+            user_id (str): ID of the user who completed their assigned frames
+            
+        Returns:
+            dict: Result containing status and redistribution information
+            
+        Example:
+            result = await supervisor.user_rendering_completed("user-123")
         """
         try:
             print(f"User {user_id} completed all assigned frames")
@@ -799,6 +1192,19 @@ class sessionSupervisorClass:
             }
 
     async def handle_user_disconnection(self, user_id: str):
+        """
+        Handle when a user disconnects from the session.
+        
+        This method is called when a user unexpectedly disconnects during
+        the rendering process. It removes the user from the session and
+        redistributes their assigned frames among the remaining users.
+        
+        Args:
+            user_id (str): ID of the user who disconnected
+            
+        Example:
+            await supervisor.handle_user_disconnection("user-123")
+        """
         try:
             if user_id in self.user_list:
                 self.user_list.remove(user_id)
@@ -813,8 +1219,25 @@ class sessionSupervisorClass:
         
     async def get_rendering_progress(self):
         """
-        Get the current rendering progress.
-        Returns information about completed frames, remaining frames, etc.
+        Get detailed information about the current rendering progress.
+        
+        This method provides comprehensive information about the rendering
+        session including completion status, active users, and frame mapping.
+        Useful for monitoring and debugging the rendering process.
+        
+        Returns:
+            dict: Progress information containing:
+                - total_frames (int): Total number of frames to render
+                - completed_frames (int): Number of frames completed
+                - remaining_frames (int): Number of frames still to render
+                - progress_percentage (float): Completion percentage (0-100)
+                - workload_status (str): Current workload status
+                - active_users (int): Number of users currently active
+                - frame_mapping (dict): Mapping of frame numbers to user IDs
+                
+        Example:
+            progress = await supervisor.get_rendering_progress()
+            print(f"Progress: {progress['progress_percentage']:.1f}%")
         """
         total_frames = len(self.remaining_frame_list) if self.remaining_frame_list else 0
         remaining_frames = len(self.frameNumberMappedToUser)
@@ -833,6 +1256,16 @@ class sessionSupervisorClass:
         }
 
     async def check_and_demand_users(self):
+        """
+        Check if users are needed and request them from the User Manager.
+        
+        This method checks if the session has any users available. If no users
+        are available and the workload is running, it requests additional users
+        from the User Manager to continue the rendering process.
+        
+        Example:
+            await supervisor.check_and_demand_users()
+        """
         print("Checking and Demanding for more Users")
         print("Current Time when requesting users: ", datetime.now())
         if self.number_of_users == 0:
@@ -841,6 +1274,21 @@ class sessionSupervisorClass:
             return
 
     async def start_workload(self):
+        """
+        Start the rendering workload for this session.
+        
+        This method initiates the rendering process by:
+        1. Checking if the workload is already completed
+        2. Setting the workload status to "running"
+        3. Getting the frame range and preparing frames for distribution
+        4. Starting a background task to check for and request users
+        
+        This method should be called to begin the rendering process after
+        the session supervisor has been initialized.
+        
+        Example:
+            await supervisor.start_workload()
+        """
         if self.completed:
             return
         
@@ -851,7 +1299,15 @@ class sessionSupervisorClass:
     def __del__(self):
         """
         Destructor - handles cleanup when object is garbage collected.
-        Note: This is a fallback mechanism. Prefer calling cleanup() explicitly.
+        
+        This is a fallback cleanup mechanism that runs when the object is
+        being garbage collected. It attempts to perform async cleanup
+        operations, but this is not guaranteed to work properly in all
+        scenarios.
+        
+        Note:
+            This is a fallback mechanism. Prefer calling cleanup() explicitly
+            when you know the session supervisor is no longer needed.
         """
         try:
             # Try to get the current event loop
@@ -867,7 +1323,17 @@ class sessionSupervisorClass:
             print("Warning: Could not perform async cleanup in destructor - no event loop available")
     
     async def _async_cleanup(self):
-        """Internal async cleanup method"""
+        """
+        Internal async cleanup method that performs resource cleanup.
+        
+        This method handles the actual cleanup operations including:
+        1. Sending stop work messages to all users
+        2. Releasing users back to the User Manager
+        3. Removing user demands from the User Manager
+        4. Closing message queue connections
+        
+        This method is called by both the destructor and the explicit cleanup method.
+        """
         try:
 
             # Send stop work message to users
@@ -908,8 +1374,17 @@ class sessionSupervisorClass:
     
     async def cleanup(self):
         """
-        Explicit cleanup method that should be called when the session supervisor is no longer needed.
-        This is the preferred way to clean up resources.
+        Explicit cleanup method for proper resource management.
+        
+        This is the preferred way to clean up resources when the session supervisor
+        is no longer needed. It performs all necessary cleanup operations including
+        releasing users, closing connections, and notifying other services.
+        
+        This method should be called explicitly when you know the session supervisor
+        is no longer needed, rather than relying on the destructor.
+        
+        Example:
+            await supervisor.cleanup()
         """
         await self._async_cleanup()
 

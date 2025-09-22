@@ -125,3 +125,16 @@ class sessionClass:
     async def set_object_id(self, object_id):
         # Sets the object ID for the session
         self.object_id = object_id
+
+
+    # -------------------------
+    # Session Overvier and Control Section
+    # -------------------------
+
+    async def get_number_of_users(self):
+        return self.session_supervisor_instance.number_of_users
+    
+    async def set_user_count(self, user_count):
+        return await self.session_supervisor_instance.fix_user_count(user_count)
+
+
