@@ -142,14 +142,14 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n  \"customerId\": \"cust_001\",\n  \"blendFileName\": \"chair_model.blend\",\n  \"blendFilePath\": \"/path/to/model.blend\",\n  \"renderedVideoPath\": \"/path/to/video.mp4\",\n  \"isPaid\": true\n}"
+							"raw": "{\n  \"customerId\": \"cust_001\",\n  \"blendFileName\": \"chair_model.blend\",\n  \"blendFilePath\": \"/path/to/model.blend\",\n  \"renderedVideoPath\": \"/path/to/video.mp4\",\n  \"isPaid\": true,\n  \"cost\": 25.99\n}"
 						},
 						"url": {
 							"raw": "{{base_url}}/api/mongodb-service/blender-objects/add",
 							"host": ["{{base_url}}"],
 							"path": ["api", "mongodb-service", "blender-objects", "add"]
 						},
-						"description": "Add a new blender object with all fields. objectId will be auto-generated."
+						"description": "Add a new blender object with all fields including cost. objectId will be auto-generated."
 					},
 					"response": []
 				},
@@ -219,6 +219,52 @@
 							"path": ["api", "mongodb-service", "blender-objects", "add"]
 						},
 						"description": "Add a blender object with only blendFileName (no file paths). objectId will be auto-generated."
+					},
+					"response": []
+				},
+				{
+					"name": "Add Blender Object - With Cost (Paid)",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"customerId\": \"cust_001\",\n  \"blendFileName\": \"lamp_model.blend\",\n  \"isPaid\": true,\n  \"cost\": 15.50\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/mongodb-service/blender-objects/add",
+							"host": ["{{base_url}}"],
+							"path": ["api", "mongodb-service", "blender-objects", "add"]
+						},
+						"description": "Add a paid blender object with cost field. objectId will be auto-generated."
+					},
+					"response": []
+				},
+				{
+					"name": "Add Blender Object - Without Cost (Unpaid)",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"customerId\": \"cust_001\",\n  \"blendFileName\": \"free_model.blend\",\n  \"isPaid\": false\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/mongodb-service/blender-objects/add",
+							"host": ["{{base_url}}"],
+							"path": ["api", "mongodb-service", "blender-objects", "add"]
+						},
+						"description": "Add an unpaid blender object without cost field. objectId will be auto-generated."
 					},
 					"response": []
 				},
@@ -618,6 +664,195 @@
 							"path": ["api", "mongodb-service", "blender-objects", "get-blend-file-from-path"]
 						},
 						"description": "Test without file_path query parameter (should fail)"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Cost Management",
+			"item": [
+				{
+					"name": "Update Cost - Success",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"objectId\": \"obj_001\",\n  \"customerId\": \"cust_001\",\n  \"cost\": 35.99\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/mongodb-service/blender-objects/update-cost",
+							"host": ["{{base_url}}"],
+							"path": ["api", "mongodb-service", "blender-objects", "update-cost"]
+						},
+						"description": "Update cost for existing blender object using hardcoded IDs"
+					},
+					"response": []
+				},
+				{
+					"name": "Update Cost - Missing Fields",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"objectId\": \"obj_001\",\n  \"customerId\": \"cust_001\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/mongodb-service/blender-objects/update-cost",
+							"host": ["{{base_url}}"],
+							"path": ["api", "mongodb-service", "blender-objects", "update-cost"]
+						},
+						"description": "Test validation - missing cost field"
+					},
+					"response": []
+				},
+				{
+					"name": "Update Cost - Invalid Customer",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"objectId\": \"obj_001\",\n  \"customerId\": \"invalid_customer\",\n  \"cost\": 25.50\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/mongodb-service/blender-objects/update-cost",
+							"host": ["{{base_url}}"],
+							"path": ["api", "mongodb-service", "blender-objects", "update-cost"]
+						},
+						"description": "Test updating cost with non-existent customer"
+					},
+					"response": []
+				},
+				{
+					"name": "Update Cost - Invalid Object",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"objectId\": \"invalid_object\",\n  \"customerId\": \"cust_001\",\n  \"cost\": 25.50\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/mongodb-service/blender-objects/update-cost",
+							"host": ["{{base_url}}"],
+							"path": ["api", "mongodb-service", "blender-objects", "update-cost"]
+						},
+						"description": "Test updating cost for non-existent object"
+					},
+					"response": []
+				},
+				{
+					"name": "Update Cost - Invalid Cost Format",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"objectId\": \"obj_001\",\n  \"customerId\": \"cust_001\",\n  \"cost\": \"invalid_cost\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/mongodb-service/blender-objects/update-cost",
+							"host": ["{{base_url}}"],
+							"path": ["api", "mongodb-service", "blender-objects", "update-cost"]
+						},
+						"description": "Test validation - invalid cost format (string instead of number)"
+					},
+					"response": []
+				},
+				{
+					"name": "Update Cost - Negative Cost",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"objectId\": \"obj_001\",\n  \"customerId\": \"cust_001\",\n  \"cost\": -10.50\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/mongodb-service/blender-objects/update-cost",
+							"host": ["{{base_url}}"],
+							"path": ["api", "mongodb-service", "blender-objects", "update-cost"]
+						},
+						"description": "Test validation - negative cost value (should fail)"
+					},
+					"response": []
+				},
+				{
+					"name": "Update Cost - Zero Cost",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"objectId\": \"obj_001\",\n  \"customerId\": \"cust_001\",\n  \"cost\": 0\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/mongodb-service/blender-objects/update-cost",
+							"host": ["{{base_url}}"],
+							"path": ["api", "mongodb-service", "blender-objects", "update-cost"]
+						},
+						"description": "Test updating cost to zero (should be valid)"
+					},
+					"response": []
+				},
+				{
+					"name": "Update Cost - High Precision",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"objectId\": \"obj_001\",\n  \"customerId\": \"cust_001\",\n  \"cost\": 99.999\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/mongodb-service/blender-objects/update-cost",
+							"host": ["{{base_url}}"],
+							"path": ["api", "mongodb-service", "blender-objects", "update-cost"]
+						},
+						"description": "Test updating cost with high precision decimal value"
 					},
 					"response": []
 				}

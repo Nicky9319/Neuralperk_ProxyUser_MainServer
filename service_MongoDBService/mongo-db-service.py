@@ -235,7 +235,8 @@ class HTTP_SERVER():
         async def add_blender_object(request: Request):
             """Add a new blender object to the database
             Required fields: customerId
-            Optional fields: blendFileName, blendFilePath, renderedVideoPath
+            Optional fields: blendFileName, blendFilePath, renderedVideoPath, isPaid, objectState, cost
+            Note: cost field is only used when isPaid is true
             Returns: Success message with object details including auto-generated objectId
             """
             try:
@@ -272,7 +273,8 @@ class HTTP_SERVER():
                     "renderedVideoPath": body.get("renderedVideoPath", None),
                     "customerId": body["customerId"],
                     "isPaid": body.get("isPaid", False),
-                    "objectState": body.get("objectState", "ready-to-render")
+                    "objectState": body.get("objectState", "ready-to-render"),
+                    "cost": body.get("cost", None) if body.get("isPaid", False) else None
                 }
                 
                 result = self.blender_objects_collection.insert_one(object_doc)
@@ -377,6 +379,66 @@ class HTTP_SERVER():
                         "message": "Video file path updated successfully",
                         "objectId": body["objectId"],
                         "renderedVideoPath": body["renderedVideoPath"]
+                    },
+                    status_code=200
+                )
+                
+            except HTTPException:
+                raise
+            except Exception as e:
+                raise HTTPException(status_code=500, detail=f"Internal server error: {str(e)}")
+        
+        @self.app.put("/api/mongodb-service/blender-objects/update-cost")
+        async def update_blender_object_cost(request: Request):
+            """Update the cost for a blender object
+            Required fields: objectId, customerId, cost
+            Returns: Success message with updated object details
+            """
+            try:
+                body = await request.json()
+                
+                # Validate required fields
+                required_fields = ["objectId", "customerId", "cost"]
+                for field in required_fields:
+                    if field not in body:
+                        raise HTTPException(status_code=400, detail=f"Missing required field: {field}")
+                
+                # Validate cost is a number
+                try:
+                    cost_value = float(body["cost"])
+                    if cost_value < 0:
+                        raise HTTPException(status_code=400, detail="Cost must be a non-negative number")
+                except (ValueError, TypeError):
+                    raise HTTPException(status_code=400, detail="Cost must be a valid number")
+                
+                # Check if customer exists
+                customer = self.customers_collection.find_one({"customerId": body["customerId"]})
+                if not customer:
+                    raise HTTPException(status_code=404, detail="Customer not found")
+                
+                # Check if blender object exists
+                blender_object = self.blender_objects_collection.find_one({
+                    "objectId": body["objectId"],
+                    "customerId": body["customerId"]
+                })
+                if not blender_object:
+                    raise HTTPException(status_code=404, detail="Blender object not found")
+                
+                # Update the cost
+                result = self.blender_objects_collection.update_one(
+                    {"objectId": body["objectId"], "customerId": body["customerId"]},
+                    {"$set": {"cost": cost_value}}
+                )
+                
+                if result.matched_count == 0:
+                    raise HTTPException(status_code=404, detail="Blender object not found")
+                
+                return JSONResponse(
+                    content={
+                        "message": "Cost updated successfully",
+                        "objectId": body["objectId"],
+                        "customerId": body["customerId"],
+                        "cost": cost_value
                     },
                     status_code=200
                 )

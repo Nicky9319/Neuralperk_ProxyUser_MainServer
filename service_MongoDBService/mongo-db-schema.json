@@ -85,6 +85,10 @@
               "bsonType": "string",
               "enum": ["ready-to-render", "processing", "video-ready"],
               "description": "current state of the blender object, must be one of: ready-to-render, processing, video-ready and is required"
+            },
+            "cost": {
+              "bsonType": ["double", "null"],
+              "description": "cost of the blender object, must be a float if present, or null if not available. Only present when isPaid is true"
             }
           }
         }
