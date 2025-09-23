@@ -22,6 +22,7 @@ cd $TARGET_DIR
 
 # Installing the latest version of Python 3.12 venv
 echo '226044' | sudo -S apt install python3.12-venv -y
+echo '226044' | sudo apt install -y python3.12-dev build-essential
 
 # Define environmental variables
 python3.12 -m venv .venv

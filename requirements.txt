@@ -20,3 +20,10 @@ boto3>=1.26.0
 python-multipart
 
 vastai
+
+
+streamlit>=1.28.0
+plotly>=5.15.0
+numpy==1.26.4
+pandas==2.2.3
+nest-asyncio>=1.5.6

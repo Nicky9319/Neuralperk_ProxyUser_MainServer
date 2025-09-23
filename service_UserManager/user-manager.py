@@ -321,12 +321,15 @@ class HTTP_SERVER():
 
 
                 print("Sending User Disconnected Event to Session Supervisor")
-                supervisor_id = self.userToSupervisorIdMapping[user_id]
-                supervisor_routing_key = self.supervisorToRoutingKeyMapping[supervisor_id]
+                if user_id in self.userToSupervisorIdMapping.keys():
+                    supervisor_id = self.userToSupervisorIdMapping[user_id]
+                    supervisor_routing_key = self.supervisorToRoutingKeyMapping[supervisor_id]
 
-                await self.mq_client.publish_message("SESSION_SUPERVISOR_EXCHANGE", supervisor_routing_key, json.dumps(payload))
+                    await self.mq_client.publish_message("SESSION_SUPERVISOR_EXCHANGE", supervisor_routing_key, json.dumps(payload))
+                    
                 self.users.remove(user_id)
                 if user_id in self.idle_users:
+                    print("User was In Idle User List")
                     self.idle_users.remove(user_id)
                 # Remove user from supervisor mapping when disconnected
                 if user_id in self.userToSupervisorIdMapping:
