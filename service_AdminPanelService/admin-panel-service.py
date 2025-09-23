@@ -973,6 +973,19 @@ if __name__ == "__main__":
     elif len(sys.argv) > 1 and sys.argv[1] == "streamlit":
         # Run Streamlit interface via function call
         start_streamlit_app()
-    else:
-        # Run HTTP API service (default)
+    elif len(sys.argv) > 1 and sys.argv[1] == "api":
+        # Run HTTP API service explicitly
         asyncio.run(start_service())
+    else:
+        # Default: Show instructions for running Streamlit
+        print("=" * 60)
+        print("🔧 Admin Panel Service")
+        print("=" * 60)
+        print("To run the Streamlit Admin Panel:")
+        print("  streamlit run admin-panel-service.py --server.port 15000")
+        print()
+        print("To run the HTTP API Service:")
+        print("  python admin-panel-service.py api")
+        print()
+        print("Default credentials: admin / password")
+        print("=" * 60)
