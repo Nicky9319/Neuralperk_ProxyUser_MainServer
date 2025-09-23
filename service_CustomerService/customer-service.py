@@ -1129,9 +1129,73 @@ class HTTP_SERVER():
         async def getRenderedFrames(
             object_id: str,
             access_token: str = Depends(self.authenticate_token),
-            customer_id: str = Depends(self.getCustomerIdFromAuthorizationHeader)
+            customer_id: str = Depends(self.getCustomerIdFromAuthorizationHeader),
+            start_frame: int = 0,
+            pagination_size: int = 20
         ):
+            """
+            Get Rendered Frames Endpoint with Pagination
+            
+            This endpoint retrieves rendered frames for a specific blender object with pagination support.
+            The behavior differs based on payment status:
+            - Paid plans: Returns sequential frames based on pagination
+            - Unpaid plans: Returns 30% of frames distributed evenly, maintaining correct sequence
+            
+            Authentication:
+                Requires valid Bearer token in Authorization header
+                
+            Parameters:
+                object_id (str): The unique identifier of the blender object
+                access_token (str): Bearer token for authentication (auto-extracted)
+                customer_id (str): Customer ID extracted from authorization header
+                start_frame (int, optional): Starting frame index for pagination (default: 0)
+                pagination_size (int, optional): Number of frames to return (default: 20)
+                
+            Process:
+                1. Checks payment status for the object
+                2. Retrieves all rendered images from MongoDB
+                3. Applies pagination logic based on payment status:
+                   - Paid: Sequential frames from start_frame
+                   - Unpaid: 30% distributed frames, filtered by start_frame
+                4. Streams frames with metadata
+                
+            Returns:
+                StreamingResponse: JSON metadata followed by frame images
+                
+            Response Headers:
+                X-Object-ID: Object identifier
+                X-Customer-ID: Customer identifier
+                X-Payment-Status: "paid" or "unpaid"
+                X-Total-Frames: Total number of rendered frames
+                X-Frames-Returned: Number of frames in this response
+                X-Start-Frame: Starting frame index
+                X-Pagination-Size: Requested pagination size
+                X-Has-More-Frames: Whether more frames are available
+                
+            Example Response:
+                JSON metadata:
+                {
+                    "message": "Rendered frames retrieved successfully",
+                    "objectId": "object-uuid",
+                    "customerId": "customer-uuid",
+                    "frames": [...],
+                    "totalFrames": 100,
+                    "framesReturned": 20,
+                    "paymentStatus": "paid",
+                    "isPreview": false,
+                    "startFrame": 0,
+                    "paginationSize": 20,
+                    "hasMoreFrames": true
+                }
+                Followed by frame images with separators.
+                
+            Raises:
+                HTTPException: 401 if authentication fails
+                HTTPException: 404 if object not found or no frames available
+                HTTPException: 500 if internal server error occurs
+            """
             print(f"Get rendered frames endpoint hit for customer: {customer_id}, object: {object_id}")
+            print(f"Pagination parameters - start_frame: {start_frame}, pagination_size: {pagination_size}")
             
             try:
                 # Step 1: Check if the object is paid for
@@ -1177,36 +1241,53 @@ class HTTP_SERVER():
                         "frames": [],
                         "totalFrames": 0,
                         "framesReturned": 0,
-                        "paymentStatus": "paid" if is_paid else "unpaid"
+                        "paymentStatus": "paid" if is_paid else "unpaid",
+                        "startFrame": start_frame,
+                        "paginationSize": pagination_size
                     }, status_code=200)
                 
-                # Step 3: Determine which frames to return based on payment status
+                # Step 3: Determine which frames to return based on payment status and pagination
                 if is_paid:
-                    # If paid, return all frames
-                    frames_to_return = all_rendered_images
-                    print(f"Customer has paid - returning all {total_frames} frames")
+                    # If paid, return frames sequentially based on pagination
+                    end_frame = min(start_frame + pagination_size, total_frames)
+                    frames_to_return = all_rendered_images[start_frame:end_frame]
+                    print(f"Customer has paid - returning frames {start_frame} to {end_frame-1} ({len(frames_to_return)} frames)")
                 else:
-                    # If not paid, return 30% of frames in sequential order
+                    # If not paid, calculate which frames should be available (30% distributed)
                     frames_to_return_count = max(1, int(total_frames * 0.3))  # At least 1 frame
                     
-                    # Calculate step size to distribute frames evenly across the sequence
+                    # Calculate the step size and available frame indices for unpaid plan
                     if frames_to_return_count == 1:
                         # If only 1 frame, return the middle frame
-                        middle_index = total_frames // 2
-                        frames_to_return = [all_rendered_images[middle_index]]
+                        available_frame_indices = [total_frames // 2]
                     else:
                         # Calculate step size to get evenly distributed frames
                         step_size = total_frames / frames_to_return_count
-                        frames_to_return = []
+                        available_frame_indices = []
                         
                         for i in range(frames_to_return_count):
                             # Calculate index for this frame
                             index = int(i * step_size)
                             # Ensure we don't go out of bounds
                             index = min(index, total_frames - 1)
-                            frames_to_return.append(all_rendered_images[index])
+                            available_frame_indices.append(index)
                     
-                    print(f"Customer has not paid - returning {len(frames_to_return)} out of {total_frames} frames (30%)")
+                    print(f"Available frame indices for unpaid plan: {available_frame_indices}")
+                    
+                    # Now apply pagination to the available frames
+                    # Find which available frames are >= start_frame
+                    paginated_available_indices = [
+                        idx for idx in available_frame_indices 
+                        if idx >= start_frame
+                    ][:pagination_size]
+                    
+                    # Get the actual frame objects for these indices
+                    frames_to_return = [
+                        all_rendered_images[idx] for idx in paginated_available_indices
+                    ]
+                    
+                    print(f"Customer has not paid - returning {len(frames_to_return)} frames from available frames, starting from frame {start_frame}")
+                    print(f"Returned frame indices: {paginated_available_indices}")
                 
                 # Step 4: Get metadata for each frame (including content length)
                 print("Retrieving metadata for rendered frames...")
@@ -1259,7 +1340,10 @@ class HTTP_SERVER():
                             "totalFrames": total_frames,
                             "framesReturned": len(frames_metadata),
                             "paymentStatus": "paid" if is_paid else "unpaid",
-                            "isPreview": not is_paid
+                            "isPreview": not is_paid,
+                            "startFrame": start_frame,
+                            "paginationSize": pagination_size,
+                            "hasMoreFrames": (start_frame + len(frames_metadata)) < total_frames if is_paid else len(frames_metadata) == pagination_size
                         }
                         
                         # Send metadata as JSON
@@ -1323,7 +1407,10 @@ class HTTP_SERVER():
                         "X-Customer-ID": customer_id,
                         "X-Payment-Status": "paid" if is_paid else "unpaid",
                         "X-Total-Frames": str(total_frames),
-                        "X-Frames-Returned": str(len(frames_to_return))
+                        "X-Frames-Returned": str(len(frames_to_return)),
+                        "X-Start-Frame": str(start_frame),
+                        "X-Pagination-Size": str(pagination_size),
+                        "X-Has-More-Frames": str((start_frame + len(frames_to_return)) < total_frames if is_paid else len(frames_to_return) == pagination_size)
                     }
                 )
                 
