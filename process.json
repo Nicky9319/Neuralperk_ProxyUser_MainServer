@@ -62,6 +62,16 @@
             "error_file": "./logs/userManagerService-error.log",
             "merge_logs": true,
             "namespace": "neuralperk"
+        },
+        {
+            "name": "adminPanel",
+            "script": ".venv/bin/streamlit",
+            "args": "run service_AdminPanelService/admin-panel-service.py --server.port 15000 --server.headless true",
+            "interpreter": ".venv/bin/python",
+            "out_file": "./logs/adminPanel-out.log",
+            "error_file": "./logs/adminPanel-error.log",
+            "merge_logs": true,
+            "namespace": "neuralperk"
         }
     ]
 }
