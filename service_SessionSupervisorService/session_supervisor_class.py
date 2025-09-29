@@ -1064,8 +1064,15 @@ class sessionSupervisorClass:
                 print(f"Removed frame {frame_number} from mapping dictionary")
             else:
                 print(f"Warning: Frame {frame_number} not found in mapping dictionary")
+                
+            # Step 2: Remove frame from the remaining frame list
+            print("Remaining Frame List Before Removal:")
+            print(self.remaining_frame_list)
+            self.remaining_frame_list.remove(frame_number)
+            print("Remaining Frame List After Removal:")
+            print(self.remaining_frame_lsit)
             
-            # Step 2: Download image from temp bucket in blob storage
+            # Step 3: Download image from temp bucket in blob storage
             print(f"Downloading image from temp bucket: {image_binary_path}")
             
             async with httpx.AsyncClient(timeout=30.0) as client:
