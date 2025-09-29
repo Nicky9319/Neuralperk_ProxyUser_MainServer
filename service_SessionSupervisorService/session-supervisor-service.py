@@ -111,6 +111,13 @@ class HTTP_SERVER():
             self.blob_service_url = "http://127.0.0.1:13000"
         else:
             self.blob_service_url = blob_env_url
+
+        # Get User Manager service URL from environment (needed for cleanup calls)
+        user_manager_env_url = os.getenv("USER_MANAGER_SERVICE", "").strip()
+        if not user_manager_env_url or not (user_manager_env_url.startswith("http://") or user_manager_env_url.startswith("https://")):
+            self.user_manager_service_url = "http://127.0.0.1:7000"
+        else:
+            self.user_manager_service_url = user_manager_env_url
         
         # HTTP client for making requests to MongoDB service and Auth service
         self.http_client = httpx.AsyncClient(timeout=30.0)
@@ -161,6 +168,40 @@ class HTTP_SERVER():
                 print(f"No object_id available for customer {customer_id}; skipping DB update")
         except Exception as e:
             print(f"Unexpected error while attempting DB update in workload_completed_callback: {e}")
+
+        # Also clean up the User Manager routing/session mapping similar to customer-service
+        try:
+            # Get the session supervisor information directly (no HTTP call to self)
+            overview = await self.get_session_supervisor_information(customer_id)
+        except Exception as e:
+            overview = None
+            print(f"Warning: Error fetching session supervisor overview for User Manager cleanup: {e}")
+
+        try:
+            if overview and not overview.get("error"):
+                try:
+                    session_supervisor_id = overview.get("session_id")
+                    if session_supervisor_id:
+                        cleanup_resp = await self.http_client.delete(
+                            f"{self.user_manager_service_url}/api/user-manager/session-supervisor/cleanup-session",
+                            data={
+                                "session_supervisor_id": session_supervisor_id
+                            }
+                        )
+                        if cleanup_resp.status_code != 200:
+                            try:
+                                err_detail = cleanup_resp.json().get("detail", cleanup_resp.text)
+                            except Exception:
+                                err_detail = cleanup_resp.text
+                            print(f"Warning: User Manager cleanup failed: {cleanup_resp.status_code} - {err_detail}")
+                    else:
+                        print("Warning: session_id not found in session supervisor overview; skipping User Manager cleanup")
+                except Exception as e:
+                    print(f"Warning: Error during User Manager cleanup processing: {e}")
+            else:
+                print(f"Warning: No session supervisor overview available for customer {customer_id}; skipping User Manager cleanup")
+        except Exception as e:
+            print(f"Warning: Error during User Manager cleanup: {str(e)}")
 
         # Ensure the session is stopped/cleaned and removed from the in-memory mapping.
         # This mirrors the stop-and-delete endpoint behavior and guarantees the
