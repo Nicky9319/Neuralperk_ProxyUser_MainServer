@@ -315,7 +315,7 @@ class HTTP_SERVER():
                 payload = {
                     "topic": "user-disconnected",
                     "data": {
-                        "user_id": user_id
+                        "user-id": user_id
                     }
                 }
 
@@ -335,6 +335,22 @@ class HTTP_SERVER():
                 if user_id in self.userToSupervisorIdMapping:
                     del self.userToSupervisorIdMapping[user_id]
                 await self.distributeUsers()
+            elif topic == "user-error-sending-frame":
+                print("User Error Sending Frame Event Received")
+                user_id = data["user-id"]
+                supervisor_id = self.userToSupervisorIdMapping[user_id]
+                supervisor_routing_key = self.supervisorToRoutingKeyMapping[supervisor_id]
+                
+                payload = {
+                    "topic": "user-error-sending-frame",
+                    "data": {
+                        "user-id": user_id,
+                        "frame-number": data["frame-number"],
+                        "blend-file-hash": data["blend-file-hash"],
+                    }
+                }
+
+                await self.mq_client.publish_message("SESSION_SUPERVISOR_EXCHANGE", supervisor_routing_key, json.dumps(payload))
 
 
             else:

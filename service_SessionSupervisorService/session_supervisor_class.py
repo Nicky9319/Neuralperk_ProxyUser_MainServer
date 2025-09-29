@@ -328,7 +328,7 @@ class sessionSupervisorClass:
 
             elif payload["topic"] == "user-disconnected":
                 # Handle user disconnection event
-                user_id = payload["data"]["user_id"]
+                user_id = payload["data"]["user-id"]
                 print(f"User {user_id} disconnected")
                 
                 # Handle user disconnection and reassign frames
@@ -342,6 +342,15 @@ class sessionSupervisorClass:
                 user_list = payload["data"]["user_list"]
                 
                 await self.users_added(user_list)
+
+            elif payload["topic"] == "user-error-sending-frame":
+                data = payload["data"]
+                
+                user_id = data["user-id"]
+                frameNumber = int(data["frame-number"])
+                blendFileHash = data["blend-file-hash"]
+                
+                # Need to Implement the Functionality Further on here.
 
             else:
                 print("Unknown Event Type")

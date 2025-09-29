@@ -457,6 +457,26 @@ class Service:
             await self.data_class.mq_client.publish_message(self.user_manager_exchange_name, "USER_SERVICE" , json.dumps(payload))
             print(f"❌ Client disconnected: {sid}")
 
+        @self.sio.on("error-sending-frame")
+        async def error_sending_frame(sid, data):
+            print(f"⚠️ Error sending frame from user {sid}: {data}")
+            frameNumber = data.get("frame-number", "unknown")
+            blendFileHash = data.get("blend-file-hash", "unknown")
+            
+            if blendFileHash or frameNumber == "unknown":
+                print(f"Invalid frame number received in error report from user {sid}")
+                return
+            payload = {
+                "topic": "user-error-sending-frame",
+                "data":{
+                    "user-id": sid,
+                    "frame-number": frameNumber,
+                    "blend-file-hash": blendFileHash
+                }
+            }
+
+            await self.data_class.mq_client.publish_message(self.user_manager_exchange_name, "USER_SERVICE", json.dumps(payload))
+
         @self.sio.on("get-sid")
         async def get_sid(sid):
             return sid
