@@ -298,10 +298,13 @@ class HTTP_SERVER():
             elif topic == "user-rendering-completed":
                 print("user Rendering Completed Event Received")
                 user_id = data["user-id"]
-                supervisor_id = self.userToSupervisorIdMapping[user_id]
-                supervisor_routing_key = self.supervisorToRoutingKeyMapping[supervisor_id]
-
-                await self.mq_client.publish_message("SESSION_SUPERVISOR_EXCHANGE", supervisor_routing_key, payload)
+                if user_id in self.userToSupervisorIdMapping:
+                    supervisor_id = self.userToSupervisorIdMapping[user_id]
+                    supervisor_routing_key = self.supervisorToRoutingKeyMapping[supervisor_id]
+                    await self.mq_client.publish_message("SESSION_SUPERVISOR_EXCHANGE", supervisor_routing_key, payload)
+                else:
+                    print(f"User {user_id} not found in userToSupervisorIdMapping")
+                    print("Check the Logs for better understanding of what is the reason for this")
             elif topic == "new-user":
                 print("New User Event Received")
                 print("Current Connected Users: ", self.users)
