@@ -379,11 +379,15 @@ class AdminPanelStreamlit:
                 col1, col2, col3 = st.columns([2, 1, 1])
                 
                 with col1:
+                    # Allow zero as a valid initial value
+                    initial_count = supervisor.get('number_of_users', 0) or 0
+                    if initial_count < 0:
+                        initial_count = 0
                     new_user_count = st.number_input(
                         "New User Count",
-                        min_value=1,
+                        min_value=0,
                         max_value=20,
-                        value=supervisor.get('number_of_users', 1),
+                        value=initial_count,
                         key=f"user_count_{i}"
                     )
                 
