@@ -8,7 +8,7 @@ import json
 import time
 
 # Import the VastAI manager
-from vastAIManager import VastAIManager
+from Neuralperk_ProxyUser_MainServer.OldServices.old_files.vastAIManager import VastAIManager
 
 # Embedded HTTPServer class
 class HTTPServer:
