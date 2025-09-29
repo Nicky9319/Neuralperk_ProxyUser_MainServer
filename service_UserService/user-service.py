@@ -203,7 +203,7 @@ class Service:
             await self.send_message_to_user(user_id, topic, message)
             return {"status": 200, "message": "Message sent to user"}
 
-        @self.sio.post("/api/user-service/user/send-msg-to-user-with-acknowledgement")
+        @self.app.post("/api/user-service/user/send-msg-to-user-with-acknowledgement")
         async def send_msg_to_user_with_acknowledgement(request: Request):
             data = await request.json()
             user_id = data["user_id"]
