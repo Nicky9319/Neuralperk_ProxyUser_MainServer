@@ -293,6 +293,40 @@ class sessionSupervisorClass:
         json_message = json.loads(decoded_message)
 
         async def handleUserManagerMessages(payload):
+            """
+            Internal message handler for messages coming from User Manager.
+
+            Flow / responsibilities:
+            - Receive a decoded JSON payload from the outer callback and route
+                it to the appropriate handling branch based on the `topic` field.
+            - Supported topics include: "new-session", "user-frame-rendered",
+                "user-rendering-completed", "user-disconnected", "new-users",
+                and "user-error-sending-frame".
+            - For "new-session" it updates the supervisor's session identifiers.
+            - For "user-frame-rendered" it extracts frame metadata and calls
+                `user_frame_rendered` to process the completed frame (download,
+                store, and update DB).
+            - For "user-rendering-completed" it calls a helper to ensure the
+                user has sent all frames, then triggers redistribution or
+                completion handling.
+            - For "user-disconnected" it triggers `handle_user_disconnection` to
+                remove the user and redistribute their frames.
+            - For "new-users" it appends new user ids and (if workload is
+                running) redistributes work with `users_added`.
+            - For "user-error-sending-frame" it attempts to retrieve the frame
+                from the user and, if unsuccessful, re-distributes the workload.
+
+            Error handling:
+            - This function assumes the outer callback decoded the message and
+                that payload is a dict with expected keys; missing or malformed
+                payloads will raise and be propagated to the outer scope.
+
+            Note:
+            - This handler is declared nested so it can access `self` and the
+                outer scope easily. It does not return a value; its side effects
+                are updating supervisor state and sending messages/requests to
+                other services.
+            """
             if payload["topic"] == "new-session":
                 self.session_id = payload["session-id"]
                 self.sessionRoutingKey = f"SESSION_SUPERVISOR_{self.session_id}"
@@ -323,8 +357,14 @@ class sessionSupervisorClass:
                 print(f"User {user_id} completed all assigned frames")
                 
                 # Call the new user_rendering_completed method
-                result = await self.user_rendering_completed(user_id)
-                print(f"User completion handling result: {result}")
+                user_send_all_frames = await self.check_and_retrieve_all_user_frames(user_id)
+                if user_send_all_frames == True:
+                    print(f"User {user_id} has sent all frames successfully.")
+                    await self.user_rendering_completed(user_id)
+                else:
+                    return
+                    
+                    
 
             elif payload["topic"] == "user-disconnected":
                 # Handle user disconnection event
@@ -1125,6 +1165,42 @@ class sessionSupervisorClass:
                 "frame_number": frame_number,
                 "error": str(e)
             }
+
+    async def check_and_retrieve_all_user_frames(self, user_id: str):
+        """
+        Ensure a user has returned all frames they were assigned.
+
+        Flow:
+        - Inspect `frameNumberMappedToUser` to find any frames still mapped to
+            the given `user_id`.
+        - If there are no remaining frames for that user, return True
+            indicating the user has sent all frames.
+        - If there are remaining frames, send a "retrieve-frames-from-frame-list"
+            message to the user with the list of missing frame numbers and
+            return False to indicate there is outstanding work to be returned.
+
+        Return value:
+        - True: User has no remaining frames (safe to treat as completed).
+        - False: User still has frames and a retrieval request was sent.
+
+        Error handling:
+        - Any exception is caught, logged, and False is returned so calling
+            code treats the user as not-ready/complete.
+        """
+        try:
+                remaining_user_frames = [frame for frame, uid in self.frameNumberMappedToUser.items() if uid == user_id]
+                if len(remaining_user_frames) == 0:
+                        return True
+                else:
+                        await self.sendMessageToUser(
+                                user_id,
+                                "retrieve-frames-from-frame-list",
+                                {"blend_file_hash": self.blendFileHash, "frame_list": remaining_user_frames}
+                        )
+                        return False
+        except Exception as e:
+                print(f"Error in check_and_retrieve_all_user_frames for user {user_id}: {e}")
+                return False
 
     async def user_rendering_completed(self, user_id: str):
         """
