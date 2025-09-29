@@ -350,7 +350,16 @@ class sessionSupervisorClass:
                 frameNumber = int(data["frame-number"])
                 blendFileHash = data["blend-file-hash"]
                 
-                self.sendMessageToUser_withAcknowledgment(user_id, "retrieve-frame", {"frame-number": frameNumber, "blend-file-hash": blendFileHash})
+                response = self.sendMessageToUser_withAcknowledgment(user_id, "retrieve-frame", {"frame-number": frameNumber, "blend-file-hash": blendFileHash})
+                
+                if response == True:
+                    print(f"User Acknowledged that it has the frame with it and hence would be sending it back to the server")
+                    print(f"frameNumber : {frameNumber}, userID: {user_id}")
+                    return
+                else:
+                    print(f"User Doesnt have the Desired Frame")
+                    print("FrameNumber: {frameNumber}, UserID: {user_id}")
+                    await self.distributeWorkload()
 
             else:
                 print("Unknown Event Type")
