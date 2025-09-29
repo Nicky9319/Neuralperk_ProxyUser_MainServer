@@ -669,6 +669,27 @@ class HTTP_SERVER():
             self.activeSessions.append(session_supervisor_id)
             self.supervisorToRoutingKeyMapping[session_supervisor_id] = f"SESSION_SUPERVISOR_{session_supervisor_id}"
 
+        @self.app.delete("/api/user-manager/session-supervisor/cleanup-session")
+        async def cleanupSession(
+            session_supervisor_id: str = Form(...)
+        ):
+            """
+            Remove the association of a session supervisor from the User Manager.
+
+            This endpoint cleans up all data related to the specified session supervisor
+            on the User Manager side, such as removing the supervisor from the list of
+            active sessions and deleting its routing key mapping.
+
+            Note:
+                - This operation only affects the User Manager's internal records.
+                - The session supervisor is responsible for cleaning up its own users and related resources.
+                - The User Manager does not trigger or manage user removal as part of this process.
+
+            Args:
+                session_supervisor_id (str): Unique identifier for the session supervisor to be cleaned up.
+            """
+            self.activeSessions.remove(session_supervisor_id)
+            self.supervisorToRoutingKeyMapping.pop(session_supervisor_id)
 
         # ----------------------------
         # Admin Panel API Calls
