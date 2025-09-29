@@ -350,6 +350,7 @@ class HTTP_SERVER():
                 }
             """
             response = await self.data_class.customerSessionsMapping[customer_id].stop_and_delete_workload(customer_id)
+            del self.data_class.customerSessionsMapping[customer_id]
             if response.status_code == 200:
                 return JSONResponse(content={"message": "Workload stopped and deleted"}, status_code=response.status_code)
             else:
