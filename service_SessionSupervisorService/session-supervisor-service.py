@@ -183,7 +183,8 @@ class HTTP_SERVER():
                     session_supervisor_id = overview.get("session_id")
                     print(f"Cleaning up User Manager session for session_supervisor_id from session supervisor: {session_supervisor_id}")
                     if session_supervisor_id:
-                        cleanup_resp = await self.http_client.delete(
+                        cleanup_resp = await self.http_client.request(
+                            "DELETE",
                             f"{self.user_manager_service_url}/api/user-manager/session-supervisor/cleanup-session",
                             data={
                                 "session_supervisor_id": session_supervisor_id
@@ -212,7 +213,7 @@ class HTTP_SERVER():
         if customer_id in self.data_class.customerSessionsMapping:
             try:
                 try:
-                    response = await self.data_class.customerSessionsMapping[customer_id].stop_and_delete_workload(customer_id)
+                    response = await self.data_class.customerSessionsMapping[customer_id].stop_and_delete_workload()
                     # response is typically a JSONResponse; log status
                     status_code = getattr(response, 'status_code', None)
                     print(f"workload_completed_callback: stop_and_delete_workload status: {status_code}")
