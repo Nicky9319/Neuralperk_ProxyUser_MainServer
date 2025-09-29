@@ -350,7 +350,7 @@ class sessionSupervisorClass:
                 frameNumber = int(data["frame-number"])
                 blendFileHash = data["blend-file-hash"]
                 
-                # Need to Implement the Functionality Further on here.
+                self.sendMessageToUser_withAcknowledgment(user_id, "retrieve-frame", {"frame-number": frameNumber, "blend-file-hash": blendFileHash})
 
             else:
                 print("Unknown Event Type")
@@ -651,26 +651,51 @@ class sessionSupervisorClass:
 
     async def sendMessageToUser(self, user_id, topic, payload):
         """
-        Send a message to a specific user through the User Service.
-        
-        This method sends a message to a user by making an HTTP request to the
-        User Service. The message contains a topic (message type) and payload
-        (message data) that the user will receive and process.
-        
-        Args:
-            user_id (str): Unique identifier of the user to send message to
-            topic (str): Type of message being sent (e.g., "start-rendering", "stop-work")
-            payload (dict): Message data to send to the user
+            Send a message to a specific user through the User Service.
             
-        Example:
-            await supervisor.sendMessageToUser(
-                user_id="user-123",
-                topic="start-rendering", 
-                payload={"frame_list": [1, 2, 3], "blend_file_hash": "abc123"}
-            )
+            This method sends a message to a user by making an HTTP request to the
+            User Service. The message contains a topic (message type) and payload
+            (message data) that the user will receive and process.
+            
+            Args:
+                user_id (str): Unique identifier of the user to send message to
+                topic (str): Type of message being sent (e.g., "start-rendering", "stop-work")
+                payload (dict): Message data to send to the user
+                
+            Example:
+                await supervisor.sendMessageToUser(
+                    user_id="user-123",
+                    topic="start-rendering", 
+                    payload={"frame_list": [1, 2, 3], "blend_file_hash": "abc123"}
+                )
         """
         await self.http_client.post(f"{self.user_service_url}/api/user-service/user/send-msg-to-user", json={"user_id": user_id, "data": payload, "topic": topic})
         print(f"Message sent to user {user_id}: {payload}")
+
+    async def sendMessageToUser_withAcknowledgment(self, user_id, topic, payload):
+        """
+            Sends a message to a specific user and waits for an acknowledgment.
+            This asynchronous method sends a message to the user identified by `user_id` on the specified `topic` with the provided `payload`.
+            The message is sent via an HTTP POST request to the user service endpoint. The method waits for the response, which should
+            include an acknowledgment from the user or the service indicating successful delivery or processing.
+            Args:
+                user_id (str or int): The unique identifier of the user to whom the message will be sent.
+                topic (str): The topic or channel under which the message should be sent.
+                payload (dict): The actual message data to be delivered to the user.
+            Returns:
+                response: The HTTP response object returned by the user service, which may contain acknowledgment details.
+            Raises:
+                httpx.HTTPError: If the HTTP request fails due to network issues or server errors.
+                Exception: For any other unexpected errors during the message sending process.
+            Example:
+                response = await sendMessageToUser_withAcknowledgment(
+                    user_id="12345",
+                    topic="notification",
+                    payload={"title": "Welcome", "body": "Hello, user!"}
+                )  
+        """
+        response = await self.http_client.post(f"{self.user_service_url}/api/user-service/user/send-msg-to-user-with-acknowledgment", json={"user_id": user_id, "data": payload, "topic": topic})
+        return response
 
     async def sendUserStopWork(self, user_list):
         """

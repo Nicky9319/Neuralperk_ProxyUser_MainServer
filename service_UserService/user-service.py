@@ -183,6 +183,10 @@ class Service:
     # -------- Utility Functions -------- #
     async def send_message_to_user(self, sid, topic, message):
         await self.sio.emit(topic, message, to=sid)
+    
+    async def send_message_to_user_with_acknowledgement(self, sid, topic, message):
+        response = await self.sio.call(topic, message, to=sid)
+        return response
 
     # -------- Configure Routes -------- #
     async def configure_http_routes(self):
@@ -198,6 +202,17 @@ class Service:
             message = data["data"]
             await self.send_message_to_user(user_id, topic, message)
             return {"status": 200, "message": "Message sent to user"}
+
+        @self.sio.post("/api/user-service/user/send-msg-to-user-with-acknowledgement")
+        async def send_msg_to_user_with_acknowledgement(request: Request):
+            data = await request.json()
+            user_id = data["user_id"]
+            topic = data["topic"]
+            message = data["data"]
+
+            user_response = await self.send_message_to_user_with_acknowledgement(user_id, topic, message)
+
+            return user_response
 
         @self.app.get("/api/user-service/user/get-blend-file/{blend_file_hash}")
         async def get_blend_file(blend_file_hash: str):
