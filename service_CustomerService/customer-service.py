@@ -70,6 +70,13 @@ class HTTP_SERVER():
         else:
             self.session_supervisor_service_url = session_supervisor_env_url
         
+        # Get User Manager service URL from environment
+        user_manager_env_url = os.getenv("USER_MANAGER_SERVICE", "").strip()
+        if not user_manager_env_url or not (user_manager_env_url.startswith("http://") or user_manager_env_url.startswith("https://")):
+            self.user_manager_service_url = "http://127.0.0.1:7000"
+        else:
+            self.user_manager_service_url = user_manager_env_url
+        
         # HTTP client for making requests to MongoDB service and Auth service
         self.http_client = httpx.AsyncClient(timeout=30.0)
 
@@ -583,7 +590,8 @@ class HTTP_SERVER():
                     data={"customer_id": customer_id}
                 )
 
-                response = await self.http_client.put(
+                # Reset object state in MongoDB regardless of session supervisor response
+                mongo_response = await self.http_client.put(
                     f"{self.mongodb_service_url}/api/mongodb-service/blender-objects/change-state",
                     json={
                         "objectId": object_id,
@@ -591,6 +599,37 @@ class HTTP_SERVER():
                         "objectState": "ready-to-render"
                     }
                 )
+                if mongo_response.status_code != 200:
+                    print(f"Warning: Failed to reset object state: {mongo_response.text}")
+
+                # Also clean up the User Manager routing/session mapping
+                try:
+                    # Get the session supervisor info to obtain the session_supervisor_id
+                    overview_resp = await self.http_client.get(
+                        f"{self.session_supervisor_service_url}/api/session-supervisor-service/get-session-supervisor-overview/{customer_id}"
+                    )
+                    if overview_resp.status_code == 200:
+                        overview_json = overview_resp.json()
+                        session_supervisor_id = overview_json.get("session_id")
+                        if session_supervisor_id:
+                            cleanup_resp = await self.http_client.delete(
+                                f"{self.user_manager_service_url}/api/user-manager/session-supervisor/cleanup-session",
+                                data={
+                                    "session_supervisor_id": session_supervisor_id
+                                }
+                            )
+                            if cleanup_resp.status_code != 200:
+                                try:
+                                    err_detail = cleanup_resp.json().get("detail", cleanup_resp.text)
+                                except Exception:
+                                    err_detail = cleanup_resp.text
+                                print(f"Warning: User Manager cleanup failed: {cleanup_resp.status_code} - {err_detail}")
+                        else:
+                            print("Warning: session_id not found in session supervisor overview; skipping User Manager cleanup")
+                    else:
+                        print(f"Warning: Failed to get session supervisor overview for cleanup: {overview_resp.status_code} - {overview_resp.text}")
+                except Exception as e:
+                    print(f"Warning: Error during User Manager cleanup: {str(e)}")
                 
                 # Return the response directly to the client
                 return JSONResponse(
