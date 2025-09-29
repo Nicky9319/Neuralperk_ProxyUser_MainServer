@@ -182,11 +182,11 @@ class AdminPanelStreamlit:
         try:
             response = await self.http_client.post(f"{self.session_supervisor_service_url}/api/session-supervisor-service/set-user-count/{customer_id}/{user_count}")
             if response.status_code == 200:
-                return response.json()
-            return {}
+                return True
+            return False
         except Exception as e:
             st.error(f"Error setting user count: {str(e)}")
-            return {}
+            return False
     
     def main_dashboard(self):
         """
