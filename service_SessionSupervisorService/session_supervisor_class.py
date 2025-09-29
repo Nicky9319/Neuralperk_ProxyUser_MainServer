@@ -927,11 +927,16 @@ class sessionSupervisorClass:
             # Current session has 3 users, want 3 users total
             await supervisor.fix_user_count(3)  # No action taken
         """
+        print(f"[fix_user_count] Requested total_user_count: {total_user_count}, Current number_of_users: {self.number_of_users}")
         if total_user_count > self.number_of_users:
+            print(f"[fix_user_count] Need to add {total_user_count - self.number_of_users} users.")
             await self.demand_users(total_user_count - self.number_of_users)
         elif total_user_count < self.number_of_users:
-            await self.remove_users(self.user_list[:self.number_of_users - total_user_count])
+            num_to_remove = self.number_of_users - total_user_count
+            print(f"[fix_user_count] Need to remove {num_to_remove} users: {self.user_list[:num_to_remove]}")
+            await self.remove_users(self.user_list[:num_to_remove])
         else:
+            print("[fix_user_count] User count is already correct. No action needed.")
             return
 
     # -------------------------
