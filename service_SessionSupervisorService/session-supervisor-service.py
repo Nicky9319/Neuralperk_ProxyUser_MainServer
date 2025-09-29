@@ -134,9 +134,10 @@ class HTTP_SERVER():
         """
         print("Workload is Completed for the customer id : ", customer_id)
 
-        # Try to update the blender object state to 'video-ready' in MongoDB.
+        # Attempt to update the blender object state to 'video-ready' in MongoDB
+        session = None
+        object_id = None
         try:
-            # Retrieve session supervisor to get object_id if available
             session = self.data_class.customerSessionsMapping.get(customer_id)
             object_id = getattr(session, "object_id", None) if session else None
             if object_id:
@@ -161,9 +162,29 @@ class HTTP_SERVER():
         except Exception as e:
             print(f"Unexpected error while attempting DB update in workload_completed_callback: {e}")
 
-        # Remove the session from in-memory mapping
+        # Ensure the session is stopped/cleaned and removed from the in-memory mapping.
+        # This mirrors the stop-and-delete endpoint behavior and guarantees the
+        # session mapping is cleared even if stop/cleanup throws.
         if customer_id in self.data_class.customerSessionsMapping:
-            del self.data_class.customerSessionsMapping[customer_id]
+            try:
+                try:
+                    response = await self.data_class.customerSessionsMapping[customer_id].stop_and_delete_workload(customer_id)
+                    # response is typically a JSONResponse; log status
+                    status_code = getattr(response, 'status_code', None)
+                    print(f"workload_completed_callback: stop_and_delete_workload status: {status_code}")
+                except Exception as e:
+                    # Log but continue to remove mapping to avoid stale entries
+                    print(f"Error while stopping/cleaning session for {customer_id}: {e}")
+            finally:
+                # Always attempt to remove the session from the mapping so the
+                # server is free to accept new workloads for this customer.
+                try:
+                    del self.data_class.customerSessionsMapping[customer_id]
+                    print(f"Session removed from mapping for customer_id: {customer_id}")
+                except KeyError:
+                    print(f"Session for {customer_id} already removed from mapping")
+                except Exception as e:
+                    print(f"Unexpected error removing session from mapping for {customer_id}: {e}")
    
     async def configure_routes(self):
         """

@@ -78,11 +78,26 @@ class sessionClass:
         return JSONResponse(content={"message": "Workload started"}, status_code=200)
 
 
-    async def stop_and_delete_workload(self, customer_id):
-        await self.workload_completed_callback(customer_id)
-        await self.session_supervisor_instance.cleanup()
-        del self.session_supervisor_instance
-        self.session_supervisor_instance = None
+    async def stop_and_delete_workload(self):
+        """
+        Stop and cleanup this session without triggering external callbacks.
+
+        This method performs the explicit cleanup of the underlying
+        session supervisor instance and frees resources. It intentionally
+        does NOT call back into the server's workload_completed_callback
+        to avoid recursive calls when the server already invoked this
+        stop method as part of workload completion or stop/delete flows.
+        """
+        try:
+            if self.session_supervisor_instance:
+                await self.session_supervisor_instance.cleanup()
+                # remove reference so GC can collect
+                del self.session_supervisor_instance
+                self.session_supervisor_instance = None
+        except Exception as e:
+            print(f"Error during stop_and_delete_workload cleanup: {e}")
+            return JSONResponse(content={"message": "Error during cleanup", "details": str(e)}, status_code=500)
+
         return JSONResponse(content={"message": "Workload stopped and deleted"}, status_code=200)
 
     # -------------------------
