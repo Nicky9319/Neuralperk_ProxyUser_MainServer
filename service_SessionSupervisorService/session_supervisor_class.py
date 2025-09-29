@@ -963,30 +963,17 @@ class sessionSupervisorClass:
         self.completed = True
         self.workload_status = "completed"
 
-        # Update blender object state in MongoDB to 'video-ready'
-        try:
-            payload = {
-                "objectId": self.object_id,
-                "customerId": self.customer_id,
-                "objectState": "video-ready"
-            }
-            resp = await self.http_client.put(
-                f"{self.mongodb_service_url}/api/mongodb-service/blender-objects/change-state",
-                json=payload
-            )
-            if resp.status_code == 200:
-                print(f"Updated object state to 'video-ready' for object {self.object_id}")
-            else:
-                print(f"Warning: Failed to update object state. Status: {resp.status_code}, Response: {resp.text}")
-        except Exception as e:
-            print(f"Error updating object state in MongoDB: {e}")
+        # Note: DB update moved to the supervisor service callback to avoid
+        # making service-to-service HTTP calls from this class. The
+        # Session Supervisor Service will mark the blender object state as
+        # 'video-ready' when the workload completes.
 
         # Release users and invoke completion callback
         await self.remove_users(self.user_list)
         try:
             if callable(self.workload_completed_callback):
                 # keep legacy synchronous callback behavior but guard exceptions
-                self.workload_completed_callback(self.customer_id)
+                await self.workload_completed_callback(self.customer_id)
         except Exception as e:
             print(f"Error running workload_completed_callback: {e}")
 

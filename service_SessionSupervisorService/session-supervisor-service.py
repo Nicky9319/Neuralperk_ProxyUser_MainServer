@@ -133,8 +133,37 @@ class HTTP_SERVER():
             await server.workload_completed_callback("customer-123")
         """
         print("Workload is Completed for the customer id : ", customer_id)
-        
-        del self.data_class.customerSessionsMapping[customer_id]
+
+        # Try to update the blender object state to 'video-ready' in MongoDB.
+        try:
+            # Retrieve session supervisor to get object_id if available
+            session = self.data_class.customerSessionsMapping.get(customer_id)
+            object_id = getattr(session, "object_id", None) if session else None
+            if object_id:
+                payload = {
+                    "objectId": object_id,
+                    "customerId": customer_id,
+                    "objectState": "video-ready"
+                }
+                try:
+                    resp = await self.http_client.put(
+                        f"{self.mongodb_service_url}/api/mongodb-service/blender-objects/change-state",
+                        json=payload
+                    )
+                    if resp.status_code == 200:
+                        print(f"Updated object state to 'video-ready' for object {object_id}")
+                    else:
+                        print(f"Warning: Failed to update object state. Status: {resp.status_code}, Response: {resp.text}")
+                except Exception as e:
+                    print(f"Error calling MongoDB service to update object state: {e}")
+            else:
+                print(f"No object_id available for customer {customer_id}; skipping DB update")
+        except Exception as e:
+            print(f"Unexpected error while attempting DB update in workload_completed_callback: {e}")
+
+        # Remove the session from in-memory mapping
+        if customer_id in self.data_class.customerSessionsMapping:
+            del self.data_class.customerSessionsMapping[customer_id]
    
     async def configure_routes(self):
         """
