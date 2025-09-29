@@ -181,6 +181,7 @@ class HTTP_SERVER():
             if overview and not overview.get("error"):
                 try:
                     session_supervisor_id = overview.get("session_id")
+                    print(f"Cleaning up User Manager session for session_supervisor_id from session supervisor: {session_supervisor_id}")
                     if session_supervisor_id:
                         cleanup_resp = await self.http_client.delete(
                             f"{self.user_manager_service_url}/api/user-manager/session-supervisor/cleanup-session",
@@ -194,6 +195,8 @@ class HTTP_SERVER():
                             except Exception:
                                 err_detail = cleanup_resp.text
                             print(f"Warning: User Manager cleanup failed: {cleanup_resp.status_code} - {err_detail}")
+                        else:
+                            print(f"User Manager cleanup successful for session_supervisor_id: {session_supervisor_id}")
                     else:
                         print("Warning: session_id not found in session supervisor overview; skipping User Manager cleanup")
                 except Exception as e:
