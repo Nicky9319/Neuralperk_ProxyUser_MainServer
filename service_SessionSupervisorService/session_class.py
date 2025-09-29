@@ -27,7 +27,7 @@ class sessionClass:
     # -------------------------
     # Initialization Section
     # -------------------------
-    def __init__(self, customer_id = None, object_id = None, workload_removing_callback = None):
+    def __init__(self, customer_id = None, object_id = None, workload_completed_callback = None):
         self.session_status : Literal["queued", "rendering", "completed", "failed" , None] = None
         self.customer_id = customer_id
         self.object_id = object_id
@@ -35,7 +35,7 @@ class sessionClass:
         self.session_id = str(uuid.uuid4())
         self.sessionRoutingKey = f"SESSION_SUPERVISOR_{self.session_id}"
 
-        self.session_supervisor_instance = sessionSupervisorClass(customer_id=self.customer_id, object_id=self.object_id, session_id=self.session_id)
+        self.session_supervisor_instance = sessionSupervisorClass(customer_id=self.customer_id, object_id=self.object_id, session_id=self.session_id, workload_completed_callback=workload_completed_callback)
 
 
         self.http_client = httpx.AsyncClient(timeout=30.0)
@@ -46,7 +46,6 @@ class sessionClass:
         else:
             self.user_manager_service_url = self.user_manager_service_url
 
-        self.workload_removing_callback = workload_removing_callback
 
     # -------------------------
     # Workload Management Section
@@ -80,7 +79,7 @@ class sessionClass:
 
 
     async def stop_and_delete_workload(self, customer_id):
-        await self.workload_removing_callback(customer_id)
+        await self.workload_completed_callback(customer_id)
         await self.session_supervisor_instance.cleanup()
         del self.session_supervisor_instance
         self.session_supervisor_instance = None

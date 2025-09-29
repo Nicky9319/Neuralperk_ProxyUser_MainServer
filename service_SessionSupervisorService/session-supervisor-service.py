@@ -116,7 +116,7 @@ class HTTP_SERVER():
         self.http_client = httpx.AsyncClient(timeout=30.0)
 
 
-    async def workload_removing_callback(self, customer_id: str):
+    async def workload_completed_callback(self, customer_id: str):
         """
         Callback function to remove completed workload sessions.
         
@@ -130,8 +130,10 @@ class HTTP_SERVER():
                              workload session should be removed
                              
         Example:
-            await server.workload_removing_callback("customer-123")
+            await server.workload_completed_callback("customer-123")
         """
+        print("Workload is Completed for the customer id : ", customer_id)
+        
         del self.data_class.customerSessionsMapping[customer_id]
    
     async def configure_routes(self):
@@ -250,7 +252,7 @@ class HTTP_SERVER():
                 if customer_id in self.data_class.customerSessionsMapping.keys():
                     return JSONResponse(content={"message": "One workload already running. Your Access Plan doesnt allow to run another workload"}, status_code=400)
 
-                new_session = sessionClass(customer_id=customer_id, object_id=object_id, workload_removing_callback=self.workload_removing_callback)
+                new_session = sessionClass(customer_id=customer_id, object_id=object_id, workload_completed_callback=self.workload_completed_callback)
                 self.data_class.customerSessionsMapping[customer_id] = new_session
                 response = await new_session.start_workload()
                 # JSONResponse does not have a .content attribute; to print the response body, access .body and decode it

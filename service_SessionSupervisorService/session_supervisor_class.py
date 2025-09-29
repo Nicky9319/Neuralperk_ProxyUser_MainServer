@@ -130,7 +130,7 @@ class sessionSupervisorClass:
         workload_status (str): Current status - "initialized", "running", or "completed"
     """
     
-    def __init__(self, customer_id = None, object_id = None, session_id = None, workload_removing_callback = None):
+    def __init__(self, customer_id = None, object_id = None, session_id = None, workload_completed_callback = None):
         """
         Initialize a new Session Supervisor instance.
         
@@ -142,7 +142,7 @@ class sessionSupervisorClass:
             customer_id (str): Unique identifier for the customer who owns the object
             object_id (str): Unique identifier for the 3D object to be rendered
             session_id (str): Unique identifier for this rendering session
-            workload_removing_callback (callable): Function to call when workload is completed
+            workload_completed_callback (callable): Function to call when workload is completed
                                                   Should accept customer_id as parameter
                                                   
         Raises:
@@ -216,7 +216,7 @@ class sessionSupervisorClass:
 
         self.completed = False
 
-        self.workload_completed_callback = workload_removing_callback
+        self.workload_completed_callback = workload_completed_callback
 
 
     async def initialization(self):
@@ -962,8 +962,34 @@ class sessionSupervisorClass:
         """
         self.completed = True
         self.workload_status = "completed"
+
+        # Update blender object state in MongoDB to 'video-ready'
+        try:
+            payload = {
+                "objectId": self.object_id,
+                "customerId": self.customer_id,
+                "objectState": "video-ready"
+            }
+            resp = await self.http_client.put(
+                f"{self.mongodb_service_url}/api/mongodb-service/blender-objects/change-state",
+                json=payload
+            )
+            if resp.status_code == 200:
+                print(f"Updated object state to 'video-ready' for object {self.object_id}")
+            else:
+                print(f"Warning: Failed to update object state. Status: {resp.status_code}, Response: {resp.text}")
+        except Exception as e:
+            print(f"Error updating object state in MongoDB: {e}")
+
+        # Release users and invoke completion callback
         await self.remove_users(self.user_list)
-        self.workload_removing_callback(self.customer_id)
+        try:
+            if callable(self.workload_completed_callback):
+                # keep legacy synchronous callback behavior but guard exceptions
+                self.workload_completed_callback(self.customer_id)
+        except Exception as e:
+            print(f"Error running workload_completed_callback: {e}")
+
         print("Workload Completed")
 
     async def distributeWorkload(self):
