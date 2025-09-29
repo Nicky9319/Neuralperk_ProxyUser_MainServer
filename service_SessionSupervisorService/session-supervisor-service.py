@@ -423,6 +423,7 @@ class HTTP_SERVER():
         async def getAllSupervisorInformation(request: Request):
             response_list = []
             for customer_id in self.data_class.customerSessionsMapping.keys():
+                print(f"Session Information retrieving for Customer ID: {customer_id}")
                 response = await self.get_session_supervisor_information(customer_id)
                 response_list.append(response)
             return JSONResponse(content=response_list, status_code=200)
