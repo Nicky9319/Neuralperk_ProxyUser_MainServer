@@ -23,6 +23,7 @@ from session_class import sessionClass
 
 import sys
 import os
+import traceback
 
 from dotenv import load_dotenv
 load_dotenv()
@@ -306,56 +307,70 @@ class HTTP_SERVER():
 
         @self.app.post("/api/session-supervisor-service/stop-and-delete-workload")
         async def getWorkloadResults(
-            customer_id: str = Form(...),
-        ):
-            """
-            Stop and delete an active rendering workload for a customer.
-            
-            This endpoint terminates an active rendering session and performs
-            cleanup operations. It stops all rendering work, releases users
-            back to the User Manager, and removes the session from memory.
-            
-            The endpoint performs the following actions:
-            1. Stops all rendering work for the session
-            2. Releases all assigned users
-            3. Cleans up session resources
-            4. Removes the session from active sessions mapping
-            
-            Args:
+                customer_id: str = Form(...),
+            ):
+                """
+                Stop and delete an active rendering workload for a customer.
+                
+                This endpoint terminates an active rendering session and performs
+                cleanup operations. It stops all rendering work, releases users
+                back to the User Manager, and removes the session from memory.
+                
+                The endpoint performs the following actions:
+                1. Stops all rendering work for the session
+                2. Releases all assigned users
+                3. Cleans up session resources
+                4. Removes the session from active sessions mapping
+                
+                Args:
                 customer_id (str): Unique identifier for the customer
-                                 Provided as form data
-                                 
-            Returns:
+                            Provided as form data
+                            
+                Returns:
                 JSONResponse: Response containing stop/delete operation status
                 
-            Status Codes:
+                Status Codes:
                 200: Workload stopped and deleted successfully
                 404: No active workload found for customer
                 500: Error during workload termination
                 
-            Example Request:
+                Example Request:
                 POST /api/session-supervisor-service/stop-and-delete-workload
                 Content-Type: application/x-www-form-urlencoded
                 
                 customer_id=customer-123
                 
-            Example Response (Success):
+                Example Response (Success):
                 {
                     "message": "Workload stopped and deleted"
                 }
                 
-            Example Response (Error):
+                Example Response (Error):
                 {
                     "message": "Failed to stop and delete workload"
                 }
-            """
-            response = await self.data_class.customerSessionsMapping[customer_id].stop_and_delete_workload(customer_id)
-            del self.data_class.customerSessionsMapping[customer_id]
-            if response.status_code == 200:
-                return JSONResponse(content={"message": "Workload stopped and deleted"}, status_code=response.status_code)
-            else:
-                return JSONResponse(content={"message": "Failed to stop and delete workload"}, status_code=response.status_code)
-            
+                """
+                print(f"[stop-and-delete-workload] Endpoint hit for customer_id: {customer_id}")
+                if customer_id not in self.data_class.customerSessionsMapping:
+                    print(f"[stop-and-delete-workload] No active workload found for customer_id: {customer_id}")
+                    return JSONResponse(content={"message": "No active workload found for customer"}, status_code=404)
+                try:
+                    print(f"[stop-and-delete-workload] Stopping and deleting workload for customer_id: {customer_id}")
+                    response = await self.data_class.customerSessionsMapping[customer_id].stop_and_delete_workload(customer_id)
+                    print(f"[stop-and-delete-workload] Workload stop response: {response}")
+                    del self.data_class.customerSessionsMapping[customer_id]
+                    print(f"[stop-and-delete-workload] Session removed from mapping for customer_id: {customer_id}")
+                    if response.status_code == 200:
+                        print(f"[stop-and-delete-workload] Workload stopped and deleted successfully for customer_id: {customer_id}")
+                        return JSONResponse(content={"message": "Workload stopped and deleted"}, status_code=response.status_code)
+                    else:
+                        print(f"[stop-and-delete-workload] Failed to stop and delete workload for customer_id: {customer_id}, status_code: {response.status_code}")
+                        return JSONResponse(content={"message": "Failed to stop and delete workload"}, status_code=response.status_code)
+                except Exception as e:
+                    print(f"[stop-and-delete-workload] Error for customer_id: {customer_id}: {traceback.format_exc()}")
+                    return JSONResponse(content={"message": "Internal server error", "details": str(e)}, status_code=500)
+
+
         @self.app.get("/api/session-supervisor-service/get-workload-progress")
         async def getWorkloadProgress(
             customer_id: str = Query(...),
