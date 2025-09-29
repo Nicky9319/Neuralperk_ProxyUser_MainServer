@@ -446,12 +446,17 @@ class HTTP_SERVER():
             This endpoint sets the number of users assigned to a session supervisor.
             It updates the user count for the session supervisor.
             """
+            print(f"[setUserCount] Endpoint hit for customer_id: {customer_id}, user_count: {user_count}")
             try:
                 if customer_id not in self.data_class.customerSessionsMapping:
+                    print(f"[setUserCount] No active session for customer_id: {customer_id}")
                     return JSONResponse(content={"message": f"No active session for customer_id: {customer_id}"}, status_code=404)
+                print(f"[setUserCount] Setting user count for customer_id: {customer_id} to {user_count}")
                 response = await self.data_class.customerSessionsMapping[customer_id].set_user_count(user_count)
+                print(f"[setUserCount] Response: {response}")
                 return JSONResponse(content=response, status_code=200)
             except Exception as e:
+                print(f"[setUserCount] Error setting user count for customer_id: {customer_id}: {str(e)}")
                 return JSONResponse(content={"message": f"Error setting user count: {str(e)}"}, status_code=500)
 
     async def get_session_supervisor_information(self, customer_id: str):
