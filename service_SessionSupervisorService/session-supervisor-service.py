@@ -456,6 +456,7 @@ class HTTP_SERVER():
 
     async def get_session_supervisor_information(self, customer_id: str):
         return {
+            "customer_id" : customer_id,
             "object_id" : self.data_class.customerSessionsMapping[customer_id].object_id,
             "session_routing_key" : self.data_class.customerSessionsMapping[customer_id].sessionRoutingKey,
             "session_id" : self.data_class.customerSessionsMapping[customer_id].session_id,

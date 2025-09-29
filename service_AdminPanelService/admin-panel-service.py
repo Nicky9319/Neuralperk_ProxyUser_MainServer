@@ -389,8 +389,8 @@ class AdminPanelStreamlit:
                 
                 with col2:
                     if st.button("Update", key=f"update_{i}"):
-                        # Here we would call the function to update user count
-                        customer_id = supervisor.get('session_id', '')  # Assuming session_id is customer_id
+                        # Use explicit customer_id returned by the API instead of session_id
+                        customer_id = supervisor.get('customer_id', '')
                         result = await self.set_supervisor_user_count(customer_id, new_user_count)
                         if result:
                             st.success("User count updated!")
