@@ -1070,7 +1070,7 @@ class sessionSupervisorClass:
             print(self.remaining_frame_list)
             self.remaining_frame_list.remove(frame_number)
             print("Remaining Frame List After Removal:")
-            print(self.remaining_frame_lsit)
+            print(self.remaining_frame_list)
             
             # Step 3: Download image from temp bucket in blob storage
             print(f"Downloading image from temp bucket: {image_binary_path}")

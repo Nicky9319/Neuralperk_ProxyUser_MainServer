@@ -477,14 +477,34 @@ class HTTP_SERVER():
                 return JSONResponse(content={"message": f"Error setting user count: {str(e)}"}, status_code=500)
 
     async def get_session_supervisor_information(self, customer_id: str):
-        return {
-            "customer_id" : customer_id,
-            "object_id" : self.data_class.customerSessionsMapping[customer_id].object_id,
-            "session_routing_key" : self.data_class.customerSessionsMapping[customer_id].sessionRoutingKey,
-            "session_id" : self.data_class.customerSessionsMapping[customer_id].session_id,
-            "number_of_users" : await self.data_class.customerSessionsMapping[customer_id].get_number_of_users(),
-            "session_status" : self.data_class.customerSessionsMapping[customer_id].session_status,
-        }  
+        """
+        Retrieve session supervisor information for a given customer_id, with error handling.
+
+        Args:
+            customer_id (str): The customer ID whose session supervisor info is requested.
+
+        Returns:
+            dict: Information about the session supervisor, or an error message.
+        """
+        try:
+            if customer_id not in self.data_class.customerSessionsMapping:
+                return {
+                    "error": f"No active session for customer_id: {customer_id}"
+                }
+            supervisor = self.data_class.customerSessionsMapping[customer_id]
+            return {
+                "customer_id": customer_id,
+                "object_id": getattr(supervisor, "object_id", None),
+                "session_routing_key": getattr(supervisor, "sessionRoutingKey", None),
+                "session_id": getattr(supervisor, "session_id", None),
+                "number_of_users": await supervisor.get_number_of_users() if hasattr(supervisor, "get_number_of_users") else None,
+                "session_status": getattr(supervisor, "session_status", None),
+            }
+        except Exception as e:
+            print("Error in get_session_supervisor_information: ", e)
+            return {
+                "error": f"Error retrieving session supervisor information: {str(e)}"
+            }
 
 
     async def run_app(self):
