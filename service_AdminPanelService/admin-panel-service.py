@@ -51,10 +51,13 @@ class AdminPanelStreamlit:
         # Service URLs configuration
         user_manager_env_url = os.getenv("USER_MANAGER_SERVICE", "").strip()
         if not user_manager_env_url or not (user_manager_env_url.startswith("http://") or user_manager_env_url.startswith("https://")):
-            self.user_manager_service_url = "http://127.0.0.1:7000"
+            self.user_manager_service_url = "http://127.0.0.1:8500"
         else:
             self.user_manager_service_url = user_manager_env_url
-            
+
+        # Debug: Print User Manager Service URL
+        print(f"User Manager Service URL: {self.user_manager_service_url}")
+
         session_supervisor_env_url = os.getenv("SESSION_SUPERVISOR_SERVICE", "").strip()
         if not session_supervisor_env_url or not (session_supervisor_env_url.startswith("http://") or session_supervisor_env_url.startswith("https://")):
             self.session_supervisor_service_url = "http://127.0.0.1:7500"
@@ -193,7 +196,7 @@ class AdminPanelStreamlit:
         Fetch the total number of connected users from the User Service.
         """
         try:
-            response = await self.http_client.get(f"{self.user_manager_service_url}/api/user-service/user/connected-users-count")
+            response = await self.http_client.get(f"{self.user_service_url}/api/user-service/user/connected-users-count")
             if response.status_code == 200:
                 data = response.json()
                 return data.get("total_connected_users", 0)
