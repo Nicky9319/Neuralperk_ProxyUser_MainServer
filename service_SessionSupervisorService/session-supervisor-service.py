@@ -453,7 +453,7 @@ class HTTP_SERVER():
                     return JSONResponse(content={"message": "No active workload found for customer"}, status_code=404)
                 try:
                     print(f"[stop-and-delete-workload] Stopping and deleting workload for customer_id: {customer_id}")
-                    response = await self.data_class.customerSessionsMapping[customer_id].stop_and_delete_workload(customer_id)
+                    response = await self.data_class.customerSessionsMapping[customer_id].stop_and_delete_workload()
                     print(f"[stop-and-delete-workload] Workload stop response: {response}")
                     del self.data_class.customerSessionsMapping[customer_id]
                     print(f"[stop-and-delete-workload] Session removed from mapping for customer_id: {customer_id}")
