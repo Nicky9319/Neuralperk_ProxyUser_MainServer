@@ -3,7 +3,7 @@
         {
             "name": "customerService",
             "script": "./service_CustomerService/customer-service.py",
-            "interpreter": ".venv/bin/python",
+            "interpreter": "/opt/anaconda3/envs/nrlperk/bin/python",
             "out_file": "./logs/customerServer-out.log",
             "error_file": "./logs/customerServer-error.log",
             "merge_logs": true,
@@ -12,7 +12,7 @@
         {
             "name": "mongoDBService",
             "script": "./service_MongoDBService/mongo-db-service.py",
-            "interpreter": ".venv/bin/python",
+            "interpreter": "/opt/anaconda3/envs/nrlperk/bin/python",
             "out_file": "./logs/mongoDBService-out.log",
             "error_file": "./logs/mongoDBService-error.log",
             "merge_logs": true,
@@ -21,7 +21,7 @@
         {
             "name": "blobService",
             "script": "./service_BlobService/blob-service.py",
-            "interpreter": ".venv/bin/python",
+            "interpreter": "/opt/anaconda3/envs/nrlperk/bin/python",
             "out_file": "./logs/blobService-out.log",
             "error_file": "./logs/blobService-error.log",
             "merge_logs": true,
@@ -30,7 +30,7 @@
         {
             "name": "authService",
             "script": "./service_AuthService/auth-service.py",
-            "interpreter": ".venv/bin/python",
+            "interpreter": "/opt/anaconda3/envs/nrlperk/bin/python",
             "out_file": "./logs/authService-out.log",
             "error_file": "./logs/authService-error.log",
             "merge_logs": true,
@@ -39,7 +39,7 @@
         {
             "name": "userService",
             "script": "./service_UserService/user-service.py",
-            "interpreter": ".venv/bin/python",
+            "interpreter": "/opt/anaconda3/envs/nrlperk/bin/python",
             "out_file": "./logs/userService-out.log",
             "error_file": "./logs/userService-error.log",
             "merge_logs": true,
@@ -48,7 +48,7 @@
         {
             "name": "sessionSupervisorService",
             "script": "./service_SessionSupervisorService/session-supervisor-service.py",
-            "interpreter": ".venv/bin/python",
+            "interpreter": "/opt/anaconda3/envs/nrlperk/bin/python",
             "out_file": "./logs/sessionSupervisorService-out.log",
             "error_file": "./logs/sessionSupervisorService-error.log",
             "merge_logs": true,
@@ -57,7 +57,7 @@
         {
             "name": "userManagerService",
             "script": "./service_UserManager/user-manager.py",
-            "interpreter": ".venv/bin/python",
+            "interpreter": "/opt/anaconda3/envs/nrlperk/bin/python",
             "out_file": "./logs/userManagerService-out.log",
             "error_file": "./logs/userManagerService-error.log",
             "merge_logs": true,
