@@ -27,7 +27,7 @@ class sessionClass:
     # -------------------------
     # Initialization Section
     # -------------------------
-    def __init__(self, customer_id = None, object_id = None, workload_removing_callback = None):
+    def __init__(self, customer_id = None, object_id = None, workload_completed_callback = None):
         self.session_status : Literal["queued", "rendering", "completed", "failed" , None] = None
         self.customer_id = customer_id
         self.object_id = object_id
@@ -35,7 +35,7 @@ class sessionClass:
         self.session_id = str(uuid.uuid4())
         self.sessionRoutingKey = f"SESSION_SUPERVISOR_{self.session_id}"
 
-        self.session_supervisor_instance = sessionSupervisorClass(customer_id=self.customer_id, object_id=self.object_id, session_id=self.session_id)
+        self.session_supervisor_instance = sessionSupervisorClass(customer_id=self.customer_id, object_id=self.object_id, session_id=self.session_id, workload_completed_callback=workload_completed_callback)
 
 
         self.http_client = httpx.AsyncClient(timeout=30.0)
@@ -46,7 +46,6 @@ class sessionClass:
         else:
             self.user_manager_service_url = self.user_manager_service_url
 
-        self.workload_removing_callback = workload_removing_callback
 
     # -------------------------
     # Workload Management Section
@@ -79,11 +78,26 @@ class sessionClass:
         return JSONResponse(content={"message": "Workload started"}, status_code=200)
 
 
-    async def stop_and_delete_workload(self, customer_id):
-        await self.workload_removing_callback(customer_id)
-        await self.session_supervisor_instance.cleanup()
-        del self.session_supervisor_instance
-        self.session_supervisor_instance = None
+    async def stop_and_delete_workload(self):
+        """
+        Stop and cleanup this session without triggering external callbacks.
+
+        This method performs the explicit cleanup of the underlying
+        session supervisor instance and frees resources. It intentionally
+        does NOT call back into the server's workload_completed_callback
+        to avoid recursive calls when the server already invoked this
+        stop method as part of workload completion or stop/delete flows.
+        """
+        try:
+            if self.session_supervisor_instance:
+                await self.session_supervisor_instance.cleanup()
+                # remove reference so GC can collect
+                del self.session_supervisor_instance
+                self.session_supervisor_instance = None
+        except Exception as e:
+            print(f"Error during stop_and_delete_workload cleanup: {e}")
+            return JSONResponse(content={"message": "Error during cleanup", "details": str(e)}, status_code=500)
+
         return JSONResponse(content={"message": "Workload stopped and deleted"}, status_code=200)
 
     # -------------------------

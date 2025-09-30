@@ -263,6 +263,30 @@ class Service:
 
                 print(f"Retrieving from bucket: {bucket}, key: {key}")
 
+                # Step 2: Get file metadata (including content length) from blob service
+                print(f"Getting blend file metadata from blob service...")
+                try:
+                    metadata_response = await self.http_client.get(
+                        f"{self.blob_service_url}/api/blob-service/retrieve-blend-metadata",
+                        params={
+                            "bucket": bucket,
+                            "key": key
+                        },
+                        timeout=10.0
+                    )
+                    
+                    content_length = None
+                    if metadata_response.status_code == 200:
+                        metadata_json = metadata_response.json()
+                        content_length = metadata_json.get("size_bytes")
+                        print(f"Retrieved file metadata - Content length: {content_length} bytes")
+                    else:
+                        print(f"Warning: Could not retrieve metadata, status: {metadata_response.status_code}")
+                        
+                except Exception as e:
+                    print(f"Warning: Error retrieving metadata: {str(e)}")
+                    content_length = None
+
                 # Step 2: Proxy the response directly from blob service to client
                 print(f"Proxying blend file from blob service...")
 
@@ -309,13 +333,21 @@ class Service:
                 file_name = os.path.basename(blend_file_path) if blend_file_path else "blendfile.blend"
                 print(f"Proxying blend file: {file_name}")
 
+                # Prepare response headers
+                response_headers = {
+                    "Content-Disposition": f"attachment; filename=\"{file_name}\"",
+                    "Cache-Control": "no-cache"
+                }
+                
+                # Add content length if available
+                if content_length is not None:
+                    response_headers["Content-Length"] = str(content_length)
+                    print(f"Added Content-Length header: {content_length} bytes")
+
                 return StreamingResponse(
                     proxy_blend_file(),
                     media_type="application/octet-stream",
-                    headers={
-                        "Content-Disposition": f"attachment; filename=\"{file_name}\"",
-                        "Cache-Control": "no-cache"
-                    }
+                    headers=response_headers
                 )
             except HTTPException:
                 raise

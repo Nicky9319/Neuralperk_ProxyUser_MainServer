@@ -130,7 +130,7 @@ class sessionSupervisorClass:
         workload_status (str): Current status - "initialized", "running", or "completed"
     """
     
-    def __init__(self, customer_id = None, object_id = None, session_id = None, workload_removing_callback = None):
+    def __init__(self, customer_id = None, object_id = None, session_id = None, workload_completed_callback = None):
         """
         Initialize a new Session Supervisor instance.
         
@@ -142,7 +142,7 @@ class sessionSupervisorClass:
             customer_id (str): Unique identifier for the customer who owns the object
             object_id (str): Unique identifier for the 3D object to be rendered
             session_id (str): Unique identifier for this rendering session
-            workload_removing_callback (callable): Function to call when workload is completed
+            workload_completed_callback (callable): Function to call when workload is completed
                                                   Should accept customer_id as parameter
                                                   
         Raises:
@@ -216,7 +216,7 @@ class sessionSupervisorClass:
 
         self.completed = False
 
-        self.workload_completed_callback = workload_removing_callback
+        self.workload_completed_callback = workload_completed_callback
 
 
     async def initialization(self):
@@ -962,8 +962,21 @@ class sessionSupervisorClass:
         """
         self.completed = True
         self.workload_status = "completed"
+
+        # Note: DB update moved to the supervisor service callback to avoid
+        # making service-to-service HTTP calls from this class. The
+        # Session Supervisor Service will mark the blender object state as
+        # 'video-ready' when the workload completes.
+
+        # Release users and invoke completion callback
         await self.remove_users(self.user_list)
-        self.workload_removing_callback(self.customer_id)
+        try:
+            if callable(self.workload_completed_callback):
+                # keep legacy synchronous callback behavior but guard exceptions
+                await self.workload_completed_callback(self.customer_id)
+        except Exception as e:
+            print(f"Error running workload_completed_callback: {e}")
+
         print("Workload Completed")
 
     async def distributeWorkload(self):
@@ -1070,7 +1083,7 @@ class sessionSupervisorClass:
             print(self.remaining_frame_list)
             self.remaining_frame_list.remove(frame_number)
             print("Remaining Frame List After Removal:")
-            print(self.remaining_frame_lsit)
+            print(self.remaining_frame_list)
             
             # Step 3: Download image from temp bucket in blob storage
             print(f"Downloading image from temp bucket: {image_binary_path}")

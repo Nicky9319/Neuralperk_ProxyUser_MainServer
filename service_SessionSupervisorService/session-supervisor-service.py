@@ -111,12 +111,19 @@ class HTTP_SERVER():
             self.blob_service_url = "http://127.0.0.1:13000"
         else:
             self.blob_service_url = blob_env_url
+
+        # Get User Manager service URL from environment (needed for cleanup calls)
+        user_manager_env_url = os.getenv("USER_MANAGER_SERVICE", "").strip()
+        if not user_manager_env_url or not (user_manager_env_url.startswith("http://") or user_manager_env_url.startswith("https://")):
+            self.user_manager_service_url = "http://127.0.0.1:7000"
+        else:
+            self.user_manager_service_url = user_manager_env_url
         
         # HTTP client for making requests to MongoDB service and Auth service
         self.http_client = httpx.AsyncClient(timeout=30.0)
 
 
-    async def workload_removing_callback(self, customer_id: str):
+    async def workload_completed_callback(self, customer_id: str):
         """
         Callback function to remove completed workload sessions.
         
@@ -130,9 +137,99 @@ class HTTP_SERVER():
                              workload session should be removed
                              
         Example:
-            await server.workload_removing_callback("customer-123")
+            await server.workload_completed_callback("customer-123")
         """
-        del self.data_class.customerSessionsMapping[customer_id]
+        print("Workload is Completed for the customer id : ", customer_id)
+
+        # Attempt to update the blender object state to 'video-ready' in MongoDB
+        session = None
+        object_id = None
+        try:
+            session = self.data_class.customerSessionsMapping.get(customer_id)
+            object_id = getattr(session, "object_id", None) if session else None
+            if object_id:
+                payload = {
+                    "objectId": object_id,
+                    "customerId": customer_id,
+                    "objectState": "video-ready"
+                }
+                try:
+                    resp = await self.http_client.put(
+                        f"{self.mongodb_service_url}/api/mongodb-service/blender-objects/change-state",
+                        json=payload
+                    )
+                    if resp.status_code == 200:
+                        print(f"Updated object state to 'video-ready' for object {object_id}")
+                    else:
+                        print(f"Warning: Failed to update object state. Status: {resp.status_code}, Response: {resp.text}")
+                except Exception as e:
+                    print(f"Error calling MongoDB service to update object state: {e}")
+            else:
+                print(f"No object_id available for customer {customer_id}; skipping DB update")
+        except Exception as e:
+            print(f"Unexpected error while attempting DB update in workload_completed_callback: {e}")
+
+        # Also clean up the User Manager routing/session mapping similar to customer-service
+        try:
+            # Get the session supervisor information directly (no HTTP call to self)
+            overview = await self.get_session_supervisor_information(customer_id)
+        except Exception as e:
+            overview = None
+            print(f"Warning: Error fetching session supervisor overview for User Manager cleanup: {e}")
+
+        try:
+            if overview and not overview.get("error"):
+                try:
+                    session_supervisor_id = overview.get("session_id")
+                    print(f"Cleaning up User Manager session for session_supervisor_id from session supervisor: {session_supervisor_id}")
+                    if session_supervisor_id:
+                        cleanup_resp = await self.http_client.request(
+                            "DELETE",
+                            f"{self.user_manager_service_url}/api/user-manager/session-supervisor/cleanup-session",
+                            data={
+                                "session_supervisor_id": session_supervisor_id
+                            }
+                        )
+                        if cleanup_resp.status_code != 200:
+                            try:
+                                err_detail = cleanup_resp.json().get("detail", cleanup_resp.text)
+                            except Exception:
+                                err_detail = cleanup_resp.text
+                            print(f"Warning: User Manager cleanup failed: {cleanup_resp.status_code} - {err_detail}")
+                        else:
+                            print(f"User Manager cleanup successful for session_supervisor_id: {session_supervisor_id}")
+                    else:
+                        print("Warning: session_id not found in session supervisor overview; skipping User Manager cleanup")
+                except Exception as e:
+                    print(f"Warning: Error during User Manager cleanup processing: {e}")
+            else:
+                print(f"Warning: No session supervisor overview available for customer {customer_id}; skipping User Manager cleanup")
+        except Exception as e:
+            print(f"Warning: Error during User Manager cleanup: {str(e)}")
+
+        # Ensure the session is stopped/cleaned and removed from the in-memory mapping.
+        # This mirrors the stop-and-delete endpoint behavior and guarantees the
+        # session mapping is cleared even if stop/cleanup throws.
+        if customer_id in self.data_class.customerSessionsMapping:
+            try:
+                try:
+                    response = await self.data_class.customerSessionsMapping[customer_id].stop_and_delete_workload()
+                    # response is typically a JSONResponse; log status
+                    status_code = getattr(response, 'status_code', None)
+                    print(f"workload_completed_callback: stop_and_delete_workload status: {status_code}")
+                except Exception as e:
+                    # Log but continue to remove mapping to avoid stale entries
+                    print(f"Error while stopping/cleaning session for {customer_id}: {e}")
+            finally:
+                # Always attempt to remove the session from the mapping so the
+                # server is free to accept new workloads for this customer.
+                try:
+                    del self.data_class.customerSessionsMapping[customer_id]
+                    print(f"Session removed from mapping for customer_id: {customer_id}")
+                except KeyError:
+                    print(f"Session for {customer_id} already removed from mapping")
+                except Exception as e:
+                    print(f"Unexpected error removing session from mapping for {customer_id}: {e}")
    
     async def configure_routes(self):
         """
@@ -250,7 +347,7 @@ class HTTP_SERVER():
                 if customer_id in self.data_class.customerSessionsMapping.keys():
                     return JSONResponse(content={"message": "One workload already running. Your Access Plan doesnt allow to run another workload"}, status_code=400)
 
-                new_session = sessionClass(customer_id=customer_id, object_id=object_id, workload_removing_callback=self.workload_removing_callback)
+                new_session = sessionClass(customer_id=customer_id, object_id=object_id, workload_completed_callback=self.workload_completed_callback)
                 self.data_class.customerSessionsMapping[customer_id] = new_session
                 response = await new_session.start_workload()
                 # JSONResponse does not have a .content attribute; to print the response body, access .body and decode it
@@ -356,7 +453,7 @@ class HTTP_SERVER():
                     return JSONResponse(content={"message": "No active workload found for customer"}, status_code=404)
                 try:
                     print(f"[stop-and-delete-workload] Stopping and deleting workload for customer_id: {customer_id}")
-                    response = await self.data_class.customerSessionsMapping[customer_id].stop_and_delete_workload(customer_id)
+                    response = await self.data_class.customerSessionsMapping[customer_id].stop_and_delete_workload()
                     print(f"[stop-and-delete-workload] Workload stop response: {response}")
                     del self.data_class.customerSessionsMapping[customer_id]
                     print(f"[stop-and-delete-workload] Session removed from mapping for customer_id: {customer_id}")
@@ -477,14 +574,34 @@ class HTTP_SERVER():
                 return JSONResponse(content={"message": f"Error setting user count: {str(e)}"}, status_code=500)
 
     async def get_session_supervisor_information(self, customer_id: str):
-        return {
-            "customer_id" : customer_id,
-            "object_id" : self.data_class.customerSessionsMapping[customer_id].object_id,
-            "session_routing_key" : self.data_class.customerSessionsMapping[customer_id].sessionRoutingKey,
-            "session_id" : self.data_class.customerSessionsMapping[customer_id].session_id,
-            "number_of_users" : await self.data_class.customerSessionsMapping[customer_id].get_number_of_users(),
-            "session_status" : self.data_class.customerSessionsMapping[customer_id].session_status,
-        }  
+        """
+        Retrieve session supervisor information for a given customer_id, with error handling.
+
+        Args:
+            customer_id (str): The customer ID whose session supervisor info is requested.
+
+        Returns:
+            dict: Information about the session supervisor, or an error message.
+        """
+        try:
+            if customer_id not in self.data_class.customerSessionsMapping:
+                return {
+                    "error": f"No active session for customer_id: {customer_id}"
+                }
+            supervisor = self.data_class.customerSessionsMapping[customer_id]
+            return {
+                "customer_id": customer_id,
+                "object_id": getattr(supervisor, "object_id", None),
+                "session_routing_key": getattr(supervisor, "sessionRoutingKey", None),
+                "session_id": getattr(supervisor, "session_id", None),
+                "number_of_users": await supervisor.get_number_of_users() if hasattr(supervisor, "get_number_of_users") else None,
+                "session_status": getattr(supervisor, "session_status", None),
+            }
+        except Exception as e:
+            print("Error in get_session_supervisor_information: ", e)
+            return {
+                "error": f"Error retrieving session supervisor information: {str(e)}"
+            }
 
 
     async def run_app(self):
