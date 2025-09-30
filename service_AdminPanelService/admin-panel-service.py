@@ -188,6 +188,22 @@ class AdminPanelStreamlit:
             st.error(f"Error setting user count: {str(e)}")
             return False
     
+    async def get_total_connected_users(self):
+        """
+        Fetch the total number of connected users from the User Service.
+        """
+        try:
+            response = await self.http_client.get(f"{self.user_manager_service_url}/api/user-service/user/connected-users-count")
+            if response.status_code == 200:
+                data = response.json()
+                return data.get("total_connected_users", 0)
+            else:
+                print(f"Failed to fetch connected users count: {response.status_code}")
+                return 0
+        except Exception as e:
+            print(f"Error fetching connected users count: {e}")
+            return 0
+
     def main_dashboard(self):
         """
         Main dashboard interface after authentication.
@@ -241,34 +257,19 @@ class AdminPanelStreamlit:
     async def render_system_overview(self):
         """Render the system overview dashboard."""
         st.subheader("📊 System Overview")
-        
+
         # Get data from both services
         user_manager_data = await self.get_user_manager_overview()
         session_supervisor_data = await self.get_session_supervisor_info()
-        
+        total_connected_users = await self.get_total_connected_users()
+
         # Summary metrics
         col1, col2, col3, col4 = st.columns(4)
-        
+
         with col1:
-            total_sessions = len(user_manager_data.get("activeSessions", []))
-            st.metric("Active Sessions", total_sessions)
-        
+            st.metric(label="Total Connected Users", value=total_connected_users)
+
         with col2:
-            idle_users = len(user_manager_data.get("idle_users", []))
-            st.metric("Idle Users", idle_users)
-        
-        with col3:
-            demand_requests = len(user_manager_data.get("user_demand_queue", []))
-            st.metric("Demand Requests", demand_requests)
-        
-        with col4:
-            supervisors = len(session_supervisor_data)
-            st.metric("Session Supervisors", supervisors)
-        
-        # Charts
-        col1, col2 = st.columns(2)
-        
-        with col1:
             # User distribution pie chart
             if user_manager_data:
                 total_users = len(user_manager_data.get("userToSupervisorIdMapping", {}))
@@ -283,7 +284,7 @@ class AdminPanelStreamlit:
                 )
                 st.plotly_chart(fig, use_container_width=True)
         
-        with col2:
+        with col3:
             # Session status distribution
             if session_supervisor_data:
                 status_counts = {}
@@ -300,6 +301,24 @@ class AdminPanelStreamlit:
                         color_continuous_scale="viridis"
                     )
                     st.plotly_chart(fig, use_container_width=True)
+        
+        with col4:
+            # Summary metrics
+            if user_manager_data:
+                total_sessions = len(user_manager_data.get("activeSessions", []))
+                st.metric("Active Sessions", total_sessions)
+        
+            if user_manager_data:
+                idle_users = len(user_manager_data.get("idle_users", []))
+                st.metric("Idle Users", idle_users)
+        
+            if user_manager_data:
+                demand_requests = len(user_manager_data.get("user_demand_queue", []))
+                st.metric("Demand Requests", demand_requests)
+        
+            if session_supervisor_data:
+                supervisors = len(session_supervisor_data)
+                st.metric("Session Supervisors", supervisors)
     
     async def render_user_manager_section(self):
         """Render the User Manager section."""

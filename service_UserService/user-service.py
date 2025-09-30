@@ -422,6 +422,13 @@ class Service:
                     status_code=500
                 )
         
+        @self.app.get("/api/user-service/user/connected-users-count")
+        async def get_connected_users_count():
+            """
+            API endpoint to get the total number of connected users.
+            """
+            total_connected_users = len(self.data_class.connected_users)
+            return {"total_connected_users": total_connected_users}
 
         # Add more FastAPI routes here as needed...
 
