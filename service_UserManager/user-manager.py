@@ -835,7 +835,7 @@ async def start_service():
     #<HTTP_SERVER_INSTANCE_INTIALIZATION_START>
 
     #<HTTP_SERVER_PORT_START>
-    httpServerPort = 7001
+    httpServerPort = 7000
     #<HTTP_SERVER_PORT_END>
 
     #<HTTP_SERVER_HOST_START>
