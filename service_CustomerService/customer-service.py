@@ -1693,7 +1693,7 @@ class HTTP_SERVER():
                     "customerId": customer_id,
                     "zipKey": zip_key,
                     "bucket": "frames-zip",
-                    "zipProxyPath": proxy_path,
+                    "signed_url": proxy_path,
                     "expiresIn": secs,
                     "zipExistsPreviously": zip_exists,
                     "totalFrames": total_frames,
