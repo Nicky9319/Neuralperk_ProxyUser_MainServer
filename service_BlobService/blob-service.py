@@ -26,7 +26,6 @@ import uvicorn
 # AWS S3/MinIO client imports
 import boto3
 from botocore.client import Config
-from botocore.exceptions import ClientError
 
 from io import BytesIO
 import io
@@ -248,8 +247,20 @@ class HTTP_SERVER():
         # =============================================================================
         @self.app.get("/api/blob-service/object-exists")
         async def objectExists(bucket: str, key: str):
-            """Lightweight existence check for an object.
-            Returns exists flag and basic metadata if present.
+            """Check if an object exists in a bucket with minimal overhead.
+
+            Args:
+                bucket: Bucket name
+                key: Object key path
+
+            Returns (always 200 on success):
+                {
+                    "bucket": str,
+                    "key": str,
+                    "exists": bool,
+                    "size_bytes": int | null,
+                    "etag": str | null
+                }
             """
             try:
                 await self.ensure_bucket_exists(bucket)
@@ -277,123 +288,6 @@ class HTTP_SERVER():
                     return JSONResponse(content={"error": str(ce)}, status_code=500)
             except Exception as e:
                 return JSONResponse(content={"error": str(e)}, status_code=500)
-
-        # =============================================================================
-        # GENERIC OBJECT / PREFIX METADATA ROUTE
-        # =============================================================================
-        @self.app.get("/api/blob-service/object-metadata")
-        async def objectMetadata(
-            bucket: str,
-            key: str,
-            aggregate_prefix: bool = False
-        ):
-            """Retrieve rich metadata for a specific object, or optionally aggregate for a prefix.
-
-            Query Parameters:
-                bucket (str): Bucket name
-                key (str): Object key OR prefix path (if aggregate_prefix=True)
-                aggregate_prefix (bool): When true and the exact object does not exist, treat key as a prefix
-                                          and return aggregate statistics for all objects under it.
-
-            Returns JSON with fields:
-                bucket, key, exists, is_prefix, size_bytes, human_readable_size,
-                etag, content_type, last_modified, storage_class,
-                total_size_bytes, object_count, human_readable_total_size (when aggregated)
-            """
-
-            def _human(size):
-                if size is None:
-                    return None
-                if size < 1024:
-                    return f"{size} B"
-                if size < 1024**2:
-                    return f"{size/1024:.2f} KB"
-                if size < 1024**3:
-                    return f"{size/1024**2:.2f} MB"
-                return f"{size/1024**3:.2f} GB"
-
-            # Attempt a HEAD for exact object
-            try:
-                head = self.client.head_object(Bucket=bucket, Key=key)
-                size_bytes = head.get("ContentLength")
-                return JSONResponse(content={
-                    "bucket": bucket,
-                    "key": key,
-                    "exists": True,
-                    "is_prefix": False,
-                    "size_bytes": size_bytes,
-                    "human_readable_size": _human(size_bytes),
-                    "etag": (head.get("ETag") or '').strip('"'),
-                    "content_type": head.get("ContentType"),
-                    "last_modified": head.get("LastModified").isoformat() if head.get("LastModified") else None,
-                    "storage_class": head.get("StorageClass"),
-                    "total_size_bytes": None,
-                    "object_count": None,
-                    "human_readable_total_size": None
-                }, status_code=200)
-            except ClientError as e:
-                error_code = e.response.get("Error", {}).get("Code")
-                if error_code in ("404", "NoSuchKey", "NotFound") and aggregate_prefix:
-                    # Treat as prefix aggregation
-                    prefix = key if key.endswith('/') else key + '/'
-                    paginator = self.client.get_paginator('list_objects_v2')
-                    total_size = 0
-                    count = 0
-                    last_modified = None
-                    for page in paginator.paginate(Bucket=bucket, Prefix=prefix):
-                        for obj in page.get('Contents', []):
-                            if obj.get('Key') == prefix:
-                                continue
-                            total_size += obj.get('Size', 0)
-                            count += 1
-                            lm = obj.get('LastModified')
-                            if lm and (last_modified is None or lm > last_modified):
-                                last_modified = lm
-                    return JSONResponse(content={
-                        "bucket": bucket,
-                        "key": key,
-                        "exists": count > 0,
-                        "is_prefix": True,
-                        "size_bytes": None,
-                        "human_readable_size": None,
-                        "etag": None,
-                        "content_type": None,
-                        "last_modified": last_modified.isoformat() if last_modified else None,
-                        "storage_class": None,
-                        "total_size_bytes": total_size if count else None,
-                        "object_count": count if count else None,
-                        "human_readable_total_size": _human(total_size) if count else None
-                    }, status_code=200)
-                elif error_code in ("404", "NoSuchKey", "NotFound"):
-                    return JSONResponse(content={
-                        "bucket": bucket,
-                        "key": key,
-                        "exists": False,
-                        "is_prefix": False,
-                        "size_bytes": None,
-                        "human_readable_size": None,
-                        "etag": None,
-                        "content_type": None,
-                        "last_modified": None,
-                        "storage_class": None,
-                        "total_size_bytes": None,
-                        "object_count": None,
-                        "human_readable_total_size": None
-                    }, status_code=200)
-                else:
-                    return JSONResponse(content={
-                        "error": "Failed to retrieve object metadata",
-                        "details": str(e),
-                        "bucket": bucket,
-                        "key": key
-                    }, status_code=500)
-            except Exception as e:
-                return JSONResponse(content={
-                    "error": "Unexpected error while retrieving object metadata",
-                    "details": str(e),
-                    "bucket": bucket,
-                    "key": key
-                }, status_code=500)
 
         # =============================================================================
         # BLEND FILE OPERATIONS ROUTES
