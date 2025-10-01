@@ -60,6 +60,12 @@ class AdminPanelStreamlit:
             self.session_supervisor_service_url = "http://127.0.0.1:7500"
         else:
             self.session_supervisor_service_url = session_supervisor_env_url
+            
+        user_service_env_url = os.getenv("USER_SERVICE", "").strip()
+        if not user_service_env_url or not (user_service_env_url.startswith("http://") or user_service_env_url.startswith("https://")):
+            self.user_service_url = "http://127.0.0.1:8500"
+        else:
+            self.user_service_url = user_service_env_url
         
         # HTTP client for service communication
         self.http_client = httpx.AsyncClient(timeout=30.0)
@@ -166,6 +172,20 @@ class AdminPanelStreamlit:
             st.error(f"Error fetching supervisor overview: {str(e)}")
             return {}
     
+    async def get_total_connected_user_count(self):
+        try:
+            response = await self.http_client.get(f"{self.user_service_url}/api/user-service/user/connected-users-count")
+            if response.status_code == 200:
+                data = response.json()
+                print(data)
+                return data.get("total_connected_users", 0)
+            else:
+                st.error(f"Failed to fetch connected user count: HTTP {response.status_code}")
+                return 0
+        except Exception as e:
+            st.error(f"Error fetching connected user count: {str(e)}")
+            return 0
+
     async def get_supervisor_user_count(self, customer_id):
         """Get user count for a specific supervisor."""
         try:
@@ -245,9 +265,10 @@ class AdminPanelStreamlit:
         # Get data from both services
         user_manager_data = await self.get_user_manager_overview()
         session_supervisor_data = await self.get_session_supervisor_info()
+        total_connected_users = await self.get_total_connected_user_count()
         
         # Summary metrics
-        col1, col2, col3, col4 = st.columns(4)
+        col1, col2, col3, col4, col5 = st.columns(5)
         
         with col1:
             total_sessions = len(user_manager_data.get("activeSessions", []))
@@ -264,6 +285,10 @@ class AdminPanelStreamlit:
         with col4:
             supervisors = len(session_supervisor_data)
             st.metric("Session Supervisors", supervisors)
+        
+        with col5:
+            total_users = total_connected_users
+            st.metric("Connected Users", total_users)
         
         # Charts
         col1, col2 = st.columns(2)
