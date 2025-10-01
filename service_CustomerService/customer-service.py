@@ -1,12 +1,8 @@
 import asyncio
-
 from fastapi import FastAPI, Response, Request, HTTPException, Depends, File, Form, UploadFile
-from fastapi.responses import StreamingResponse
+from fastapi.responses import StreamingResponse, JSONResponse
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
-
-from fastapi.responses import JSONResponse
-
 import uvicorn
 import httpx
 import json
@@ -14,16 +10,8 @@ from datetime import datetime
 import uuid
 import hashlib
 import secrets
-
-import asyncio
 import aio_pika
-
-
-import sys
 import os
-
-from dotenv import load_dotenv
-load_dotenv()
 
 # Security scheme for token validation
 security = HTTPBearer(auto_error=False)
@@ -81,18 +69,15 @@ class HTTP_SERVER():
         self.http_client = httpx.AsyncClient(timeout=30.0)
 
     def _format_file_size(self, size_bytes):
-        """Format file size in human-readable format"""
         if size_bytes is None:
             return None
-        
         if size_bytes < 1024:
             return f"{size_bytes} B"
-        elif size_bytes < 1024 * 1024:
+        if size_bytes < 1024 * 1024:
             return f"{size_bytes / 1024:.2f} KB"
-        elif size_bytes < 1024 * 1024 * 1024:
+        if size_bytes < 1024 * 1024 * 1024:
             return f"{size_bytes / (1024 * 1024):.2f} MB"
-        else:
-            return f"{size_bytes / (1024 * 1024 * 1024):.2f} GB"
+        return f"{size_bytes / (1024 * 1024 * 1024):.2f} GB"
 
     async def authenticate_token(self, credentials: HTTPAuthorizationCredentials = Depends(security)):
         """
@@ -1605,6 +1590,7 @@ class HTTP_SERVER():
                 zip_exists = False
                 zip_size_bytes = None
                 zip_size_human = None
+                zip_metadata = None
                 exists_response = await self.http_client.get(
                     f"{self.blob_service_url}/api/blob-service/object-exists",
                     params={
@@ -1619,6 +1605,25 @@ class HTTP_SERVER():
                         zip_size_bytes = exists_json.get("size_bytes")
                         zip_size_human = self._format_file_size(zip_size_bytes) if zip_size_bytes is not None else None
                         print(f"[ZIP_FRAMES] Zip already exists (size={zip_size_bytes})")
+                        # Retrieve rich metadata (HEAD proxy via blob service) for existing zip
+                        try:
+                            meta_resp = await self.http_client.get(
+                                f"{self.blob_service_url}/api/blob-service/object-metadata",
+                                params={
+                                    "bucket": "frames-zip",
+                                    "key": zip_key,
+                                    "aggregate_prefix": False
+                                }, timeout=20.0
+                            )
+                            if meta_resp.status_code == 200:
+                                zip_metadata = meta_resp.json()
+                                # Prefer authoritative size if present
+                                meta_size = zip_metadata.get("size_bytes")
+                                if isinstance(meta_size, int):
+                                    zip_size_bytes = meta_size
+                                    zip_size_human = self._format_file_size(zip_size_bytes)
+                        except Exception as e_meta:
+                            print(f"[ZIP_FRAMES] Failed to fetch object-metadata for existing zip: {e_meta}")
                 else:
                     print(f"[ZIP_FRAMES] object-exists check returned {exists_response.status_code}, will attempt creation.")
 
@@ -1653,6 +1658,24 @@ class HTTP_SERVER():
                         if after_json.get("exists"):
                             zip_size_bytes = after_json.get("size_bytes")
                             zip_size_human = self._format_file_size(zip_size_bytes) if zip_size_bytes is not None else None
+                    # Retrieve metadata after creation as well
+                    try:
+                        meta_resp2 = await self.http_client.get(
+                            f"{self.blob_service_url}/api/blob-service/object-metadata",
+                            params={
+                                "bucket": "frames-zip",
+                                "key": zip_key,
+                                "aggregate_prefix": False
+                            }, timeout=20.0
+                        )
+                        if meta_resp2.status_code == 200:
+                            zip_metadata = meta_resp2.json()
+                            meta_size2 = zip_metadata.get("size_bytes")
+                            if isinstance(meta_size2, int):
+                                zip_size_bytes = meta_size2
+                                zip_size_human = self._format_file_size(zip_size_bytes)
+                    except Exception as e_meta2:
+                        print(f"[ZIP_FRAMES] Metadata fetch after creation failed: {e_meta2}")
                     else:
                         print(f"[ZIP_FRAMES] Could not confirm zip after creation: {exists_after_create.status_code}")
 
@@ -1672,6 +1695,33 @@ class HTTP_SERVER():
                 signed_url = signed_json.get("signed_url")
                 if not signed_url:
                     raise HTTPException(status_code=500, detail="Signed URL missing in blob service response")
+
+                # Fallback: If size not yet known, attempt HEAD on signed URL to retrieve Content-Length
+                if zip_size_bytes is None:
+                    try:
+                        head_resp = await self.http_client.head(signed_url, timeout=15.0)
+                        if head_resp.status_code == 200:
+                            cl = head_resp.headers.get("Content-Length") or head_resp.headers.get("content-length")
+                            if cl and cl.isdigit():
+                                zip_size_bytes = int(cl)
+                                zip_size_human = self._format_file_size(zip_size_bytes)
+                            else:
+                                print("[ZIP_FRAMES] HEAD returned without usable Content-Length")
+                        else:
+                            print(f"[ZIP_FRAMES] HEAD request failed with status {head_resp.status_code}")
+                    except Exception as e_head:
+                        print(f"[ZIP_FRAMES] HEAD size fallback failed: {e_head}")
+
+                # If still have no metadata but have size, synthesize a minimal metadata object
+                if zip_metadata is None and zip_size_bytes is not None:
+                    zip_metadata = {
+                        "bucket": "frames-zip",
+                        "key": zip_key,
+                        "exists": True,
+                        "is_prefix": False,
+                        "size_bytes": zip_size_bytes,
+                        "human_readable_size": zip_size_human
+                    }
 
                 # Parse signed URL and build proxy path similar to rendered video approach
                 from urllib.parse import urlparse
@@ -1698,7 +1748,8 @@ class HTTP_SERVER():
                     "zipExistsPreviously": zip_exists,
                     "totalFrames": total_frames,
                     "zipSizeBytes": zip_size_bytes,
-                    "zipSizeHuman": zip_size_human
+                    "zipSizeHuman": zip_size_human,
+                    "zipMetadata": zip_metadata
                 }, status_code=200)
             except HTTPException:
                 raise
@@ -1727,21 +1778,64 @@ class HTTP_SERVER():
                     blob_url += ("&" if "?" in blob_url else "?") + request.url.query
                 print(f"[ZIP_PROXY] Full blob URL: {blob_url}")
 
+                # 1) Try metadata endpoint first for reliable size
+                content_length_int = None
+                try:
+                    parts = clean_path.split('/', 1)
+                    if len(parts) == 2:
+                        bucket = parts[0]
+                        key = parts[1].split('?')[0]
+                        meta_resp = await self.http_client.get(
+                            f"{self.blob_service_url}/api/blob-service/object-metadata",
+                            params={"bucket": bucket, "key": key, "aggregate_prefix": False},
+                            timeout=12.0
+                        )
+                        if meta_resp.status_code == 200:
+                            mj = meta_resp.json()
+                            sz = mj.get("size_bytes")
+                            if isinstance(sz, int):
+                                content_length_int = sz
+                                print(f"[ZIP_PROXY] Size via object-metadata: {sz}")
+                except Exception as e_meta_first:
+                    print(f"[ZIP_PROXY] metadata probe failed: {e_meta_first}")
+
+                # 2) HEAD fallback
+                if content_length_int is None:
+                    try:
+                        head_resp = await self.http_client.head(blob_url, timeout=15.0)
+                        if head_resp.status_code == 200:
+                            cl = head_resp.headers.get("Content-Length") or head_resp.headers.get("content-length")
+                            if cl and cl.isdigit():
+                                content_length_int = int(cl)
+                        else:
+                            print(f"[ZIP_PROXY] HEAD request returned status {head_resp.status_code}")
+                    except Exception as e_head:
+                        print(f"[ZIP_PROXY] HEAD size probe failed: {e_head}")
+
+                # 3) object-exists final fallback
+                if content_length_int is None:
+                    try:
+                        parts = clean_path.split('/', 1)
+                        if len(parts) == 2:
+                            bucket = parts[0]
+                            key = parts[1].split('?')[0]
+                            exists_resp = await self.http_client.get(
+                                f"{self.blob_service_url}/api/blob-service/object-exists",
+                                params={"bucket": bucket, "key": key}, timeout=10.0
+                            )
+                            if exists_resp.status_code == 200:
+                                ej = exists_resp.json()
+                                sz2 = ej.get("size_bytes")
+                                if isinstance(sz2, int):
+                                    content_length_int = sz2
+                                    print(f"[ZIP_PROXY] Size via object-exists fallback: {sz2}")
+                    except Exception as e_meta2:
+                        print(f"[ZIP_PROXY] object-exists fallback failed: {e_meta2}")
+
                 async def proxy_zip_stream():
                     try:
                         async with httpx.AsyncClient() as proxy_client:
-                            # Perform HEAD to attempt to get size (optional optimization)
-                            content_length_val = None
-                            try:
-                                head_resp = await proxy_client.head(blob_url, timeout=15.0)
-                                if head_resp.status_code == 200:
-                                    cl = head_resp.headers.get("Content-Length") or head_resp.headers.get("content-length")
-                                    if cl and cl.isdigit():
-                                        content_length_val = int(cl)
-                            except Exception:
-                                pass
-
-                            async with proxy_client.stream("GET", blob_url, timeout=120.0) as resp:
+                            async with proxy_client.stream("GET", blob_url, timeout=180.0) as resp:
                                 if resp.status_code != 200:
                                     try:
                                         err_bytes = await resp.aread()
@@ -1749,17 +1843,11 @@ class HTTP_SERVER():
                                     except Exception:
                                         err_detail = "Unknown error"
                                     raise HTTPException(status_code=resp.status_code, detail=f"Blob service error: {err_detail}")
-
-                                # If GET supplies size and HEAD failed
-                                if content_length_val is None:
+                                # If still no size, attempt to derive from GET headers
+                                if content_length_int is None:
                                     cl = resp.headers.get("Content-Length") or resp.headers.get("content-length")
                                     if cl and cl.isdigit():
-                                        content_length_val = int(cl)
-
-                                # Attach size to outer scope via nonlocal closure variable
-                                nonlocal content_length_int
-                                content_length_int = content_length_val
-
+                                        content_length_int = int(cl)
                                 async for chunk in resp.aiter_bytes():
                                     yield chunk
                     except HTTPException:
@@ -1770,17 +1858,9 @@ class HTTP_SERVER():
 
                 zip_filename = os.path.basename(zip_path.split('?')[0]) or 'frames.zip'
                 disposition = 'attachment' if download else 'inline'
-                content_length_int = None  # will be filled inside proxy_zip_stream if determinable
-
-                async def streaming_wrapper():
-                    async for part in proxy_zip_stream():
-                        yield part
-
-                response_stream = StreamingResponse(streaming_wrapper(), media_type='application/zip')
+                response_stream = StreamingResponse(proxy_zip_stream(), media_type='application/zip')
                 response_stream.headers['Content-Disposition'] = f"{disposition}; filename=\"{zip_filename}\""
                 response_stream.headers['Cache-Control'] = 'no-cache'
-                # After first iteration content_length_int might still be None; FastAPI can't know length beforehand.
-                # If HEAD gave us size, set it early so clients can display progress.
                 if content_length_int is not None:
                     response_stream.headers['Content-Length'] = str(content_length_int)
                 return response_stream
