@@ -97,7 +97,7 @@ class HTTP_SERVER():
         """
         try:
             # List of default buckets to create
-            default_buckets = ["blend-files", "rendered-videos", "rendered-frames", "temp"]
+            default_buckets = ["blend-files", "rendered-videos", "rendered-frames", "frames-zip", "temp"]
             
             for bucket_name in default_buckets:
                 try:
@@ -560,6 +560,112 @@ class HTTP_SERVER():
                 )
 
         # =============================================================================
+        # FRAMES ZIP OPERATIONS ROUTES
+        # =============================================================================
+        @self.app.post("/api/blob-service/store-frames-zip")
+        async def storeFramesZip(
+            file: UploadFile = Form(...),
+            key: str = Form(...)
+        ):
+            """
+            Store a ZIP file containing rendered frames for a particular blend object.
+
+            Args:
+                file: Uploaded zip file (should be .zip)
+                key: Desired storage key (without or with .zip extension)
+
+            Returns:
+                JSON response with success or error status.
+            """
+            print(f"Storing frames zip file upload received: {file.filename}")
+            print(f"Provided key/prefix: '{key}'")
+
+            # Validate uploaded file extension
+            if not file.filename.lower().endswith('.zip'):
+                return JSONResponse(content={"error": "Uploaded file must be a .zip archive"}, status_code=400)
+
+            # Normalize key so the stored object is ALWAYS named 'frames.zip'
+            prefix = (key or '').strip()
+            if prefix in ('', '.', '/'):  # no meaningful prefix
+                final_key = 'frames.zip'
+            else:
+                # Remove leading slashes
+                while prefix.startswith('/'):
+                    prefix = prefix[1:]
+                # If user supplied a file name, replace it with frames.zip
+                if prefix.endswith('/'):
+                    final_key = f"{prefix}frames.zip"
+                else:
+                    # Decide if last segment looks like a file name (has a dot)
+                    if '.' in prefix.split('/')[-1]:
+                        # Replace last segment with frames.zip
+                        parts = prefix.split('/')[:-1]
+                        if parts:
+                            final_key = '/'.join(parts) + '/frames.zip'
+                        else:
+                            final_key = 'frames.zip'
+                    else:
+                        # Treat as folder path
+                        final_key = f"{prefix}/frames.zip"
+
+            print(f"Normalized storage key: {final_key}")
+
+            result = await self.uploadFramesZipToBlobStorage(file, final_key)
+            if "error" in result:
+                return JSONResponse(content={"error": result["error"]}, status_code=500)
+
+            return JSONResponse(content={
+                "message": "Frames zip stored successfully",
+                "filename": file.filename,
+                "key": final_key,
+                "bucket": "frames-zip"
+            }, status_code=200)
+
+        @self.app.get("/api/blob-service/retrieve-frames-zip")
+        async def retrieveFramesZip(key: str):
+            """
+            Retrieve a ZIP archive of frames by key from the frames-zip bucket.
+
+            Args:
+                key: Storage key (with or without .zip extension)
+
+            Returns:
+                Streaming response / file bytes
+            """
+            print(f"Retrieving frames zip with supplied key/prefix: {key}")
+
+            supplied = key.strip()
+            if supplied in ('', '.', '/'):  # default
+                final_key = 'frames.zip'
+            else:
+                if supplied.endswith('/'):
+                    final_key = f"{supplied}frames.zip"
+                else:
+                    # If last segment has a dot and isn't frames.zip, replace with frames.zip
+                    last = supplied.split('/')[-1]
+                    if last.lower() == 'frames.zip':
+                        final_key = supplied
+                    elif '.' in last:  # treat as file name to replace
+                        parts = supplied.split('/')[:-1]
+                        if parts:
+                            final_key = '/'.join(parts) + '/frames.zip'
+                        else:
+                            final_key = 'frames.zip'
+                    else:
+                        final_key = f"{supplied}/frames.zip"
+
+            print(f"Resolved retrieval key: {final_key}")
+
+            data = await self.retrieveFramesZipFromBlobStorage(final_key)
+            if isinstance(data, dict) and "error" in data:
+                return JSONResponse(content={"error": data["error"]}, status_code=404)
+
+            headers = {
+                "Content-Disposition": f"attachment; filename=\"frames.zip\""
+            }
+            return Response(content=data, media_type="application/zip", headers=headers)
+
+        # =============================================================================
         # DELETE OPERATIONS ROUTES
         # =============================================================================
         
@@ -845,6 +951,49 @@ class HTTP_SERVER():
             
             self.client.delete_object(Bucket="temp", Key=key)
             return {"message": f"File '{key}' deleted successfully from temp bucket"}
+        except Exception as e:
+            return {"error": str(e)}
+
+    # =============================================================================
+    # FRAMES ZIP STORAGE OPERATIONS
+    # =============================================================================
+    async def uploadFramesZipToBlobStorage(self, file: UploadFile, key: str):
+        """
+        Upload a frames zip archive to the frames-zip bucket.
+
+        Args:
+            file: Uploaded .zip file
+            key: Storage key (should end with .zip)
+
+        Returns:
+            dict: Success response with filename/key or error
+        """
+        try:
+            bucket_created = await self.ensure_bucket_exists("frames-zip")
+            if not bucket_created:
+                return {"error": "Failed to create frames-zip bucket"}
+            contents = await file.read()
+            self.client.put_object(Bucket="frames-zip", Key=key, Body=contents, ContentType="application/zip")
+            return {"filename": file.filename, "key": key}
+        except Exception as e:
+            return {"error": str(e)}
+
+    async def retrieveFramesZipFromBlobStorage(self, key: str):
+        """
+        Retrieve a frames zip archive from the frames-zip bucket.
+
+        Args:
+            key: Storage key (expects .zip)
+
+        Returns:
+            bytes or dict with error
+        """
+        try:
+            bucket_created = await self.ensure_bucket_exists("frames-zip")
+            if not bucket_created:
+                return {"error": "Failed to create frames-zip bucket"}
+            response = self.client.get_object(Bucket="frames-zip", Key=key)
+            return response['Body'].read()
         except Exception as e:
             return {"error": str(e)}
 

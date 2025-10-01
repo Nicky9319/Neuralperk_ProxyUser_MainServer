@@ -228,6 +228,107 @@
 				"description": "Tests deletion from a non-existent bucket to verify proper error handling."
 			},
 			"response": []
+		},
+		{
+			"name": "10. Test Store Frames Zip",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "multipart/form-data"
+					}
+				],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "file",
+							"type": "file",
+							"src": []
+						},
+						{
+							"key": "key",
+							"type": "text",
+							"value": "{{frames_zip_key}}"
+						}
+					]
+				},
+				"url": {
+					"raw": "{{base_url}}/api/blob-service/store-frames-zip",
+					"host": ["{{base_url}}"],
+					"path": ["api", "blob-service", "store-frames-zip"]
+				},
+				"description": "Uploads a frames ZIP archive (.zip) for a particular blend object into the frames-zip bucket."
+			},
+			"response": [],
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"pm.test('Status code is valid', function () {",
+							"    pm.expect(pm.response.code).to.be.oneOf([200,400,404,500]);",
+							"});",
+							"",
+							"if (pm.response.code === 200) {",
+							"  const json = pm.response.json();",
+							"  pm.test('Upload success message present', function(){ pm.expect(json).to.have.property('message'); pm.expect(json.message.toLowerCase()).to.include('frames zip stored'); });",
+							"  pm.test('Bucket is frames-zip', function(){ pm.expect(json).to.have.property('bucket','frames-zip'); });",
+							"  pm.test('Key echoed back', function(){ pm.expect(json).to.have.property('key'); });",
+							"  pm.collectionVariables.set('frames_zip_key', json.key);",
+							"}",
+							"",
+							"if (pm.response.code !== 200) {",
+							"  try { const json = pm.response.json(); pm.test('Error shape', function(){ pm.expect(json).to.have.property('error'); }); } catch(e) { /* ignore parse errors */ }",
+							"}"
+						]
+					}
+				}
+			]
+		},
+		{
+			"name": "11. Test Retrieve Frames Zip",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{base_url}}/api/blob-service/retrieve-frames-zip?key={{frames_zip_key}}",
+					"host": ["{{base_url}}"],
+					"path": ["api", "blob-service", "retrieve-frames-zip"],
+					"query": [
+						{
+							"key": "key",
+							"value": "{{frames_zip_key}}",
+							"description": "Key of frames zip archive to retrieve"
+						}
+					]
+				},
+				"description": "Retrieves previously uploaded frames zip archive by key."
+			},
+			"response": [],
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"pm.test('Status code is valid', function () {",
+							"    pm.expect(pm.response.code).to.be.oneOf([200,400,404,500]);",
+							"});",
+							"",
+							"if (pm.response.code === 200) {",
+							"  pm.test('Content-Type is application/zip', function(){ pm.expect(pm.response.headers.get('Content-Type')).to.include('application/zip'); });",
+							"  pm.test('Content-Disposition header present', function(){ pm.expect(pm.response.headers.has('Content-Disposition')).to.be.true; });",
+							"}",
+							"else {",
+							"  try { const json = pm.response.json(); pm.test('Error shape on failure', function(){ pm.expect(json).to.have.property('error'); }); } catch(e) { /* ignore */ }",
+							"}"
+						]
+					}
+				}
+			]
 		}
 	],
 	"event": [
