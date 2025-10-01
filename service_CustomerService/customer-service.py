@@ -1600,27 +1600,27 @@ class HTTP_SERVER():
                 zip_key = f"{prefix}/frames.zip"
                 print(f"[ZIP_FRAMES] Derived prefix={prefix} zip_key={zip_key}")
 
-                # Step 1: Check if zip already exists in frames-zip bucket (using metadata head endpoint)
-                print("[ZIP_FRAMES] Checking if zip already exists in frames-zip bucket...")
+                # Step 1: Check if zip already exists (light-weight existence endpoint)
+                print("[ZIP_FRAMES] Checking if zip already exists in frames-zip bucket (object-exists)...")
                 zip_exists = False
                 zip_size_bytes = None
                 zip_size_human = None
-                metadata_response = await self.http_client.get(
-                    f"{self.blob_service_url}/api/blob-service/retrieve-blend-metadata",
+                exists_response = await self.http_client.get(
+                    f"{self.blob_service_url}/api/blob-service/object-exists",
                     params={
                         "bucket": "frames-zip",
                         "key": zip_key
                     }
                 )
-                if metadata_response.status_code == 200:
-                    meta_json = metadata_response.json()
-                    if not (isinstance(meta_json, dict) and meta_json.get("error")):
+                if exists_response.status_code == 200:
+                    exists_json = exists_response.json()
+                    if exists_json.get("exists"):
                         zip_exists = True
-                        zip_size_bytes = meta_json.get("size_bytes")
+                        zip_size_bytes = exists_json.get("size_bytes")
                         zip_size_human = self._format_file_size(zip_size_bytes) if zip_size_bytes is not None else None
                         print(f"[ZIP_FRAMES] Zip already exists (size={zip_size_bytes})")
                 else:
-                    print(f"[ZIP_FRAMES] Metadata check returned {metadata_response.status_code}, will attempt creation.")
+                    print(f"[ZIP_FRAMES] object-exists check returned {exists_response.status_code}, will attempt creation.")
 
                 # Step 2: If not exists, request blob service to create it
                 if not zip_exists:
@@ -1640,20 +1640,21 @@ class HTTP_SERVER():
                     if returned_key and returned_key != zip_key:
                         print(f"[ZIP_FRAMES] Warning: returned key {returned_key} differs from expected {zip_key}; using returned key.")
                         zip_key = returned_key
-                    # Fetch metadata again to get size
-                    meta_after_create = await self.http_client.get(
-                        f"{self.blob_service_url}/api/blob-service/retrieve-blend-metadata",
+                    # Fetch existence again to get size (still light-weight)
+                    exists_after_create = await self.http_client.get(
+                        f"{self.blob_service_url}/api/blob-service/object-exists",
                         params={
                             "bucket": "frames-zip",
                             "key": zip_key
                         }
                     )
-                    if meta_after_create.status_code == 200:
-                        meta_json = meta_after_create.json()
-                        zip_size_bytes = meta_json.get("size_bytes")
-                        zip_size_human = self._format_file_size(zip_size_bytes) if zip_size_bytes is not None else None
+                    if exists_after_create.status_code == 200:
+                        after_json = exists_after_create.json()
+                        if after_json.get("exists"):
+                            zip_size_bytes = after_json.get("size_bytes")
+                            zip_size_human = self._format_file_size(zip_size_bytes) if zip_size_bytes is not None else None
                     else:
-                        print(f"[ZIP_FRAMES] Could not retrieve metadata after creation: {meta_after_create.status_code}")
+                        print(f"[ZIP_FRAMES] Could not confirm zip after creation: {exists_after_create.status_code}")
 
                 # Step 3: Generate signed URL
                 print("[ZIP_FRAMES] Generating signed URL for frames zip ...")

@@ -197,7 +197,7 @@ class HTTP_SERVER():
             
             if "error" in result:
                 return JSONResponse(content={"error": result["error"]}, status_code=500)
-            
+        
             return JSONResponse(content={
                 "message": "Image stored successfully",
                 "filename": image.filename,
@@ -240,6 +240,54 @@ class HTTP_SERVER():
             # Return image with appropriate media type
             media_type = f"image/{type}"
             return Response(content=data, media_type=media_type)
+        
+    
+        # =============================================================================
+        # LIGHT-WEIGHT OBJECT EXISTENCE ROUTE
+        # =============================================================================
+        @self.app.get("/api/blob-service/object-exists")
+        async def objectExists(bucket: str, key: str):
+            """Check if an object exists in a bucket with minimal overhead.
+
+            Args:
+                bucket: Bucket name
+                key: Object key path
+
+            Returns (always 200 on success):
+                {
+                    "bucket": str,
+                    "key": str,
+                    "exists": bool,
+                    "size_bytes": int | null,
+                    "etag": str | null
+                }
+            """
+            try:
+                await self.ensure_bucket_exists(bucket)
+                import botocore
+                try:
+                    head = self.client.head_object(Bucket=bucket, Key=key)
+                    return JSONResponse(content={
+                        "bucket": bucket,
+                        "key": key,
+                        "exists": True,
+                        "size_bytes": head.get("ContentLength"),
+                        "etag": (head.get("ETag") or '').strip('"')
+                    }, status_code=200)
+                except botocore.exceptions.ClientError as ce:
+                    code = ce.response.get("Error", {}).get("Code")
+                    http_status = ce.response.get("ResponseMetadata", {}).get("HTTPStatusCode")
+                    if code in ("404", "NoSuchKey") or http_status == 404:
+                        return JSONResponse(content={
+                            "bucket": bucket,
+                            "key": key,
+                            "exists": False,
+                            "size_bytes": None,
+                            "etag": None
+                        }, status_code=200)
+                    return JSONResponse(content={"error": str(ce)}, status_code=500)
+            except Exception as e:
+                return JSONResponse(content={"error": str(e)}, status_code=500)
 
         # =============================================================================
         # BLEND FILE OPERATIONS ROUTES
@@ -769,11 +817,11 @@ class HTTP_SERVER():
     async def retrieveImageFromBlobStorage(self, bucket: str, key: str):
         """
         Retrieve an image file from blob storage.
-        
+
         Args:
             bucket: Source bucket name
             key: File key/name
-            
+
         Returns:
             bytes: Image data or dict with error
         """
