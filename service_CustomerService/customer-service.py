@@ -1557,6 +1557,142 @@ class HTTP_SERVER():
                     detail=f"Failed to retrieve workload progress: {str(e)}"
                 )
 
+        @self.app.get("/api/customer-service/create-and-retrieve-zip-file-of-rendered-frames/{object_id}/{secs}")
+        async def createAndRetrieveZipFileOfRenderedFrames(
+            object_id: str,
+            secs: int,
+            access_token: str = Depends(self.authenticate_token),
+            customer_id: str = Depends(self.getCustomerIdFromAuthorizationHeader),
+        ):
+            """
+                flow :
+                1. check if the zip file exists in the blob storage and if so directly move to step 3.
+                2. if not, make the zip file and then store it in the blob storage
+                3. create the signed url for the zip file and return it to the user so that it is able to retrieve the zip folder
+            """
+            print(f"[ZIP_FRAMES] Request received for customer_id={customer_id} object_id={object_id} secs={secs}")
+            # Basic validation
+            if secs <= 0:
+                raise HTTPException(status_code=400, detail="Expiration seconds must be > 0")
+            if secs > 3 * 3600:
+                # Cap to 3h to avoid very long-lived URLs (adjust as needed)
+                secs = 3 * 3600
+            try:
+                # Step 0: Validate blender object + ensure it belongs to customer
+                print("[ZIP_FRAMES] Fetching blender object from MongoDB service...")
+                mongo_response = await self.http_client.get(
+                    f"{self.mongodb_service_url}/api/mongodb-service/blender-objects/get-by-object-id/{object_id}",
+                    params={"customer_id": customer_id}
+                )
+                if mongo_response.status_code != 200:
+                    raise HTTPException(status_code=mongo_response.status_code, detail=f"MongoDB service error: {mongo_response.text}")
+                mongo_json = mongo_response.json()
+                blender_object = mongo_json.get("blenderObject")
+                if not blender_object:
+                    raise HTTPException(status_code=404, detail="Blender object not found")
+
+                rendered_images = blender_object.get("renderedImages", []) or []
+                total_frames = len(rendered_images)
+                if total_frames == 0:
+                    raise HTTPException(status_code=404, detail="No rendered frames available for this object yet")
+
+                prefix = f"{customer_id}/{object_id}"  # matches how frames are stored in rendered-frames bucket
+                zip_key = f"{prefix}/frames.zip"
+                print(f"[ZIP_FRAMES] Derived prefix={prefix} zip_key={zip_key}")
+
+                # Step 1: Check if zip already exists in frames-zip bucket (using metadata head endpoint)
+                print("[ZIP_FRAMES] Checking if zip already exists in frames-zip bucket...")
+                zip_exists = False
+                zip_size_bytes = None
+                zip_size_human = None
+                metadata_response = await self.http_client.get(
+                    f"{self.blob_service_url}/api/blob-service/retrieve-blend-metadata",
+                    params={
+                        "bucket": "frames-zip",
+                        "key": zip_key
+                    }
+                )
+                if metadata_response.status_code == 200:
+                    meta_json = metadata_response.json()
+                    if not (isinstance(meta_json, dict) and meta_json.get("error")):
+                        zip_exists = True
+                        zip_size_bytes = meta_json.get("size_bytes")
+                        zip_size_human = self._format_file_size(zip_size_bytes) if zip_size_bytes is not None else None
+                        print(f"[ZIP_FRAMES] Zip already exists (size={zip_size_bytes})")
+                else:
+                    print(f"[ZIP_FRAMES] Metadata check returned {metadata_response.status_code}, will attempt creation.")
+
+                # Step 2: If not exists, request blob service to create it
+                if not zip_exists:
+                    print("[ZIP_FRAMES] Creating frames zip via blob service ...")
+                    create_response = await self.http_client.post(
+                        f"{self.blob_service_url}/api/blob-service/store-rendered-images-as-zip",
+                        data={
+                            "bucket": "rendered-frames",
+                            "prefix": prefix,
+                        }
+                    )
+                    if create_response.status_code != 200:
+                        raise HTTPException(status_code=create_response.status_code, detail=f"Failed to create frames zip: {create_response.text}")
+                    create_json = create_response.json()
+                    # Use returned key if provided
+                    returned_key = create_json.get("key")
+                    if returned_key and returned_key != zip_key:
+                        print(f"[ZIP_FRAMES] Warning: returned key {returned_key} differs from expected {zip_key}; using returned key.")
+                        zip_key = returned_key
+                    # Fetch metadata again to get size
+                    meta_after_create = await self.http_client.get(
+                        f"{self.blob_service_url}/api/blob-service/retrieve-blend-metadata",
+                        params={
+                            "bucket": "frames-zip",
+                            "key": zip_key
+                        }
+                    )
+                    if meta_after_create.status_code == 200:
+                        meta_json = meta_after_create.json()
+                        zip_size_bytes = meta_json.get("size_bytes")
+                        zip_size_human = self._format_file_size(zip_size_bytes) if zip_size_bytes is not None else None
+                    else:
+                        print(f"[ZIP_FRAMES] Could not retrieve metadata after creation: {meta_after_create.status_code}")
+
+                # Step 3: Generate signed URL
+                print("[ZIP_FRAMES] Generating signed URL for frames zip ...")
+                signed_url_response = await self.http_client.get(
+                    f"{self.blob_service_url}/api/blob-service/generate-signed-url",
+                    params={
+                        "bucket": "frames-zip",
+                        "key": zip_key,
+                        "expiration": secs
+                    }
+                )
+                if signed_url_response.status_code != 200:
+                    raise HTTPException(status_code=signed_url_response.status_code, detail=f"Failed to generate signed URL: {signed_url_response.text}")
+                signed_json = signed_url_response.json()
+                signed_url = signed_json.get("signed_url")
+                if not signed_url:
+                    raise HTTPException(status_code=500, detail="Signed URL missing in blob service response")
+
+                print("[ZIP_FRAMES] Success - returning response")
+                return JSONResponse(content={
+                    "message": "Frames zip ready",
+                    "objectId": object_id,
+                    "customerId": customer_id,
+                    "zipKey": zip_key,
+                    "bucket": "frames-zip",
+                    "signedUrl": signed_url,
+                    "expiresIn": secs,
+                    "zipExistsPreviously": zip_exists,
+                    "totalFrames": total_frames,
+                    "zipSizeBytes": zip_size_bytes,
+                    "zipSizeHuman": zip_size_human
+                }, status_code=200)
+            except HTTPException:
+                raise
+            except Exception as e:
+                print(f"[ZIP_FRAMES][ERROR] {str(e)}")
+                raise HTTPException(status_code=500, detail=f"Failed to prepare frames zip: {str(e)}")
+
+
     async def deleteObjectFilesFromBlobStorage(self, customer_id: str, object_id: str):
         """
         Delete all files associated with an object from blob storage.

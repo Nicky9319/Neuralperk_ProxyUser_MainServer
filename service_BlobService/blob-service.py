@@ -1016,60 +1016,78 @@ class HTTP_SERVER():
             return response['Body'].read()
         except Exception as e:
             return {"error": str(e)}
+            async def store_rendered_images_to_zip(self, bucket: str, prefix: str):
+                try:
+                    zipStreamingObj = zipstream.ZipFile(mode="w", compression=zipstream.ZIP_DEFLATED)
+                except Exception as e:
+                    raise Exception(f"Failed to initialize zip stream: {str(e)}")
 
-    async def store_rendered_images_to_zip(self, bucket: str, prefix: str):
-        zipStreamingObj = zipstream.ZipFile(mode="w", compression=zipstream.ZIP_DEFLATED)
+                try:
+                    object_keys = await self.listObjectsWithPrefix(bucket, prefix)
+                    if isinstance(object_keys, dict) and "error" in object_keys:
+                        raise Exception(object_keys["error"])
+                    if not object_keys:
+                        raise Exception("No images found for the given prefix.")
+                except Exception as e:
+                    raise Exception(f"Failed to list objects with prefix '{prefix}' in bucket '{bucket}': {str(e)}")
 
-        object_keys = await self.listObjectsWithPrefix(bucket, prefix)
-        if isinstance(object_keys, dict) and "error" in object_keys:
-            raise Exception(object_keys["error"])
-        if not object_keys:
-            raise Exception("No images found for the given prefix.")
+                try:
+                    for objs in object_keys:
+                        try:
+                            response = self.client.get_object(Bucket=bucket, Key=objs)
+                            body_stream = response["Body"].iter_chunks(chunk_size=8192)
+                            zipStreamingObj.write_iter(objs.split("/")[-1], body_stream)
+                        except Exception as e:
+                            raise Exception(f"Failed to retrieve or add object '{objs}' to zip: {str(e)}")
+                except Exception as e:
+                    raise Exception(f"Error during zip creation for prefix '{prefix}': {str(e)}")
 
-        for objs in object_keys:
-            response = self.client.get_object(Bucket=bucket, Key=objs)
-            body_stream = response["Body"].iter_chunks(chunk_size=8192)
-            zipStreamingObj.write_iter(objs.split("/")[-1], body_stream)
+                print("storing the zip now...")
 
-        print("storing the zip now...")
+                try:
+                    # Inline generator->file-like wrapper
+                    class _GenReader(io.RawIOBase):
+                        def __init__(self, gen):
+                            self._iter = iter(gen)
+                            self._buffer = b""
 
-        # Inline generator->file-like wrapper
-        class _GenReader(io.RawIOBase):
-            def __init__(self, gen):
-                self._iter = iter(gen)
-                self._buffer = b""
+                        def readable(self):
+                            return True
 
-            def readable(self):
-                return True
+                        def readinto(self, b):
+                            while not self._buffer:
+                                try:
+                                    self._buffer = next(self._iter)
+                                except StopIteration:
+                                    return 0  # EOF
+                            n = min(len(b), len(self._buffer))
+                            b[:n] = self._buffer[:n]
+                            self._buffer = self._buffer[n:]
+                            return n
 
-            def readinto(self, b):
-                while not self._buffer:
-                    try:
-                        self._buffer = next(self._iter)
-                    except StopIteration:
-                        return 0  # EOF
-                n = min(len(b), len(self._buffer))
-                b[:n] = self._buffer[:n]
-                self._buffer = self._buffer[n:]
-                return n
+                    stream_wrapper = io.BufferedReader(_GenReader(zipStreamingObj))
 
-        stream_wrapper = io.BufferedReader(_GenReader(zipStreamingObj))
+                    # Ensure frames-zip bucket exists
+                    bucket_created = await self.ensure_bucket_exists("frames-zip")
+                    if not bucket_created:
+                        raise Exception("Failed to create or access frames-zip bucket")
 
-        # Upload streaming zip to S3/MinIO
-        self.client.upload_fileobj(
-            Fileobj=stream_wrapper,
-            Bucket="frames-zip",
-            Key=f"{prefix.strip('/')}/frames.zip",
-            ExtraArgs={"ContentType": "application/zip"}
-        )
+                    # Upload streaming zip to S3/MinIO
+                    self.client.upload_fileobj(
+                        Fileobj=stream_wrapper,
+                        Bucket="frames-zip",
+                        Key=f"{prefix.strip('/')}/frames.zip",
+                        ExtraArgs={"ContentType": "application/zip"}
+                    )
+                except Exception as e:
+                    raise Exception(f"Failed to upload zip file for prefix '{prefix}': {str(e)}")
 
-        print(f"✅ Stored {prefix.strip('/')}.zip in frames-zip bucket")
-        
-        return {
-            "bucket": "frames-zip",
-            "key": f"{prefix.strip('/')}/frames.zip",
-        }
-    
+                print(f"✅ Stored {prefix.strip('/')}.zip in frames-zip bucket")
+                
+                return {
+                    "bucket": "frames-zip",
+                    "key": f"{prefix.strip('/')}/frames.zip",
+                }
     # =============================================================================
     # SIGNED URL OPERATIONS
     # =============================================================================
