@@ -329,6 +329,57 @@
 					}
 				}
 			]
+		},
+		{
+			"name": "12. Test Store Rendered Images to Zip (Async)",
+			"request": {
+				"method": "POST",
+				"header": [
+					{ "key": "Content-Type", "value": "application/x-www-form-urlencoded" }
+				],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{ "key": "bucket", "value": "{{test_bucket}}", "type": "text" },
+						{ "key": "prefix", "value": "{{test_prefix}}", "type": "text" },
+						{ "key": "zip_bucket", "value": "frames-zip", "type": "text" },
+						{ "key": "zip_key", "value": "{{frames_zip_key}}", "type": "text" }
+					]
+				},
+				"url": {
+					"raw": "{{base_url}}/api/blob-service/store-rendered-images-zip",
+					"host": ["{{base_url}}"],
+					"path": ["api", "blob-service", "store-rendered-images-zip"]
+				},
+				"description": "Triggers the async API to zip all images under a prefix and upload to frames-zip bucket."
+			},
+			"response": [],
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"pm.test('Status code is valid', function () {",
+							"    pm.expect(pm.response.code).to.be.oneOf([200,400,404,500]);",
+							"});",
+							"",
+							"if (pm.response.code === 200) {",
+							"  const json = pm.response.json();",
+							"  pm.test('Zip archive created message', function(){ pm.expect(json).to.have.property('message'); pm.expect(json.message.toLowerCase()).to.include('zip archive created'); });",
+							"  pm.test('Zip bucket is frames-zip', function(){ pm.expect(json).to.have.property('zip_bucket','frames-zip'); });",
+							"  pm.test('Zip key present', function(){ pm.expect(json).to.have.property('zip_key'); });",
+							"  pm.collectionVariables.set('frames_zip_key', json.zip_key);",
+							"  pm.test('Count is a number', function(){ pm.expect(json).to.have.property('count'); pm.expect(json.count).to.be.a('number'); });",
+							"}",
+							"",
+							"if (pm.response.code !== 200) {",
+							"  try { const json = pm.response.json(); pm.test('Error shape', function(){ pm.expect(json).to.have.property('error'); }); } catch(e) { /* ignore parse errors */ }",
+							"}"
+						]
+					}
+				}
+			]
 		}
 	],
 	"event": [
@@ -509,6 +560,12 @@
 			"value": "nonexistent-bucket",
 			"type": "string",
 			"description": "Test non-existent bucket for error handling testing"
+		},
+		{
+			"key": "test_prefix",
+			"value": "test-prefix/",
+			"type": "string",
+			"description": "Test prefix for storing rendered images"
 		}
 	]
 }

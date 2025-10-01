@@ -27,6 +27,10 @@ import uvicorn
 import boto3
 from botocore.client import Config
 
+from io import BytesIO
+import io
+import zipstream
+
 # Message queue imports (for future use)
 import aio_pika
 
@@ -665,6 +669,22 @@ class HTTP_SERVER():
             }
             return Response(content=data, media_type="application/zip", headers=headers)
 
+        @self.app.post("/api/blob-service/store-rendered-images-as-zip")
+        async def api_store_rendered_images_zip(
+            bucket: str = Form(...),
+            prefix: str = Form(...),
+        ):
+            """
+            API endpoint to zip all images under a prefix in a bucket and upload to zip_bucket/zip_key.
+            If zip_key is not provided, it will be prefix+'.zip' in the zip_bucket.
+            """
+            try:
+                result = await self.store_rendered_images_to_zip(bucket, prefix)
+                return JSONResponse(content=result, status_code=200)
+            except Exception as e:
+                return JSONResponse(content={"error": str(e)}, status_code=500)
+        
+
         # =============================================================================
         # DELETE OPERATIONS ROUTES
         # =============================================================================
@@ -997,6 +1017,53 @@ class HTTP_SERVER():
         except Exception as e:
             return {"error": str(e)}
 
+    async def store_rendered_images_to_zip(self, bucket: str, prefix: str):
+        zipStreamingObj = zipstream.ZipFile(mode="w", compression=zipstream.ZIP_DEFLATED)
+
+        object_keys = await self.listObjectsWithPrefix(bucket, prefix)
+        if isinstance(object_keys, dict) and "error" in object_keys:
+            raise Exception(object_keys["error"])
+        if not object_keys:
+            raise Exception("No images found for the given prefix.")
+
+        for objs in object_keys:
+            response = self.client.get_object(Bucket=bucket, Key=objs)
+            body_stream = response["Body"].iter_chunks(chunk_size=8192)
+            zipStreamingObj.write_iter(objs.split("/")[-1], body_stream)
+
+        print("storing the zip now...")
+
+        # Inline generator->file-like wrapper
+        class _GenReader(io.RawIOBase):
+            def __init__(self, gen):
+                self._iter = iter(gen)
+                self._buffer = b""
+
+            def readable(self):
+                return True
+
+            def readinto(self, b):
+                while not self._buffer:
+                    try:
+                        self._buffer = next(self._iter)
+                    except StopIteration:
+                        return 0  # EOF
+                n = min(len(b), len(self._buffer))
+                b[:n] = self._buffer[:n]
+                self._buffer = self._buffer[n:]
+                return n
+
+        stream_wrapper = io.BufferedReader(_GenReader(zipStreamingObj))
+
+        # Upload streaming zip to S3/MinIO
+        self.client.upload_fileobj(
+            Fileobj=stream_wrapper,
+            Bucket="frames-zip",
+            Key=f"{prefix.strip('/')}/frames.zip",
+            ExtraArgs={"ContentType": "application/zip"}
+        )
+
+        print(f"✅ Stored {prefix.strip('/')}.zip in frames-zip bucket")
     # =============================================================================
     # SIGNED URL OPERATIONS
     # =============================================================================
