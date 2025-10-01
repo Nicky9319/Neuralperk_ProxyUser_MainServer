@@ -247,20 +247,8 @@ class HTTP_SERVER():
         # =============================================================================
         @self.app.get("/api/blob-service/object-exists")
         async def objectExists(bucket: str, key: str):
-            """Check if an object exists in a bucket with minimal overhead.
-
-            Args:
-                bucket: Bucket name
-                key: Object key path
-
-            Returns (always 200 on success):
-                {
-                    "bucket": str,
-                    "key": str,
-                    "exists": bool,
-                    "size_bytes": int | null,
-                    "etag": str | null
-                }
+            """Lightweight existence check for an object.
+            Returns exists flag and basic metadata if present.
             """
             try:
                 await self.ensure_bucket_exists(bucket)

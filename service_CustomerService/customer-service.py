@@ -1673,14 +1673,27 @@ class HTTP_SERVER():
                 if not signed_url:
                     raise HTTPException(status_code=500, detail="Signed URL missing in blob service response")
 
-                print("[ZIP_FRAMES] Success - returning response")
+                # Parse signed URL and build proxy path similar to rendered video approach
+                from urllib.parse import urlparse
+                parsed_url = urlparse(signed_url)
+                path_with_query = parsed_url.path
+                if parsed_url.query:
+                    path_with_query += f"?{parsed_url.query}"
+
+                # Construct a customer-service proxied endpoint path for retrieval
+                # We'll reuse a new endpoint: /api/customer-service/get-zip-from-signed-url/{zip_path:path}
+                # Client will call that with the returned zipProxyPath
+                proxy_path = path_with_query.lstrip('/')  # remove leading slash for path parameter
+
+                print(f"[ZIP_FRAMES] Proxied zip path: {proxy_path}")
+
                 return JSONResponse(content={
                     "message": "Frames zip ready",
                     "objectId": object_id,
                     "customerId": customer_id,
                     "zipKey": zip_key,
                     "bucket": "frames-zip",
-                    "signedUrl": signed_url,
+                    "zipProxyPath": proxy_path,
                     "expiresIn": secs,
                     "zipExistsPreviously": zip_exists,
                     "totalFrames": total_frames,
@@ -1692,6 +1705,59 @@ class HTTP_SERVER():
             except Exception as e:
                 print(f"[ZIP_FRAMES][ERROR] {str(e)}")
                 raise HTTPException(status_code=500, detail=f"Failed to prepare frames zip: {str(e)}")
+
+        @self.app.get("/api/customer-service/get-zip-from-signed-url/{zip_path:path}")
+        async def getZipFromSignedUrl(
+            zip_path: str,
+            request: Request,
+            download: bool = False
+        ):
+            """Proxy endpoint to stream or download the frames zip via the signed URL.
+            Similar pattern to get-render-video-from-signed-url.
+            zip_path: the path + query component extracted from signed URL (without scheme/host)
+            download: if True sets attachment Content-Disposition.
+            """
+            print(f"[ZIP_PROXY] Zip proxy endpoint hit for path {zip_path}")
+            try:
+                # Build full blob storage URL
+                clean_path = zip_path.lstrip('/')
+                blob_url = f"{self.blob_storage_base_url}/{clean_path}"
+                if request.url.query:
+                    # If additional query parameters are provided by client, append (rare)
+                    blob_url += ("&" if "?" in blob_url else "?") + request.url.query
+                print(f"[ZIP_PROXY] Full blob URL: {blob_url}")
+
+                async def proxy_zip_stream():
+                    try:
+                        async with httpx.AsyncClient() as proxy_client:
+                            async with proxy_client.stream("GET", blob_url, timeout=60.0) as resp:
+                                if resp.status_code != 200:
+                                    try:
+                                        err_bytes = await resp.aread()
+                                        err_detail = err_bytes.decode(errors="replace")
+                                    except Exception:
+                                        err_detail = "Unknown error"
+                                    raise HTTPException(status_code=resp.status_code, detail=f"Blob service error: {err_detail}")
+                                async for chunk in resp.aiter_bytes():
+                                    yield chunk
+                    except HTTPException:
+                        raise
+                    except Exception as e:
+                        print(f"[ZIP_PROXY][ERROR] {str(e)}")
+                        raise HTTPException(status_code=500, detail=f"Failed to proxy zip: {str(e)}")
+
+                zip_filename = os.path.basename(zip_path.split('?')[0]) or 'frames.zip'
+                disposition = 'attachment' if download else 'inline'
+                headers = {
+                    'Content-Disposition': f"{disposition}; filename=\"{zip_filename}\"",
+                    'Cache-Control': 'no-cache'
+                }
+                return StreamingResponse(proxy_zip_stream(), media_type='application/zip', headers=headers)
+            except HTTPException:
+                raise
+            except Exception as e:
+                print(f"[ZIP_PROXY][ERROR] {str(e)}")
+                raise HTTPException(status_code=500, detail=f"Failed to retrieve zip: {str(e)}")
 
 
     async def deleteObjectFilesFromBlobStorage(self, customer_id: str, object_id: str):
