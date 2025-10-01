@@ -242,7 +242,13 @@ class AdminPanelStreamlit:
             st.info("ℹ️ Auto-refresh has been disabled. Use the refresh button to update data manually.")
         
         # Main content tabs
-        tab1, tab2, tab3, tab4 = st.tabs(["📊 System Overview", "👥 User Manager", "🎬 Session Supervisors", "⚡ Quick Actions"])
+        tab1, tab2, tab3, tab4, tab5 = st.tabs([
+            "📊 System Overview", 
+            "👥 User Manager", 
+            "🎬 Session Supervisors", 
+            "⚡ Quick Actions",
+            "🖥️ Vast AI Instances"
+        ])
         
         with tab1:
             asyncio.run(self.render_system_overview())
@@ -255,6 +261,11 @@ class AdminPanelStreamlit:
         
         with tab4:
             asyncio.run(self.render_quick_actions())
+            
+        with tab5:
+            asyncio.run(self.render_vastai_instances())
+            
+        
         
         # Auto-refresh disabled - only manual refresh via buttons
     
@@ -491,6 +502,56 @@ class AdminPanelStreamlit:
                     file_name=f"system_status_{datetime.now().strftime('%Y%m%d_%H%M%S')}.json",
                     mime="application/json"
                 )
+    
+    async def render_vastai_instances(self):
+        """Render the Vast AI Instances tab."""
+        st.subheader("🖥️ Vast AI Instances")
+
+        # Mock function to retrieve instance IDs
+        def get_mock_instance_ids():
+            return ["instance_1", "instance_2", "instance_3"]
+
+        # Mock function to retrieve details for a specific instance
+        def get_mock_instance_details(instance_id):
+            if instance_id == "instance_1":
+                return {
+                    "cost": "$0.10/hour",
+                    "uptime": "5 hours",
+                    "logs": "Log data for Instance 1..."
+                }
+            elif instance_id == "instance_2":
+                return {
+                    "cost": "$0.15/hour",
+                    "uptime": "3 hours",
+                    "logs": "Log data for Instance 2..."
+                }
+            elif instance_id == "instance_3":
+                return {
+                    "cost": "$0.20/hour",
+                    "uptime": "8 hours",
+                    "logs": "Log data for Instance 3..."
+                }
+            else:
+                return {}
+
+        # Retrieve instance IDs
+        instance_ids = get_mock_instance_ids()
+
+        # Display the list of instances
+        selected_instance_id = None
+        for instance_id in instance_ids:
+            if st.button(f"{instance_id}"):
+                selected_instance_id = instance_id
+
+        # Display details of the selected instance
+        if selected_instance_id:
+            st.markdown("---")
+            instance_details = get_mock_instance_details(selected_instance_id)
+            st.write(f"### Details for {selected_instance_id}")
+            st.write(f"**Cost:** {instance_details.get('cost', 'N/A')}")
+            st.write(f"**Uptime:** {instance_details.get('uptime', 'N/A')}")
+            st.write("**Logs:**")
+            st.text_area("Logs", instance_details.get('logs', 'No logs available'), height=200)
     
     def run(self):
         """Main entry point for the Streamlit app."""
