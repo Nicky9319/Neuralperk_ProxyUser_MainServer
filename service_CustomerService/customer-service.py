@@ -1730,7 +1730,18 @@ class HTTP_SERVER():
                 async def proxy_zip_stream():
                     try:
                         async with httpx.AsyncClient() as proxy_client:
-                            async with proxy_client.stream("GET", blob_url, timeout=60.0) as resp:
+                            # Perform HEAD to attempt to get size (optional optimization)
+                            content_length_val = None
+                            try:
+                                head_resp = await proxy_client.head(blob_url, timeout=15.0)
+                                if head_resp.status_code == 200:
+                                    cl = head_resp.headers.get("Content-Length") or head_resp.headers.get("content-length")
+                                    if cl and cl.isdigit():
+                                        content_length_val = int(cl)
+                            except Exception:
+                                pass
+
+                            async with proxy_client.stream("GET", blob_url, timeout=120.0) as resp:
                                 if resp.status_code != 200:
                                     try:
                                         err_bytes = await resp.aread()
@@ -1738,6 +1749,17 @@ class HTTP_SERVER():
                                     except Exception:
                                         err_detail = "Unknown error"
                                     raise HTTPException(status_code=resp.status_code, detail=f"Blob service error: {err_detail}")
+
+                                # If GET supplies size and HEAD failed
+                                if content_length_val is None:
+                                    cl = resp.headers.get("Content-Length") or resp.headers.get("content-length")
+                                    if cl and cl.isdigit():
+                                        content_length_val = int(cl)
+
+                                # Attach size to outer scope via nonlocal closure variable
+                                nonlocal content_length_int
+                                content_length_int = content_length_val
+
                                 async for chunk in resp.aiter_bytes():
                                     yield chunk
                     except HTTPException:
@@ -1748,11 +1770,20 @@ class HTTP_SERVER():
 
                 zip_filename = os.path.basename(zip_path.split('?')[0]) or 'frames.zip'
                 disposition = 'attachment' if download else 'inline'
-                headers = {
-                    'Content-Disposition': f"{disposition}; filename=\"{zip_filename}\"",
-                    'Cache-Control': 'no-cache'
-                }
-                return StreamingResponse(proxy_zip_stream(), media_type='application/zip', headers=headers)
+                content_length_int = None  # will be filled inside proxy_zip_stream if determinable
+
+                async def streaming_wrapper():
+                    async for part in proxy_zip_stream():
+                        yield part
+
+                response_stream = StreamingResponse(streaming_wrapper(), media_type='application/zip')
+                response_stream.headers['Content-Disposition'] = f"{disposition}; filename=\"{zip_filename}\""
+                response_stream.headers['Cache-Control'] = 'no-cache'
+                # After first iteration content_length_int might still be None; FastAPI can't know length beforehand.
+                # If HEAD gave us size, set it early so clients can display progress.
+                if content_length_int is not None:
+                    response_stream.headers['Content-Length'] = str(content_length_int)
+                return response_stream
             except HTTPException:
                 raise
             except Exception as e:
