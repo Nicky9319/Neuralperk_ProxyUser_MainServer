@@ -1064,6 +1064,12 @@ class HTTP_SERVER():
         )
 
         print(f"✅ Stored {prefix.strip('/')}.zip in frames-zip bucket")
+        
+        return {
+            "bucket": "frames-zip",
+            "key": f"{prefix.strip('/')}/frames.zip",
+        }
+    
     # =============================================================================
     # SIGNED URL OPERATIONS
     # =============================================================================
