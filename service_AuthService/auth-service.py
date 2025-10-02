@@ -33,7 +33,7 @@ class HTTP_SERVER():
         self.port = httpServerPort
 
         self.privilegedIpAddress = httpServerPrivilegedIpAddress        #<HTTP_SERVER_CORS_ADDITION_START>
-        self.app.add_middleware(CORSMiddleware, allow_origins=["*"],allow_credentials=True,allow_methods=["*"],allow_headers=["*"],)
+        # self.app.add_middleware(CORSMiddleware, allow_origins=["*"],allow_credentials=True,allow_methods=["*"],allow_headers=["*"],)
         #<HTTP_SERVER_CORS_ADDITION_END>
         
         self.data_class = data_class_instance  # Reference to the Data class instance
