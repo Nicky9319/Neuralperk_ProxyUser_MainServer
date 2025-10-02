@@ -76,21 +76,21 @@ class NeuralPerkDeployer:
         
         cmd = f"vastai create instance {offer_id} --image nicky9319/neuralperk:vastai --disk 30 --ssh --raw " #--env NVIDIA_DISABLE_REQUIRE=1
         
-        try:
-            result = self.run_command(cmd)
-            response = json.loads(result.stdout)
-            
-            contract_id = response.get('new_contract') or response.get('new contract')
-            if contract_id:
-                print(f"✅ Instance created: {contract_id}")
-                return str(contract_id)
-            else:
-                print(f"❌ Failed to get contract ID from response: {response}")
-                return None
-                
-        except Exception as e:
-            print(f"❌ Error creating instance: {e}")
+        
+        result = self.run_command(cmd)
+        response = json.loads(result.stdout)
+        
+        contract_id = response.get('new_contract') or response.get('new contract')
+        if contract_id:
+            print(f"✅ Instance created: {contract_id}")
+            return str(contract_id)
+        else:
+            print(f"❌ Failed to get contract ID from response: {response}")
             return None
+                
+        # except Exception as e:
+        #     print(f"❌ Error creating instance: {e}")
+        #     return None
     
     def start_instance(self, instance_id: str) -> bool:
         """Start the instance"""
@@ -142,6 +142,7 @@ class NeuralPerkDeployer:
                             return True
                 else:
                     consecutive_loading = 0
+                    
                     
             except Exception as e:
                 print(f"   Checking status... ({e})")
