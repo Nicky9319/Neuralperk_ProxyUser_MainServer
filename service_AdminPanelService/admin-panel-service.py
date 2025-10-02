@@ -66,13 +66,21 @@ class AdminPanelStreamlit:
             self.user_service_url = "http://127.0.0.1:8500"
         else:
             self.user_service_url = user_service_env_url
+            
+        vastai_service_env_url = os.getenv("VASTAI_SERVICE", "").strip()
+        if not vastai_service_env_url or not (vastai_service_env_url.startswith("http://") or vastai_service_env_url.startswith("https://")):
+            self.vastai_service_url = "http://127.0.0.1:6000"
+        else:
+            self.vastai_service_url = vastai_service_env_url
         
         # HTTP client for service communication
-        self.http_client = httpx.AsyncClient(timeout=30.0)
+        self.http_client = httpx.AsyncClient(timeout=30.0)  # Default timeout for most services
         
         # Debug: Print service URLs
         print(f"User Manager Service URL: {self.user_manager_service_url}")
         print(f"Session Supervisor Service URL: {self.session_supervisor_service_url}")
+        print(f"VastAI Service URL: {self.vastai_service_url}")
+        print(f"Note: VastAI operations use extended timeouts (45-60s) due to CLI operations")
         
         # Authentication credentials
         self.admin_username = "admin"
@@ -202,11 +210,60 @@ class AdminPanelStreamlit:
         try:
             response = await self.http_client.post(f"{self.session_supervisor_service_url}/api/session-supervisor-service/set-user-count/{customer_id}/{user_count}")
             if response.status_code == 200:
-                return True
+                return response.json()
             return False
         except Exception as e:
             st.error(f"Error setting user count: {str(e)}")
             return False
+            
+    async def get_vastai_instances(self):
+        """Get list of all active VastAI instances."""
+        try:
+            # Create a client with increased timeout specifically for VastAI operations
+            vastai_client = httpx.AsyncClient(timeout=45.0)  # Extended timeout to 45 seconds
+            
+            response = await vastai_client.get(f"{self.vastai_service_url}/api/vastai-service/instance/list-of-instances")
+            
+            # Close the client after use
+            await vastai_client.aclose()
+            
+            if response.status_code == 200:
+                data = response.json()
+                if data.get("success") and "instances" in data:
+                    instances = data["instances"]
+                    # Validate the instances array to ensure no None objects
+                    return [instance for instance in instances if instance is not None]
+            return []
+        except httpx.TimeoutException:
+            st.error("Timeout while fetching VastAI instances. VastAI operations can take longer than usual.")
+            return []
+        except Exception as e:
+            st.error(f"Error fetching VastAI instances: {str(e)}")
+            return []
+    
+    async def get_vastai_instance_info(self, instance_id):
+        """Get detailed information about a specific VastAI instance."""
+        try:
+            # Create a client with increased timeout specifically for VastAI operations
+            # VastAI operations can take longer as they involve CLI calls
+            vastai_client = httpx.AsyncClient(timeout=60.0)  # Extended timeout to 60 seconds
+            
+            response = await vastai_client.get(f"{self.vastai_service_url}/api/vastai-service/instance/information/{instance_id}")
+            
+            # Close the client after use
+            await vastai_client.aclose()
+            
+            if response.status_code == 200:
+                data = response.json()
+                if data.get("success") and "instance" in data:
+                    return data["instance"]
+            return None
+        except httpx.TimeoutException:
+            st.error(f"Timeout while fetching VastAI instance info for {instance_id}. VastAI operations can take longer than usual.")
+            return None
+        except Exception as e:
+            st.error(f"Error fetching VastAI instance info: {str(e)}")
+            return None
     
     def main_dashboard(self):
         """
@@ -507,51 +564,116 @@ class AdminPanelStreamlit:
         """Render the Vast AI Instances tab."""
         st.subheader("🖥️ Vast AI Instances")
 
-        # Mock function to retrieve instance IDs
-        def get_mock_instance_ids():
-            return ["instance_1", "instance_2", "instance_3"]
-
-        # Mock function to retrieve details for a specific instance
-        def get_mock_instance_details(instance_id):
-            if instance_id == "instance_1":
-                return {
-                    "cost": "$0.10/hour",
-                    "uptime": "5 hours",
-                    "logs": "Log data for Instance 1..."
-                }
-            elif instance_id == "instance_2":
-                return {
-                    "cost": "$0.15/hour",
-                    "uptime": "3 hours",
-                    "logs": "Log data for Instance 2..."
-                }
-            elif instance_id == "instance_3":
-                return {
-                    "cost": "$0.20/hour",
-                    "uptime": "8 hours",
-                    "logs": "Log data for Instance 3..."
-                }
+        # Show loading indicator while fetching data
+        with st.spinner("Fetching VastAI instances..."):
+            # Get real instance data from the VastAI service
+            instances = await self.get_vastai_instances()
+        
+        if not instances:
+            st.warning("No VastAI instances found or unable to connect to VastAI service.")
+            return
+        
+        # Display instance status summary
+        status_counts = {}
+        for instance in instances:
+            # Use 'unknown' as default and ensure status is never None
+            status = instance.get("status", "unknown")
+            if status is None:
+                status = "unknown"
+                
+            if status in status_counts:
+                status_counts[status] += 1
             else:
-                return {}
-
-        # Retrieve instance IDs
-        instance_ids = get_mock_instance_ids()
-
-        # Display the list of instances
-        selected_instance_id = None
-        for instance_id in instance_ids:
-            if st.button(f"{instance_id}"):
-                selected_instance_id = instance_id
-
-        # Display details of the selected instance
-        if selected_instance_id:
-            st.markdown("---")
-            instance_details = get_mock_instance_details(selected_instance_id)
-            st.write(f"### Details for {selected_instance_id}")
-            st.write(f"**Cost:** {instance_details.get('cost', 'N/A')}")
-            st.write(f"**Uptime:** {instance_details.get('uptime', 'N/A')}")
-            st.write("**Logs:**")
-            st.text_area("Logs", instance_details.get('logs', 'No logs available'), height=200)
+                status_counts[status] = 1
+        
+        # Show status counts in columns
+        st.write("### Instance Status Summary")
+        cols = st.columns(len(status_counts) if status_counts else 1)
+        
+        for i, (status, count) in enumerate(status_counts.items()):
+            with cols[i]:
+                status_label = status.capitalize() if status is not None else "Unknown"
+                st.metric(f"{status_label}", count)
+        
+        # Create a table of instances
+        st.write("### Available Instances")
+        
+        if instances:
+            # Convert to DataFrame for better display
+            instance_data = []
+            for instance in instances:
+                # Ensure we handle all potential None values
+                instance_data.append({
+                    "Instance ID": instance.get("instance_id", "Unknown") or "Unknown",
+                    "Status": instance.get("status", "Unknown") or "Unknown",
+                    "GPU": instance.get("gpu_name", "Unknown") or "Unknown",
+                    "Machine ID": instance.get("machine_id", "Unknown") or "Unknown"
+                })
+            
+            df = pd.DataFrame(instance_data)
+            st.dataframe(df, use_container_width=True)
+            
+            # Show instance selector
+            instance_options = [str(instance.get("instance_id", "Unknown")) for instance in instances]
+            selected_instance_id = st.selectbox("Select an instance for details", ["None"] + instance_options)
+            
+            # Display details of the selected instance if an instance is selected
+            if selected_instance_id != "None":
+                st.markdown("---")
+                
+                # Use a more prominent progress indicator with a timeout message
+                with st.spinner(f"Fetching details for instance {selected_instance_id}... (This may take up to a minute)"):
+                    instance_details = await self.get_vastai_instance_info(selected_instance_id)
+                
+                if instance_details:
+                    st.write(f"### Details for Instance {selected_instance_id}")
+                    
+                    # Create two columns for instance details
+                    col1, col2 = st.columns(2)
+                    
+                    with col1:
+                        uptime = instance_details.get("uptime_hours")
+                        uptime_display = str(uptime) if uptime is not None else "N/A"
+                        st.metric("Uptime (hours)", uptime_display)
+                        
+                        total_cost = instance_details.get("total_cost")
+                        cost_display = f"${total_cost}" if total_cost is not None else "N/A"
+                        st.metric("Total Cost", cost_display)
+                        
+                        hourly_rate = instance_details.get("hourly_rate")
+                        rate_display = f"${hourly_rate}/hour" if hourly_rate is not None else "N/A"
+                        st.metric("Hourly Rate", rate_display)
+                    
+                    with col2:
+                        status = instance_details.get("status")
+                        status_display = status if status is not None else "N/A"
+                        st.metric("Status", status_display)
+                        
+                        gpu_info = instance_details.get("gpu_info")
+                        gpu_display = gpu_info if gpu_info is not None else "N/A"
+                        st.metric("GPU", gpu_display)
+                        
+                        machine_id = instance_details.get("machine_id")
+                        machine_display = machine_id if machine_id is not None else "N/A"
+                        st.metric("Machine ID", machine_display)
+                    
+                    # Show logs in expandable section
+                    with st.expander("Instance Logs", expanded=True):
+                        logs = instance_details.get("logs")
+                        log_content = logs if logs is not None else "No logs available"
+                        st.text_area("Log Output", log_content, height=300, disabled=True)
+                        
+                    # Add refresh button for this specific instance
+                    if st.button("🔄 Refresh Instance Details"):
+                        st.experimental_rerun()
+                else:
+                    st.error(f"Unable to fetch details for instance {selected_instance_id}")
+        else:
+            st.info("No instances available")
+            
+        # Add a refresh button
+        if st.button("🔄 Refresh All Instances"):
+            st.experimental_rerun()
     
     def run(self):
         """Main entry point for the Streamlit app."""
