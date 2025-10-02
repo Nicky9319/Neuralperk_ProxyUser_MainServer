@@ -18,6 +18,7 @@ jobs:
 
     env:
       ENVIRONMENTAL_VARIABLES: ${{ vars.ENVIRONMENTAL_VARIABLES }}
+      VAST_AI_API_KEY: ${{ secrets.VAST_AI_API_KEY }}
 
     steps:
       - name: Checkout code

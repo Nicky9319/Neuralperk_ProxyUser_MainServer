@@ -30,6 +30,9 @@ python3.12 -m venv .venv
 # Activate the virtual environment and install dependencies
 source .venv/bin/activate
 
+# Setting the VAST AI API key
+vastai set api-key "$VAST_AI_API_KEY"
+
 # Define environmental variables
 pip install -r requirements.txt
 
