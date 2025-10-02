@@ -732,6 +732,7 @@ class HTTP_SERVER():
                 result = await self.store_rendered_images_to_zip(bucket, prefix, is_paid)
                 return JSONResponse(content=result, status_code=200)
             except Exception as e:
+                print(f"[ERROR] Exception in store-rendered-images-as-zip: {str(e)}")
                 return JSONResponse(content={"error": str(e)}, status_code=500)
         
 
