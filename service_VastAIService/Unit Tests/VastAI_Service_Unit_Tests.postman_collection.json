@@ -1,0 +1,251 @@
+{
+	"info": {
+		"_postman_id": "de5b4f22-8c3f-4a13-a53e-9b62a8f2c03d",
+		"name": "VastAI Service Unit Tests",
+		"description": "A collection for testing the VastAI Service API endpoints.",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Service Health Check",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"pm.test(\"Service is active\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData.message).to.eql(\"Vast AI Service is Active\");",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{baseUrl}}/api/vastai-service/",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"api",
+						"vastai-service",
+						""
+					]
+				},
+				"description": "Check if the VastAI Service is active and responding properly."
+			},
+			"response": []
+		},
+		{
+			"name": "List All Instances",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"pm.test(\"Response is successful\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData.success).to.eql(true);",
+							"});",
+							"",
+							"pm.test(\"Response contains instances array\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData).to.have.property('instances');",
+							"    pm.expect(jsonData.instances).to.be.an('array');",
+							"});",
+							"",
+							"pm.test(\"If instances exist, they have required properties\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    if (jsonData.instances && jsonData.instances.length > 0) {",
+							"        pm.expect(jsonData.instances[0]).to.have.property('instance_id');",
+							"        pm.expect(jsonData.instances[0]).to.have.property('status');",
+							"        pm.expect(jsonData.instances[0]).to.have.property('gpu_name');",
+							"        pm.expect(jsonData.instances[0]).to.have.property('created_at');",
+							"        pm.expect(jsonData.instances[0]).to.have.property('machine_id');",
+							"        ",
+							"        // Store first instance ID for instance info test",
+							"        if (jsonData.instances[0].instance_id) {",
+							"            pm.collectionVariables.set('instanceId', jsonData.instances[0].instance_id);",
+							"        }",
+							"    }",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{baseUrl}}/api/vastai-service/instance/list-of-instances",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"api",
+						"vastai-service",
+						"instance",
+						"list-of-instances"
+					]
+				},
+				"description": "Get a list of all active VastAI instances in the system."
+			},
+			"response": []
+		},
+		{
+			"name": "Get Instance Information",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"pm.test(\"Response is successful\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData.success).to.eql(true);",
+							"});",
+							"",
+							"pm.test(\"Response contains instance information\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData).to.have.property('instance');",
+							"    ",
+							"    // Test for all required instance properties",
+							"    var instance = jsonData.instance;",
+							"    pm.expect(instance).to.have.property('instance_id');",
+							"    pm.expect(instance).to.have.property('uptime_hours');",
+							"    pm.expect(instance).to.have.property('status');",
+							"    pm.expect(instance).to.have.property('total_cost');",
+							"    pm.expect(instance).to.have.property('hourly_rate');",
+							"    pm.expect(instance).to.have.property('gpu_info');",
+							"    pm.expect(instance).to.have.property('machine_id');",
+							"    pm.expect(instance).to.have.property('logs');",
+							"    ",
+							"    // Validate data types",
+							"    pm.expect(instance.uptime_hours).to.be.a('number');",
+							"    pm.expect(instance.total_cost).to.be.a('number');",
+							"    pm.expect(instance.hourly_rate).to.be.a('number');",
+							"});",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{baseUrl}}/api/vastai-service/instance/information/{{instanceId}}",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"api",
+						"vastai-service",
+						"instance",
+						"information",
+						"{{instanceId}}"
+					]
+				},
+				"description": "Get detailed information about a specific VastAI instance, including ID, uptime, status, cost, and logs."
+			},
+			"response": []
+		},
+		{
+			"name": "Get Instance Information - Invalid ID",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 404\", function () {",
+							"    pm.response.to.have.status(404);",
+							"});",
+							"",
+							"pm.test(\"Response indicates failure\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData.success).to.eql(false);",
+							"});",
+							"",
+							"pm.test(\"Response contains error message\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData).to.have.property('error');",
+							"    pm.expect(jsonData.error).to.include('not found');",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{baseUrl}}/api/vastai-service/instance/information/invalid-id-999999",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"api",
+						"vastai-service",
+						"instance",
+						"information",
+						"invalid-id-999999"
+					]
+				},
+				"description": "Attempt to get information for an instance with an invalid ID to test error handling."
+			},
+			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "baseUrl",
+			"value": "http://127.0.0.1:6000",
+			"type": "string",
+			"description": "Base URL for VastAI Service"
+		},
+		{
+			"key": "instanceId",
+			"value": "12345",
+			"type": "string",
+			"description": "ID of a VastAI instance to test"
+		}
+	]
+}

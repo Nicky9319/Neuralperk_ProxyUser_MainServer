@@ -64,6 +64,15 @@
             "namespace": "neuralperk"
         },
         {
+            "name": "vastAIService",
+            "script": "./service_VastAIService/vast-ai-service.py",
+            "interpreter": ".venv/bin/python",
+            "out_file": "./logs/vastAIService-out.log",
+            "error_file": "./logs/vastAIService-error.log",
+            "merge_logs": true,
+            "namespace": "neuralperk"
+        },
+        {
             "name": "adminPanel",
             "script": ".venv/bin/streamlit",
             "args": "run service_AdminPanelService/admin-panel-service.py --server.port 15000 --server.headless true",
