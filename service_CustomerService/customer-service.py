@@ -1566,9 +1566,9 @@ class HTTP_SERVER():
         ):
             """
                 flow :
-                1. check if the zip file exists in the blob storage and if so directly move to step 3.
-                2. if not, make the zip file and then store it in the blob storage
-                3. create the signed url for the zip file and return it to the user so that it is able to retrieve the zip folder
+                1. Check payment status for the object
+                2. Create the zip file (with full or 1/3rd frames based on payment status)
+                3. Generate signed URL for the zip file and return it to the user
             """
             print(f"[ZIP_FRAMES] Request received for customer_id={customer_id} object_id={object_id} secs={secs}")
             # Basic validation
@@ -1596,13 +1596,46 @@ class HTTP_SERVER():
                 if total_frames == 0:
                     raise HTTPException(status_code=404, detail="No rendered frames available for this object yet")
 
+                # Step 1: Check payment status
+                print("[ZIP_FRAMES] Checking payment status...")
+                payment_response = await self.http_client.get(
+                    f"{self.mongodb_service_url}/api/mongodb-service/blender-objects/check-plan/{object_id}"
+                )
+                
+                if payment_response.status_code != 200:
+                    raise HTTPException(
+                        status_code=404,
+                        detail=f"Object not found: {payment_response.text}"
+                    )
+                
+                payment_result = payment_response.json()
+                is_paid = payment_result.get("isPaid", False)
+                print(f"[ZIP_FRAMES] Payment status: {'paid' if is_paid else 'unpaid'}")
+
                 prefix = f"{customer_id}/{object_id}"  # matches how frames are stored in rendered-frames bucket
                 zip_key = f"{prefix}/frames.zip"
                 print(f"[ZIP_FRAMES] Derived prefix={prefix} zip_key={zip_key}")
 
-                # Step 1: Check if zip already exists (light-weight existence endpoint)
-                print("[ZIP_FRAMES] Checking if zip already exists in frames-zip bucket (object-exists)...")
-                zip_exists = False
+                # Step 2: Create frames zip via blob service (with payment status)
+                print(f"[ZIP_FRAMES] Creating frames zip via blob service (is_paid={is_paid})...")
+                create_response = await self.http_client.post(
+                    f"{self.blob_service_url}/api/blob-service/store-rendered-images-as-zip",
+                    data={
+                        "bucket": "rendered-frames",
+                        "prefix": prefix,
+                        "is_paid": str(is_paid).lower()  # Convert boolean to string for form data
+                    }
+                )
+                if create_response.status_code != 200:
+                    raise HTTPException(status_code=create_response.status_code, detail=f"Failed to create frames zip: {create_response.text}")
+                create_json = create_response.json()
+                # Use returned key if provided
+                returned_key = create_json.get("key")
+                if returned_key and returned_key != zip_key:
+                    print(f"[ZIP_FRAMES] Warning: returned key {returned_key} differs from expected {zip_key}; using returned key.")
+                    zip_key = returned_key
+                
+                # Get zip file size
                 zip_size_bytes = None
                 zip_size_human = None
                 exists_response = await self.http_client.get(
@@ -1615,46 +1648,8 @@ class HTTP_SERVER():
                 if exists_response.status_code == 200:
                     exists_json = exists_response.json()
                     if exists_json.get("exists"):
-                        zip_exists = True
                         zip_size_bytes = exists_json.get("size_bytes")
                         zip_size_human = self._format_file_size(zip_size_bytes) if zip_size_bytes is not None else None
-                        print(f"[ZIP_FRAMES] Zip already exists (size={zip_size_bytes})")
-                else:
-                    print(f"[ZIP_FRAMES] object-exists check returned {exists_response.status_code}, will attempt creation.")
-
-                # Step 2: If not exists, request blob service to create it
-                if not zip_exists:
-                    print("[ZIP_FRAMES] Creating frames zip via blob service ...")
-                    create_response = await self.http_client.post(
-                        f"{self.blob_service_url}/api/blob-service/store-rendered-images-as-zip",
-                        data={
-                            "bucket": "rendered-frames",
-                            "prefix": prefix,
-                        }
-                    )
-                    if create_response.status_code != 200:
-                        raise HTTPException(status_code=create_response.status_code, detail=f"Failed to create frames zip: {create_response.text}")
-                    create_json = create_response.json()
-                    # Use returned key if provided
-                    returned_key = create_json.get("key")
-                    if returned_key and returned_key != zip_key:
-                        print(f"[ZIP_FRAMES] Warning: returned key {returned_key} differs from expected {zip_key}; using returned key.")
-                        zip_key = returned_key
-                    # Fetch existence again to get size (still light-weight)
-                    exists_after_create = await self.http_client.get(
-                        f"{self.blob_service_url}/api/blob-service/object-exists",
-                        params={
-                            "bucket": "frames-zip",
-                            "key": zip_key
-                        }
-                    )
-                    if exists_after_create.status_code == 200:
-                        after_json = exists_after_create.json()
-                        if after_json.get("exists"):
-                            zip_size_bytes = after_json.get("size_bytes")
-                            zip_size_human = self._format_file_size(zip_size_bytes) if zip_size_bytes is not None else None
-                    else:
-                        print(f"[ZIP_FRAMES] Could not confirm zip after creation: {exists_after_create.status_code}")
 
                 # Step 3: Generate signed URL
                 print("[ZIP_FRAMES] Generating signed URL for frames zip ...")
@@ -1686,6 +1681,11 @@ class HTTP_SERVER():
                 proxy_path = path_with_query.lstrip('/')  # remove leading slash for path parameter
 
                 print(f"[ZIP_FRAMES] Proxied zip path: {proxy_path}")
+                
+                # Calculate frames included in zip
+                frames_in_zip = total_frames
+                if not is_paid:
+                    frames_in_zip = max(1, int(total_frames * 0.3))
 
                 return JSONResponse(content={
                     "message": "Frames zip ready",
@@ -1695,8 +1695,9 @@ class HTTP_SERVER():
                     "bucket": "frames-zip",
                     "signed_url": proxy_path,
                     "expiresIn": secs,
-                    "zipExistsPreviously": zip_exists,
                     "totalFrames": total_frames,
+                    "framesInZip": frames_in_zip,
+                    "paymentStatus": "paid" if is_paid else "unpaid",
                     "zipSizeBytes": zip_size_bytes,
                     "zipSizeHuman": zip_size_human
                 }, status_code=200)
@@ -1748,8 +1749,7 @@ class HTTP_SERVER():
                                         err_detail = err_bytes.decode(errors="replace")
                                     except Exception:
                                         err_detail = "Unknown error"
-                                    raise HTTPException(status_code=resp.status_code, detail=f"Blob service error: {err_detail}")
-
+                                    raise HTTPException(status_code=resp.status_code, detail=f"Blob service error: {err_detail}")              
                                 # If GET supplies size and HEAD failed
                                 if content_length_val is None:
                                     cl = resp.headers.get("Content-Length") or resp.headers.get("content-length")

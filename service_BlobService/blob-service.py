@@ -721,13 +721,15 @@ class HTTP_SERVER():
         async def api_store_rendered_images_zip(
             bucket: str = Form(...),
             prefix: str = Form(...),
+            is_paid: bool = Form(True),
         ):
             """
             API endpoint to zip all images under a prefix in a bucket and upload to zip_bucket/zip_key.
             If zip_key is not provided, it will be prefix+'.zip' in the zip_bucket.
+            For unpaid users, only 1/3rd of frames (evenly distributed) will be included in the zip.
             """
             try:
-                result = await self.store_rendered_images_to_zip(bucket, prefix)
+                result = await self.store_rendered_images_to_zip(bucket, prefix, is_paid)
                 return JSONResponse(content=result, status_code=200)
             except Exception as e:
                 return JSONResponse(content={"error": str(e)}, status_code=500)
@@ -1064,7 +1066,16 @@ class HTTP_SERVER():
             return response['Body'].read()
         except Exception as e:
             return {"error": str(e)}
-    async def store_rendered_images_to_zip(self, bucket: str, prefix: str):
+    async def store_rendered_images_to_zip(self, bucket: str, prefix: str, is_paid: bool = True):
+        """
+        Fetch all images under 'bucket/prefix' and create a zip on-the-fly.
+        Upload that zip to the frames-zip bucket with key = prefix+'.zip'.
+        For unpaid users (is_paid=False), only 1/3rd of frames (evenly distributed) will be included.
+        """
+        print(f"Starting store_rendered_images_to_zip for bucket={bucket} prefix={prefix} is_paid={is_paid}")
+        import zipstream
+        import io
+
         try:
             zipStreamingObj = zipstream.ZipFile(mode="w", compression=zipstream.ZIP_DEFLATED)
         except Exception as e:
@@ -1079,8 +1090,35 @@ class HTTP_SERVER():
         except Exception as e:
             raise Exception(f"Failed to list objects with prefix '{prefix}' in bucket '{bucket}': {str(e)}")
 
+        # Filter frames for unpaid users (1/3rd of total frames, evenly distributed)
+        frames_to_include = object_keys
+        if not is_paid:
+            total_frames = len(object_keys)
+            frames_to_return_count = max(1, int(total_frames * 0.3))  # At least 1 frame
+            
+            if frames_to_return_count == 1:
+                # If only 1 frame, include the middle frame
+                available_frame_indices = [total_frames // 2]
+            else:
+                # Calculate step size to get evenly distributed frames
+                step_size = total_frames / frames_to_return_count
+                available_frame_indices = []
+                
+                for i in range(frames_to_return_count):
+                    # Calculate index for this frame
+                    index = int(i * step_size)
+                    # Ensure we don't go out of bounds
+                    index = min(index, total_frames - 1)
+                    available_frame_indices.append(index)
+            
+            # Filter object_keys to only include selected frames
+            frames_to_include = [object_keys[idx] for idx in available_frame_indices]
+            print(f"Unpaid user: Including {len(frames_to_include)} out of {total_frames} frames (indices: {available_frame_indices})")
+        else:
+            print(f"Paid user: Including all {len(frames_to_include)} frames")
+
         try:
-            for objs in object_keys:
+            for objs in frames_to_include:
                 try:
                     response = self.client.get_object(Bucket=bucket, Key=objs)
                     body_stream = response["Body"].iter_chunks(chunk_size=8192)
