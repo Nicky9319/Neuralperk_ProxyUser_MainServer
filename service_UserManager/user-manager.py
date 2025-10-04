@@ -681,15 +681,25 @@ class HTTP_SERVER():
             active sessions and deleting its routing key mapping.
 
             Note:
-                - This operation only affects the User Manager's internal records.
-                - The session supervisor is responsible for cleaning up its own users and related resources.
-                - The User Manager does not trigger or manage user removal as part of this process.
+            - This operation only affects the User Manager's internal records.
+            - The session supervisor is responsible for cleaning up its own users and related resources.
+            - The User Manager does not trigger or manage user removal as part of this process.
 
             Args:
-                session_supervisor_id (str): Unique identifier for the session supervisor to be cleaned up.
+            session_supervisor_id (str): Unique identifier for the session supervisor to be cleaned up.
             """
-            self.activeSessions.remove(session_supervisor_id)
-            self.supervisorToRoutingKeyMapping.pop(session_supervisor_id)
+            try:
+                self.activeSessions.remove(session_supervisor_id)
+            except ValueError:
+                pass
+            
+            try:
+                self.supervisorToRoutingKeyMapping.pop(session_supervisor_id)
+            except KeyError:
+                pass
+            
+            print(f"Cleaned up session supervisor {session_supervisor_id} from User Manager")
+            return JSONResponse(content={"message": "Session supervisor cleaned up successfully"}, status_code=200)
 
         # ----------------------------
         # Admin Panel API Calls

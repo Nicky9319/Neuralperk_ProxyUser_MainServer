@@ -1067,6 +1067,7 @@ class HTTP_SERVER():
             return response['Body'].read()
         except Exception as e:
             return {"error": str(e)}
+        
     async def store_rendered_images_to_zip(self, bucket: str, prefix: str, is_paid: bool = True):
         """
         Fetch all images under 'bucket/prefix' and create a zip on-the-fly.
