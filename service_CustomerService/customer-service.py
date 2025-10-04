@@ -613,7 +613,9 @@ class HTTP_SERVER():
                         overview_json = overview_resp.json()
                         session_supervisor_id = overview_json.get("session_id")
                         if session_supervisor_id:
-                            cleanup_resp = await self.http_client.delete(
+                            # For DELETE with form data, we need to use httpx.request with method='DELETE'
+                            cleanup_resp = await self.http_client.request(
+                                'DELETE',
                                 f"{self.user_manager_service_url}/api/user-manager/session-supervisor/cleanup-session",
                                 data={
                                     "session_supervisor_id": session_supervisor_id
