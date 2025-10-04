@@ -692,10 +692,16 @@ class HTTP_SERVER():
                 self.activeSessions.remove(session_supervisor_id)
             except ValueError:
                 pass
-            
+            except Exception as e:
+                print(f"Exception while removing session_supervisor_id={session_supervisor_id} from activeSessions: {e}")
+                pass
+
             try:
                 self.supervisorToRoutingKeyMapping.pop(session_supervisor_id)
             except KeyError:
+                pass
+            except Exception as e:
+                print(f"Exception while removing session_supervisor_id={session_supervisor_id} from supervisorToRoutingKeyMapping: {e}")
                 pass
             
             print(f"Cleaned up session supervisor {session_supervisor_id} from User Manager")
