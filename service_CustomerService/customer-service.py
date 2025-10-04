@@ -581,6 +581,11 @@ class HTTP_SERVER():
                         status_code=400,
                         detail="Missing required field: object_id"
                     )
+                    
+                print("getting Session Overview before stopping and deleting workload...")
+                overview_resp = await self.http_client.get(
+                    f"{self.session_supervisor_service_url}/api/session-supervisor-service/get-session-supervisor-overview/{customer_id}"
+                )
 
                 print(f"Redirecting stop-and-delete-workload request to session supervisor service for customer: {customer_id}")
                 
@@ -604,10 +609,6 @@ class HTTP_SERVER():
 
                 # Also clean up the User Manager routing/session mapping
                 try:
-                    # Get the session supervisor info to obtain the session_supervisor_id
-                    overview_resp = await self.http_client.get(
-                        f"{self.session_supervisor_service_url}/api/session-supervisor-service/get-session-supervisor-overview/{customer_id}"
-                    )
                     if overview_resp.status_code == 200:
                         overview_json = overview_resp.json()
                         session_supervisor_id = overview_json.get("session_id")
